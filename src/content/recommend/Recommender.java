@@ -8,6 +8,7 @@ import akka.actor.UntypedActor;
 /**
  * Receives requests for Recommendations For User from the viewer
  * Delegates to a Peer Recommendation Aggregator that aggregates peer recommendations
+ * Also exists on the other side of peer to peer communication
  * Receives requests for Peer Recommendations from a peer
  * Delegates to a History Recommendation Generator that generates a recommendation based on this peer's history
  * Receives back a Peer Recommendation to be sent back to the original requester as this peer's recommendation

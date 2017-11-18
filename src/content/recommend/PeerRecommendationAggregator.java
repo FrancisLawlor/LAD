@@ -26,7 +26,8 @@ public class PeerRecommendationAggregator extends UntypedActor {
     private Map<String, PeerRecommendation> recommendations;
     private Map<String, WeightResponse> weights;
     private long startTime;
-    private long timeOut = 60000;
+    
+    private static final long timeOut = 60000;
     
     public PeerRecommendationAggregator() {
         this.recommendations = new HashMap<String, PeerRecommendation>();
