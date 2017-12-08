@@ -4,6 +4,6 @@ package content.recommend.heuristic;
  * Handles Heuristic for Recommendations
  *
  */
-public class Heuristic {
+public interface HistoryHeuristic {
 
 }
