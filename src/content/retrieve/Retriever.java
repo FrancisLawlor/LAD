@@ -1,6 +1,7 @@
 package content.retrieve;
 
 import akka.actor.UntypedActor;
+import core.xcept.UnknownMessageException;
 
 /**
  * Retrieves Content from network for requester
@@ -27,12 +28,12 @@ public class Retriever extends UntypedActor {
             this.processRetrievedContent(retrievedContent);
         }
         else {
-            throw new RuntimeException("Unrecognised Message; Debug");
+            throw new UnknownMessageException();
         }
     }
     
     /**
-     * Viewer will delegate to a local Retriever and request Content
+     * Viewer delegates to a local Retriever to request Content
      * @param request
      */
     protected void processLocalRetrieveContentRequest(
@@ -41,7 +42,7 @@ public class Retriever extends UntypedActor {
     }
     
     /**
-     * A Peer's Retriever will ask this peer's Retriever to find the content
+     * This peer's retriever is being asked by another peer to find the content
      */
     protected void processPeerRetrieveContentRequest(
             PeerRetrieveContentRequest request) {
