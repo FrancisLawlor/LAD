@@ -4,6 +4,7 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.Props;
 import akka.actor.UntypedActor;
+import core.xcept.UnknownMessageException;
 
 /**
  * Receives requests for Recommendations For User from the viewer
@@ -41,7 +42,7 @@ public class Recommender extends UntypedActor {
             this.processPeerRecommendation(peerRecommendation);
         }
         else {
-            throw new RuntimeException("Unrecognised Message; Debug");
+            throw new UnknownMessageException();
         }
     }
     

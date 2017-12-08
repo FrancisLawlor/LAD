@@ -1,16 +1,23 @@
 package content.recommend;
 
+
 import akka.actor.ActorSelection;
 import akka.actor.UntypedActor;
-import content.view.ViewHistory;
+import content.recommend.heuristic.HistoryHeuristic;
 import content.view.ViewHistoryRequest;
 import content.view.ViewHistoryResponse;
+import core.xcept.UnknownMessageException;
 
 /**
  * Generates Recommendation from this peer based on View History
  *
  */
 public class HistoryRecommendationGenerator extends UntypedActor {
+    private HistoryHeuristic heuristic;
+    
+    public HistoryRecommendationGenerator(HistoryHeuristic heuristic) {
+        this.heuristic = heuristic;
+    }
     
     @Override
     public void onReceive(Object message) {
@@ -25,7 +32,7 @@ public class HistoryRecommendationGenerator extends UntypedActor {
             this.processViewHistoryResponse(viewHistoryResponse);
         }
         else {
-            throw new RuntimeException("Unrecognised Message; Debug");
+            throw new UnknownMessageException();
         }
     }
     
@@ -46,22 +53,20 @@ public class HistoryRecommendationGenerator extends UntypedActor {
      * @param response
      */
     protected void processViewHistoryResponse(ViewHistoryResponse response) {
-        ViewHistory viewHistory = response.getViewHistory();
         PeerRecommendation peerRecommendation = 
-                this.getPeerRecommendationBasedOnHistory(viewHistory);
+                this.getPeerRecommendationBasedOnHistory(response);
         
         ActorSelection recommender = getContext().actorSelection("user/recommender");
         recommender.tell(peerRecommendation, getSelf());
     }
     
     /**
-     * Creates Peer Recommendation based on View History
+     * Creates Peer Recommendation based on View History and HistoryHeuristic
      * @param request
      * @return
      */
-    private PeerRecommendation getPeerRecommendationBasedOnHistory(ViewHistory viewHistory) {
-        
-        
-        return null;
+    private PeerRecommendation getPeerRecommendationBasedOnHistory(ViewHistoryResponse viewHistoryResponse) {
+        PeerRecommendation recommendation = this.heuristic.getRecommendation(viewHistoryResponse);
+        return recommendation;
     }
 }
