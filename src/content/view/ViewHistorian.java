@@ -11,7 +11,7 @@ import akka.actor.UntypedActor;
  *
  */
 public class ViewHistorian extends UntypedActor {
-    private List<View> viewHistory;
+    private List<ContentView> viewHistory;
     
     @Override
     public void onReceive(Object message) {

@@ -8,13 +8,13 @@ import java.util.List;
  *
  */
 public class ViewHistory {
-    private List<View> history;
+    private List<ContentView> history;
     
-    public ViewHistory(List<View> history) {
+    public ViewHistory(List<ContentView> history) {
         this.history = history;
     }
     
-    public Iterator<View> iterator() {
+    public Iterator<ContentView> iterator() {
         return this.history.iterator();
     }
 }

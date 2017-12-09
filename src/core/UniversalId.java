@@ -1,9 +1,15 @@
 package core;
 
 /**
- * TO DO: Some sort of Universal ID for Apache Camel RESTlet
+ * Universal Id for Actors
  *
  */
 public class UniversalId {
-
+    private String ipAndPort;
+    
+    public UniversalId(String ipAndPort) {
+        this.ipAndPort = ipAndPort;
+    }
+    
+    //At the moment we'll just use an IP and Port
 }

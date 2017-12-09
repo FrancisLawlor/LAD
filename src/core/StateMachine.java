@@ -2,10 +2,10 @@ package core;
 
 import java.util.Iterator;
 
-import content.recommend.Recommendation;
+import content.content.Content;
 
 public class StateMachine {
-    public void setRecommendationsForUser(Iterator<Recommendation> recommendations) {
+    public void setRecommendationsForUser(Iterator<Content> recommendations) {
         
     }
     

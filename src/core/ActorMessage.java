@@ -1,13 +1,21 @@
 package core;
 
 public class ActorMessage {
-    private RequestHistory requestHistory;
+    private MessageTrace messageTrace;
     
     public ActorMessage() {
-        this.requestHistory = new RequestHistory();
+        this.messageTrace = new MessageTrace();
     }
     
-    public RequestHistory getRequestHistory() {
-        return this.requestHistory;
+    public ActorMessage(MessageTrace trace) {
+        this.messageTrace = trace;
+    }
+    
+    public MessageTrace getMessageTrace() {
+        return this.messageTrace;
+    }
+    
+    public UniversalId getOriginalRequester() {
+        return this.messageTrace.getOriginalRequester();
     }
 }

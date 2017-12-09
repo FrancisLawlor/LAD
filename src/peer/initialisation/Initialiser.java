@@ -12,6 +12,7 @@ import peer.graph.link.PeerLinker;
  * Initialises the permanent Actors for this Peer
  *
  */
+@SuppressWarnings("unused")
 public class Initialiser {
     public static void main(String[] args) {
         ActorSystem system = ActorSystem.create("ContentSystem");

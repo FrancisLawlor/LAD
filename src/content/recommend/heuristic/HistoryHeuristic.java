@@ -8,5 +8,7 @@ import content.view.ViewHistoryResponse;
  *
  */
 public interface HistoryHeuristic {
+    static final int TOP_N = 10;
+    
     PeerRecommendation getRecommendation(ViewHistoryResponse viewHistoryResponse);
 }

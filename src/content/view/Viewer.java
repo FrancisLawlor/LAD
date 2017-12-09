@@ -2,7 +2,7 @@ package content.view;
 
 import akka.actor.ActorSelection;
 import akka.actor.UntypedActor;
-import content.recommend.Recommendation;
+import content.content.Content;
 import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
 import content.retrieve.LocalRetrieveContentRequest;
@@ -28,9 +28,9 @@ public class Viewer extends UntypedActor {
         recommender.tell(new RecommendationsForUserRequest(), getSelf());
     }
     
-    public void getContent(Recommendation recommendation) {
+    public void getContent(Content content) {
         ActorSelection retriever = getContext().actorSelection("user/retriever");
-        retriever.tell(new LocalRetrieveContentRequest(recommendation), getSelf());
+        retriever.tell(new LocalRetrieveContentRequest(content), getSelf());
     }
     
     @Override
