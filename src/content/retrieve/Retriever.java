@@ -36,16 +36,14 @@ public class Retriever extends UntypedActor {
      * Viewer delegates to a local Retriever to request Content
      * @param request
      */
-    protected void processLocalRetrieveContentRequest(
-            LocalRetrieveContentRequest request) {
+    protected void processLocalRetrieveContentRequest(LocalRetrieveContentRequest request) {
         
     }
     
     /**
      * This peer's retriever is being asked by another peer to find the content
      */
-    protected void processPeerRetrieveContentRequest(
-            PeerRetrieveContentRequest request) {
+    protected void processPeerRetrieveContentRequest(PeerRetrieveContentRequest request) {
         
     }
     

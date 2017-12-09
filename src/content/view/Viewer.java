@@ -2,11 +2,11 @@ package content.view;
 
 import akka.actor.ActorSelection;
 import akka.actor.UntypedActor;
+import content.recommend.Recommendation;
 import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
 import content.retrieve.LocalRetrieveContentRequest;
 import content.retrieve.RetrievedContent;
-import core.Recommendation;
 import core.StateMachine;
 
 /**

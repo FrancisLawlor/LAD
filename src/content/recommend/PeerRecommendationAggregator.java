@@ -18,7 +18,7 @@ import peer.graph.weight.WeightResponse;
 
 /**
  * Aggregates Recommendations from Peers
- * Based on theoretical weighted links between this peer and others
+ * Based on the idea of this peer being linked to others in a weighted graph
  * PeerLinker is asked for the Peer IDs of the links
  * Sends Recommendation Request to Peers based on Peer IDs
  * Weighters corresponding to these Peer IDs are asked for their weight

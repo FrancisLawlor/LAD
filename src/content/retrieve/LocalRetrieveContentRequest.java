@@ -1,7 +1,7 @@
 package content.retrieve;
 
+import content.recommend.Recommendation;
 import core.ActorMessage;
-import core.Recommendation;
 
 public class LocalRetrieveContentRequest extends ActorMessage {
     public LocalRetrieveContentRequest(Recommendation recommendation) {

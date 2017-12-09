@@ -5,7 +5,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 import core.ActorMessage;
-import core.Recommendation;
 
 public class RecommendationsForUser extends ActorMessage implements Iterable<Recommendation> {
     private List<Recommendation> recommendations;
