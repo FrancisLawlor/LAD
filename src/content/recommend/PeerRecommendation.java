@@ -1,16 +1,33 @@
 package content.recommend;
 
-import akka.actor.ActorRef;
-import core.ActorMessage;
+import java.util.Iterator;
+import java.util.List;
 
-public class PeerRecommendation extends ActorMessage {
-    private ActorRef originalRequester;
+import content.content.Content;
+import core.ActorMessage;
+import core.MessageTrace;
+
+/**
+ * Curated List of Content a peer is recommending back to the requesting peer
+ *
+ */
+public class PeerRecommendation extends ActorMessage implements Iterable<Content> {
+    private List<Content> contentList;
     
-    public PeerRecommendation(ActorRef originalRequester) {
-        this.originalRequester = originalRequester;
+    public PeerRecommendation(List<Content> contentList, MessageTrace trace) {
+        super(trace);
+        this.contentList = contentList;
     }
     
-    public ActorRef getOriginalRequester() {
-        return this.originalRequester;
+    public Iterator<Content> iterator() {
+        return contentList.iterator();
+    }
+    
+    public Content getContentAtRank(int rank) {
+        return contentList.get(rank);
+    }
+    
+    public int size() {
+        return this.contentList.size();
     }
 }

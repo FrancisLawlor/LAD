@@ -1,6 +1,13 @@
 package content.view;
 
+import akka.actor.ActorSelection;
 import akka.actor.UntypedActor;
+import content.content.Content;
+import content.recommend.RecommendationsForUser;
+import content.recommend.RecommendationsForUserRequest;
+import content.retrieve.LocalRetrieveContentRequest;
+import content.retrieve.RetrievedContent;
+import core.StateMachine;
 
 /**
  * Handles view related matters
@@ -10,10 +17,43 @@ import akka.actor.UntypedActor;
  *
  */
 public class Viewer extends UntypedActor {
+    private StateMachine stateMachine;
     
+    public Viewer(StateMachine stateMachine) {
+        this.stateMachine = stateMachine;
+    }
+    
+    public void getRecommendationsForUser() {
+        ActorSelection recommender = getContext().actorSelection("user/recommender");
+        recommender.tell(new RecommendationsForUserRequest(), getSelf());
+    }
+    
+    public void getContent(Content content) {
+        ActorSelection retriever = getContext().actorSelection("user/retriever");
+        retriever.tell(new LocalRetrieveContentRequest(content), getSelf());
+    }
     
     @Override
     public void onReceive(Object message) {
-        
+        if (message instanceof RecommendationsForUser) {
+            RecommendationsForUser recommendations = (RecommendationsForUser) message;
+            this.processRecommendationsForUser(recommendations);
+        }
+        else if (message instanceof RetrievedContent) {
+            RetrievedContent content = (RetrievedContent) message;
+            this.processRetrievedContent(content);
+        }
+        else {
+            throw new RuntimeException("Message unrecognised; Debug!");
+        }
     }
+    
+    protected void processRecommendationsForUser(RecommendationsForUser recommendations) {
+        this.stateMachine.setRecommendationsForUser(recommendations.iterator());
+    }
+    
+    protected void processRetrievedContent(RetrievedContent content) {
+        this.stateMachine.setRetrievedContentUrlString(content.getURLString());
+    }
+    
 }

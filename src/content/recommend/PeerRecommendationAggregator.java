@@ -2,12 +2,15 @@ package content.recommend;
 
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 
 import akka.actor.ActorSelection;
 import akka.actor.UntypedActor;
+import content.recommend.heuristic.AggregationHeuristic;
+import core.xcept.UnknownMessageException;
 import peer.graph.link.PeerLinkResponse;
 import peer.graph.link.PeerLinksRequest;
 import peer.graph.weight.WeightRequest;
@@ -15,7 +18,7 @@ import peer.graph.weight.WeightResponse;
 
 /**
  * Aggregates Recommendations from Peers
- * Based on theoretical weighted links between this peer and others
+ * Based on the idea of this peer being linked to others in a weighted graph
  * PeerLinker is asked for the Peer IDs of the links
  * Sends Recommendation Request to Peers based on Peer IDs
  * Weighters corresponding to these Peer IDs are asked for their weight
@@ -23,14 +26,17 @@ import peer.graph.weight.WeightResponse;
  *
  */
 public class PeerRecommendationAggregator extends UntypedActor {
+    private AggregationHeuristic heuristic;
     private Map<String, PeerRecommendation> recommendations;
     private Map<String, WeightResponse> weights;
     private long startTime;
     
     private static final long timeOut = 60000;
     
-    public PeerRecommendationAggregator() {
+    public PeerRecommendationAggregator(AggregationHeuristic heuristic) {
+        this.heuristic = heuristic;
         this.recommendations = new HashMap<String, PeerRecommendation>();
+        this.weights = new HashMap<String, WeightResponse>();
         this.startTime = System.currentTimeMillis();
     }
     
@@ -57,7 +63,7 @@ public class PeerRecommendationAggregator extends UntypedActor {
             this.processWeightResponse(response);
         }
         else {
-            throw new RuntimeException("Unrecognised Message; Debug");
+            throw new UnknownMessageException();
         }
     }
     
@@ -140,7 +146,7 @@ public class PeerRecommendationAggregator extends UntypedActor {
         if (this.weights.size() == this.recommendations.size()) {
             timeToRecommend = true;
         }
-        else if (System.currentTimeMillis() - this.startTime > this.timeOut) {
+        else if (System.currentTimeMillis() - this.startTime > timeOut) {
             timeToRecommend = true;
         }
         else {
@@ -155,8 +161,11 @@ public class PeerRecommendationAggregator extends UntypedActor {
      * Weights are the theoretical similarity of peers
      */
     protected void aggregatePeerRecommendations() {
-        Set<Entry<String, PeerRecommendation>> recommendSet = this.recommendations.entrySet();
-        Iterator<Entry<String, PeerRecommendation>> recommendIt = recommendSet.iterator();
+        List<WeightedPeerRecommendation> weightedPeerRecommendations = 
+                new LinkedList<WeightedPeerRecommendation>();
+        
+        Iterator<Entry<String, PeerRecommendation>> recommendIt = 
+                this.recommendations.entrySet().iterator();
         
         while (recommendIt.hasNext()) {
             Entry<String, PeerRecommendation> entry = recommendIt.next();
@@ -166,9 +175,15 @@ public class PeerRecommendationAggregator extends UntypedActor {
             WeightResponse weightResponse = this.weights.get(peerId);
             if (weightResponse != null) {
                 double weight = weightResponse.getLinkWeight();
-                
-                // Do something now with Peer Recommendation and Weight
+                WeightedPeerRecommendation weightedRecommendation = 
+                        new WeightedPeerRecommendation(peerRecommendation, weight);
+                weightedPeerRecommendations.add(weightedRecommendation);
             }
         }
+        RecommendationsForUser forUser = 
+                this.heuristic.getRecommendationsForUser(weightedPeerRecommendations.iterator());
+        
+        ActorSelection viewer = getContext().actorSelection("user/viewer");
+        viewer.tell(forUser, getSelf());
     }
 }
