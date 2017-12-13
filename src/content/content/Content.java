@@ -10,7 +10,7 @@ public class Content {
     private String fileName;
     private String fileFormat;
     
-    Content(String uniqueId, String fileName, String fileFormat) {
+    public Content(String uniqueId, String fileName, String fileFormat) {
     		this.uniqueId = uniqueId;
     		this.fileName = fileName;
     		this.fileFormat = fileFormat;

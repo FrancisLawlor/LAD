@@ -1,4 +1,5 @@
 package gui.core;
+
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
