@@ -9,7 +9,7 @@ public class AddFileState extends State {
 	StateMachine stateMachine;
 	
 	public AddFileState(StateMachine stateMachine) {
-		super(stateMachine);
+		this.stateMachine = stateMachine;
 	}
 
 	@Override

@@ -13,7 +13,7 @@ public class RetrieveRecommendationsState extends State {
 	private int TIME_OUT = 10000;
 
 	public RetrieveRecommendationsState(StateMachine stateMachine) {
-		super(stateMachine);
+		this.stateMachine = stateMachine;
 	}
 
 	@Override

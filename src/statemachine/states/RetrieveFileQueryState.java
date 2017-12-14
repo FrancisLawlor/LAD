@@ -7,7 +7,7 @@ public class RetrieveFileQueryState extends State {
 	StateMachine stateMachine;
 	
 	public RetrieveFileQueryState(StateMachine stateMachine) {
-		super(stateMachine);
+		this.stateMachine = stateMachine;
 	}
 
 	@Override

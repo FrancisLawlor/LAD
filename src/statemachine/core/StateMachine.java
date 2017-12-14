@@ -5,6 +5,10 @@ import java.util.Iterator;
 import java.util.Map;
 
 import content.content.Content;
+import gui.core.SceneContainerStage;
+import gui.scenes.DashBoardScene;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import statemachine.states.AddFileState;
 import statemachine.states.DashboardState;
 import statemachine.states.RatingState;
@@ -20,9 +24,10 @@ import statemachine.utils.StateNames;
 public class StateMachine {
 	private String currentState;
 	private Map<String, State> stateMap = new HashMap<String, State>();
+	SceneContainerStage containerStage = new SceneContainerStage();
 	
-	StateMachine() {
-		stateMap.put(StateNames.START.toString(), new StartState(this));
+	public StateMachine() {
+		stateMap.put(StateNames.START.toString(), new StartState(this, containerStage));
 		stateMap.put(StateNames.SETUP.toString(), new SetupState(this));
 		stateMap.put(StateNames.RETRIEVE_RECOMMENDATIONS.toString(), new RetrieveRecommendationsState(this));
 		stateMap.put(StateNames.DASHBOARD.toString(), new DashboardState(this));

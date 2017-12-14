@@ -7,7 +7,7 @@ public class SetupState extends State {
 	private StateMachine stateMachine;
 	
 	public SetupState(StateMachine stateMachine) {
-		super(stateMachine);
+		this.stateMachine = stateMachine;
 	}
 
 	@Override

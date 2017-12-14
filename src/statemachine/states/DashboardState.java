@@ -7,7 +7,7 @@ public class DashboardState extends State {
 	private StateMachine stateMachine;
 	
 	public DashboardState(StateMachine stateMachine) {
-		super(stateMachine);
+		this.stateMachine = stateMachine;
 	}
 
 	@Override

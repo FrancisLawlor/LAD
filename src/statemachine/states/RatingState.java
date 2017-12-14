@@ -6,7 +6,7 @@ public class RatingState extends State {
 	private StateMachine stateMachine;
 	
 	public RatingState(StateMachine stateMachine) {
-		super(stateMachine);
+		this.stateMachine = stateMachine;
 	}
 
 	@Override
