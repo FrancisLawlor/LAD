@@ -1,6 +1,6 @@
 package statemachine.states;
 
-public class SetupState implements IState {
+public class SetupState extends State {
 
 	@Override
 	public void execute() {

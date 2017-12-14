@@ -1,6 +1,6 @@
 package statemachine.states;
 
-public class DashboardState implements IState {
+public class DashboardState extends State {
 
 	@Override
 	public void execute() {

@@ -1,6 +1,6 @@
 package statemachine.states;
 
-public class RatingState implements IState {
+public class RatingState extends State {
 
 	@Override
 	public void execute() {

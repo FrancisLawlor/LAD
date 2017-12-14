@@ -1,6 +1,6 @@
 package statemachine.states;
 
-public class RetrieveRecommendationsState implements IState {
+public class RetrieveRecommendationsState extends State {
 
 	@Override
 	public void execute() {

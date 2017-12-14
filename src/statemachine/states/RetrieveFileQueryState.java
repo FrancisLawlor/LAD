@@ -1,6 +1,6 @@
 package statemachine.states;
 
-public class RetrieveFileQueryState implements IState {
+public class RetrieveFileQueryState extends State {
 
 	@Override
 	public void execute() {

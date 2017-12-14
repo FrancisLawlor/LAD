@@ -1,10 +1,7 @@
 package statemachine.states;
 
-public class StartState extends State {
-
-	@Override
+public class State implements IState {
 	public void execute() {
 		
 	}
-
 }
