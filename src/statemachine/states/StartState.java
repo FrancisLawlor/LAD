@@ -6,7 +6,7 @@ import statemachine.utils.StateNames;
 public class StartState extends State {
 	private StateMachine stateMachine;
 	
-	StartState(StateMachine stateMachine) {
+	public StartState(StateMachine stateMachine) {
 		super(stateMachine);
 	}
 
@@ -14,8 +14,10 @@ public class StartState extends State {
 	public void execute() {
 		if (!configFileExists()) {
 			stateMachine.setCurrentState(StateNames.SETUP.toString());
+			//Change to Setup scene
 		} else {
 			stateMachine.setCurrentState(StateNames.RETRIEVE_RECOMMENDATIONS.toString());
+			//Change to Retrieve Recommendations Scene
 		}
 	}
 	

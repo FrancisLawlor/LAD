@@ -1,59 +1,38 @@
 package statemachine.states;
 
-import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import content.content.Content;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateNames;
 
 public class SetupState extends State {
 	private StateMachine stateMachine;
-	private int TIME_OUT = 10000;
 	
-	SetupState(StateMachine stateMachine) {
+	public SetupState(StateMachine stateMachine) {
 		super(stateMachine);
 	}
 
 	@Override
 	public void execute() {
-		Iterator<Content> recommendations;
-		try {
-			recommendations = retrieveRecommendations();
-		} catch (InterruptedException | TimeoutException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		// Create listener for button
+		// Button clicked
+		// Get port number from textfield
+		// Check if port is available.
+		
+		if (portIsAvailable("UserInput")) {
+			writePortNumberToConfigFile("portNumber");
+			stateMachine.setCurrentState(StateNames.RETRIEVE_RECOMMENDATIONS.toString());
+			//Change to RetrieveRecommendationsScene
+		} else {
+			//Tell user port is not available
+			//Throw exception.
 		}
-		
-		//Make recommendations available to Dashboard scene
-		
-		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
 	}
 	
-	private Iterator<Content> retrieveRecommendations() throws InterruptedException, TimeoutException {
-		int i = 0;
-		
-		Iterator<Content> recommendations = null;
-		
-		while (i != TIME_OUT) {
-			recommendations = getRecommendations();
-			if (recommendations != null) {
-				break;
-			} else {
-	            TimeUnit.SECONDS.sleep(1);
-	            i++;
-			}
-			if (i == TIME_OUT) {
-                throw new TimeoutException("Timed out..");
-            }
-		}
-		
-		return recommendations;
+	private boolean portIsAvailable(String portNumber) {
+		return true;
 	}
 	
-	Iterator<Content> getRecommendations() {
-		// TODO
-		return null;
+	private void writePortNumberToConfigFile(String portNumber) {
+		
 	}
+	
 }

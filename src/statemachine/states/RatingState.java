@@ -4,7 +4,7 @@ import statemachine.core.StateMachine;
 
 public class RatingState extends State {
 
-	RatingState(StateMachine stateMachine) {
+	public RatingState(StateMachine stateMachine) {
 		super(stateMachine);
 		// TODO Auto-generated constructor stub
 	}

@@ -4,7 +4,7 @@ import statemachine.core.StateMachine;
 
 public class AddFileState extends State {
 
-	AddFileState(StateMachine stateMachine) {
+	public AddFileState(StateMachine stateMachine) {
 		super(stateMachine);
 		// TODO Auto-generated constructor stub
 	}

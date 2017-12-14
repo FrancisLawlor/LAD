@@ -4,7 +4,7 @@ import statemachine.core.StateMachine;
 
 public class RetrievingFileState extends State {
 
-	RetrievingFileState(StateMachine stateMachine) {
+	public RetrievingFileState(StateMachine stateMachine) {
 		super(stateMachine);
 		// TODO Auto-generated constructor stub
 	}

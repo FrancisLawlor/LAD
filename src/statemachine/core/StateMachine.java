@@ -22,15 +22,15 @@ public class StateMachine {
 	private Map<String, State> stateMap = new HashMap<String, State>();
 	
 	StateMachine() {
-		stateMap.put(StateNames.START.toString(), new StartState());
-		stateMap.put(StateNames.SETUP.toString(), new SetupState());
-		stateMap.put(StateNames.RETRIEVE_RECOMMENDATIONS.toString(), new RetrieveRecommendationsState());
-		stateMap.put(StateNames.DASHBOARD.toString(), new DashboardState());
-		stateMap.put(StateNames.ADD_FILE.toString(), new AddFileState());
-		stateMap.put(StateNames.RETRIEVE_FILE_QUERY.toString(), new RetrieveFileQueryState());
-		stateMap.put(StateNames.RETRIEVING_FILE.toString(), new RetrievingFileState());
-		stateMap.put(StateNames.RATING.toString(), new RatingState());
-		stateMap.put(StateNames.VIEWING_FILES.toString(), new ViewingFilesState());
+		stateMap.put(StateNames.START.toString(), new StartState(this));
+		stateMap.put(StateNames.SETUP.toString(), new SetupState(this));
+		stateMap.put(StateNames.RETRIEVE_RECOMMENDATIONS.toString(), new RetrieveRecommendationsState(this));
+		stateMap.put(StateNames.DASHBOARD.toString(), new DashboardState(this));
+		stateMap.put(StateNames.ADD_FILE.toString(), new AddFileState(this));
+		stateMap.put(StateNames.RETRIEVE_FILE_QUERY.toString(), new RetrieveFileQueryState(this));
+		stateMap.put(StateNames.RETRIEVING_FILE.toString(), new RetrievingFileState(this));
+		stateMap.put(StateNames.RATING.toString(), new RatingState(this));
+		stateMap.put(StateNames.VIEWING_FILES.toString(), new ViewingFilesState(this));
 	}
 	
 	public void setCurrentState(String newState) {
