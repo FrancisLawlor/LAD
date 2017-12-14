@@ -11,5 +11,11 @@ public class UniversalId {
         this.ipAndPort = ipAndPort;
     }
     
-    //At the moment we'll just use an IP and Port
+    public String toString() {
+        return null;
+    }
+    
+    public boolean equals(UniversalId other) {
+        return this.ipAndPort.equals(other.ipAndPort);
+    }
 }

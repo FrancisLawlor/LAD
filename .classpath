@@ -43,5 +43,6 @@
 	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/surefire-booter-2.12.4.jar"/>
 	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/surefire-junit3-2.12.4.jar"/>
 	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/xbean-reflect-3.4.jar"/>
+	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/gson-2.2.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

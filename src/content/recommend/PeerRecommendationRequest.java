@@ -1,19 +1,15 @@
 package content.recommend;
 
-import akka.actor.ActorRef;
+import core.RequestCommunication;
+import core.UniversalId;
 
 /**
- * Requests a recommendation from this peer for the requester peer
+ * Requests a recommendation from the target peer for the requester peer
  *
  */
-public class PeerRecommendationRequest {
-    private ActorRef requester;
+public class PeerRecommendationRequest extends RequestCommunication {
     
-    PeerRecommendationRequest(ActorRef requester) {
-        this.requester = requester;
-    }
-    
-    public ActorRef getRequester() {
-        return this.requester;
+    public PeerRecommendationRequest(UniversalId origin, UniversalId target) {
+        super(origin, target);
     }
 }
