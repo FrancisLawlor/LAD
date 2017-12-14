@@ -1,19 +1,26 @@
 package statemachine.states;
 
 import statemachine.core.StateMachine;
+import statemachine.utils.StateNames;
 
 public class RetrievingFileState extends State {
 	StateMachine stateMachine;
 	
 	public RetrievingFileState(StateMachine stateMachine) {
 		super(stateMachine);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-
+		// start downloading file from other user
+		// listen for download to stop finishing
+		// when download finishes change state to Rating state
+		// change scene to rating scene
+	}
+	
+	public void downloadFinished() {
+		stateMachine.setCurrentState(StateNames.RATING.toString());
+		// change to rating scene
 	}
 
 }

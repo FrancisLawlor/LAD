@@ -3,16 +3,28 @@ package statemachine.states;
 import statemachine.core.StateMachine;
 
 public class RatingState extends State {
-
+	private StateMachine stateMachine;
+	
 	public RatingState(StateMachine stateMachine) {
 		super(stateMachine);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
 	public void execute() {
-		// TODO Auto-generated method stub
-
+		// User clicks submit
+		// or
+		// user clicks back
+	}
+	
+	private void clicksSubmit() {
+		// rating score is recorded from rating object and written to file.
+		// change to dashboard state
+		// change to dashboard scene
+	}
+	
+	private void clicksBack() {
+		// change to dashboard state
+		// change to dashboard scene
 	}
 
 }
