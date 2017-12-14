@@ -1,20 +1,30 @@
 package peer.graph.weight;
 
-import core.ActorMessage;
+import core.RequestCommunication;
+import core.UniversalId;
 
 /**
  * Sends Update request to the other peer in the theoretical peer to peer link
  * Weights need to be kept consistent on both sides of the theoretical link
  *
  */
-public class PeerWeightUpdateRequest extends ActorMessage {
-    private double newWeight = 0.0;
+public class PeerWeightUpdateRequest extends RequestCommunication {
+    private Weight newWeight;
     
-    PeerWeightUpdateRequest(double newWeight){
+    PeerWeightUpdateRequest(UniversalId originalRequester,UniversalId originalTarget, Weight newWeight){
+        super(originalRequester, originalTarget);
         this.newWeight = newWeight;
     }
     
-    public double getNewWeight() {
+    public UniversalId getUpdateRequestingPeerId() {
+        return super.getOriginalRequester();
+    }
+    
+    public UniversalId getTargetPeerId() {
+        return super.getOriginalTarget();
+    }
+    
+    public Weight getNewWeight() {
         return this.newWeight;
     }
 }

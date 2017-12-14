@@ -1,6 +1,7 @@
 package peer.graph.weight;
 
 import core.ActorMessage;
+import core.UniversalId;
 
 /**
  * Actor Message that requests a Weighter's Weight
@@ -9,13 +10,13 @@ import core.ActorMessage;
  *
  */
 public class WeightRequest extends ActorMessage {
-    private String peerId;
+    private UniversalId peerId;
     
-    public WeightRequest(String peerId) {
+    public WeightRequest(UniversalId peerId) {
         this.peerId = peerId;
     }
     
-    public String getPeerId() {
+    public UniversalId getPeerId() {
         return this.peerId;
     }
 }

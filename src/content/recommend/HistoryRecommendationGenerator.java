@@ -1,27 +1,44 @@
 package content.recommend;
 
 
+import java.util.List;
+
 import akka.actor.ActorSelection;
-import akka.actor.UntypedActor;
+import content.content.Content;
 import content.recommend.heuristic.HistoryHeuristic;
 import content.view.ViewHistoryRequest;
 import content.view.ViewHistoryResponse;
+import core.ActorNames;
+import core.PeerToPeerActor;
+import core.PeerToPeerActorInit;
+import core.UniversalId;
+import core.xcept.PeerRecommendationRequestIdMismatchException;
 import core.xcept.UnknownMessageException;
+import core.xcept.WrongPeerIdException;
 
 /**
  * Generates Recommendation from this peer based on View History
  *
  */
-public class HistoryRecommendationGenerator extends UntypedActor {
+public class HistoryRecommendationGenerator extends PeerToPeerActor {
+    private UniversalId requestingPeer;
     private HistoryHeuristic heuristic;
     
-    public HistoryRecommendationGenerator(HistoryHeuristic heuristic) {
-        this.heuristic = heuristic;
-    }
-    
+    /**
+     * Actor Message processing
+     */
     @Override
     public void onReceive(Object message) {
-        if (message instanceof PeerRecommendationRequest) {
+        if (message instanceof PeerToPeerActorInit) {
+            PeerToPeerActorInit init = (PeerToPeerActorInit) message;
+            super.initialisePeerToPeerActor(init);
+        }
+        else if (message instanceof HistoryRecommendationGeneratorInit) {
+            HistoryRecommendationGeneratorInit init = (HistoryRecommendationGeneratorInit) message;
+            this.requestingPeer = init.getRequestingPeerId();
+            this.heuristic = init.getHeuristic();
+        }
+        else if (message instanceof PeerRecommendationRequest) {
             PeerRecommendationRequest request = 
                     (PeerRecommendationRequest) message;
             this.processPeerRecommendationRequest(request);
@@ -41,9 +58,13 @@ public class HistoryRecommendationGenerator extends UntypedActor {
      * @param request
      */
     protected void processPeerRecommendationRequest(PeerRecommendationRequest request) {
+        if (!request.getOriginalTarget().equals(super.peerId)) throw new WrongPeerIdException();
+        if (!this.requestingPeer.equals(request.getOriginalRequester()))
+            throw new PeerRecommendationRequestIdMismatchException();
+        
         ViewHistoryRequest historyRequest = new ViewHistoryRequest(request);
         
-        ActorSelection viewHistorian = getContext().actorSelection("user/viewHistorian");
+        ActorSelection viewHistorian = getContext().actorSelection("user/" + ActorNames.VIEW_HISTORIAN);
         viewHistorian.tell(historyRequest, getSelf());
     }
     
@@ -56,7 +77,7 @@ public class HistoryRecommendationGenerator extends UntypedActor {
         PeerRecommendation peerRecommendation = 
                 this.getPeerRecommendationBasedOnHistory(response);
         
-        ActorSelection recommender = getContext().actorSelection("user/recommender");
+        ActorSelection recommender = getContext().actorSelection("user/" + ActorNames.RECOMMENDER);
         recommender.tell(peerRecommendation, getSelf());
     }
     
@@ -66,7 +87,9 @@ public class HistoryRecommendationGenerator extends UntypedActor {
      * @return
      */
     private PeerRecommendation getPeerRecommendationBasedOnHistory(ViewHistoryResponse viewHistoryResponse) {
-        PeerRecommendation recommendation = this.heuristic.getRecommendation(viewHistoryResponse);
+        PeerRecommendation recommendation;
+        List<Content> contentList = this.heuristic.getRecommendation(viewHistoryResponse);
+        recommendation = new PeerRecommendation(contentList, this.requestingPeer, super.peerId);
         return recommendation;
     }
 }

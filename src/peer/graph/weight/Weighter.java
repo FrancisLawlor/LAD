@@ -1,22 +1,40 @@
 package peer.graph.weight;
 
 import akka.actor.ActorRef;
-import akka.actor.UntypedActor;
+import akka.actor.ActorSelection;
+import core.ActorNames;
+import core.PeerToPeerActor;
+import core.PeerToPeerActorInit;
+import core.UniversalId;
+import core.xcept.UnknownMessageException;
+import core.xcept.WeightUpdateRequestPeerIdMismatchException;
+import core.xcept.WrongPeerIdException;
 
 /**
- * Represents a theoretical weight of a link 
- * between the local user and a remote peer
- * Handles Weight Requests
- * Handles Updates to keep link weight consistent for both peers
+ * Represents a theoretical weight of a link between the local user and a remote peer
+ * Handles weight update requests
+ * Keeps link weight consistent for both peers
  *
  */
-public class Weighter extends UntypedActor {
+public class Weighter extends PeerToPeerActor {
+    private UniversalId linkedPeerId;
+    private Weight linkWeight;
     
-    private double linkWeight = 0;
-    
+    /**
+     * Actor Message processing
+     */
     @Override
-    public void onReceive(Object message) throws Throwable {
-        if (message instanceof WeightRequest) {
+    public void onReceive(Object message) {
+        if (message instanceof PeerToPeerActorInit) {
+            PeerToPeerActorInit init = (PeerToPeerActorInit) message;
+            super.initialisePeerToPeerActor(init);
+        }
+        else if (message instanceof WeighterInit) {
+            WeighterInit init = (WeighterInit) message;
+            this.linkedPeerId = init.getLinkedPeerId();
+            this.linkWeight = init.getInitialLinkWeight();
+        }
+        else if (message instanceof WeightRequest) {
             WeightRequest weightRequest = 
                     (WeightRequest) message;
             this.processWeightRequest(weightRequest);
@@ -32,7 +50,7 @@ public class Weighter extends UntypedActor {
             this.processPeerWeightUpdateRequest(weightUpdateRequest);
         }
         else {
-            throw new RuntimeException("Unrecognised Message; Debug");
+            throw new UnknownMessageException();
         }
     }
     
@@ -41,29 +59,41 @@ public class Weighter extends UntypedActor {
      * @param weightRequest
      */
     protected void processWeightRequest(WeightRequest weightRequest) {
-        String peerId = weightRequest.getPeerId();
-        WeightResponse weightResponse = 
-                new WeightResponse(peerId, this.linkWeight);
+        UniversalId peerId = weightRequest.getPeerId();
+        WeightResponse weightResponse = new WeightResponse(peerId, this.linkWeight);
         ActorRef requester = getSender();
         requester.tell(weightResponse, getSelf());
     }
     
     /**
      * Updates weight from local request
+     * Sends a request to the other peer that is theoretically linked by this weight to this peer
+     * Asks the other peer to update its weight to keep the link weights consistent on both sides
      * @param updateRequest
      */
     protected void processLocalWeightUpdateRequest(LocalWeightUpdateRequest updateRequest) {
-        this.linkWeight = updateRequest.getNewWeight();
-        // To do, send PeerWeightUpdateRequest to peer
+        if (!this.linkedPeerId.equals(updateRequest.getLinkedPeerId())) throw new WeightUpdateRequestPeerIdMismatchException();
+        Weight weight = updateRequest.getNewWeight();
+        this.linkWeight = weight;
+        
+        PeerWeightUpdateRequest request = new PeerWeightUpdateRequest(super.peerId, this.linkedPeerId, weight);
+        ActorSelection communicator = getContext().actorSelection("user/" + ActorNames.OUTBOUND_COMM);
+        communicator.tell(request, getSelf());
     }
     
     /**
      * Updates weight due to peer request
-     * Maintains consistent link weight in both frames of reference
+     * Request should come from peer on other side of theoretical weighted link
+     * Maintains consistent link weight in both frames of reference for both linked peers
      * @param updateRequest
      */
     protected void processPeerWeightUpdateRequest(PeerWeightUpdateRequest updateRequest) {
-        this.linkWeight = updateRequest.getNewWeight();
-        //To do, add security to check the request is from the correct user?
+        if (super.peerId.equals(updateRequest.getTargetPeerId())) {
+            if (this.linkedPeerId.equals(updateRequest.getUpdateRequestingPeerId())) {
+                this.linkWeight = updateRequest.getNewWeight();
+            }
+            else throw new WeightUpdateRequestPeerIdMismatchException();
+        }
+        else throw new WrongPeerIdException();
     }
 }

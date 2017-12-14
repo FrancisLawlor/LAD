@@ -1,8 +1,10 @@
 package content.retrieve;
 
-public class PeerRetrieveContentRequest {
+import core.RequestCommunication;
+
+public class PeerRetrieveContentRequest extends RequestCommunication {
     
     public PeerRetrieveContentRequest(LocalRetrieveContentRequest request) {
-        
+        super(request.getOriginalRequester(), request.getOriginalTarget());
     }
 }

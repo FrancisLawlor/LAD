@@ -8,11 +8,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 import akka.actor.ActorSelection;
-import akka.actor.UntypedActor;
 import content.recommend.heuristic.AggregationHeuristic;
+import core.ActorNames;
+import core.PeerToPeerActor;
+import core.PeerToPeerActorInit;
+import core.UniversalId;
 import core.xcept.UnknownMessageException;
 import peer.graph.link.PeerLinkResponse;
 import peer.graph.link.PeerLinksRequest;
+import peer.graph.weight.Weight;
 import peer.graph.weight.WeightRequest;
 import peer.graph.weight.WeightResponse;
 
@@ -25,24 +29,38 @@ import peer.graph.weight.WeightResponse;
  * Using Weight we weight the recommendations retrieved from peers
  *
  */
-public class PeerRecommendationAggregator extends UntypedActor {
+public class PeerRecommendationAggregator extends PeerToPeerActor {
+    private UniversalId id;
     private AggregationHeuristic heuristic;
-    private Map<String, PeerRecommendation> recommendations;
-    private Map<String, WeightResponse> weights;
+    private Map<UniversalId, PeerRecommendation> recommendations;
+    private Map<UniversalId, WeightResponse> weights;
     private long startTime;
     
     private static final long timeOut = 60000;
     
-    public PeerRecommendationAggregator(AggregationHeuristic heuristic) {
-        this.heuristic = heuristic;
-        this.recommendations = new HashMap<String, PeerRecommendation>();
-        this.weights = new HashMap<String, WeightResponse>();
-        this.startTime = System.currentTimeMillis();
+    /**
+     * Creates a map of Universal IDs to peer recommendations and also to the weight of these
+     */
+    public PeerRecommendationAggregator() {
+        this.recommendations = new HashMap<UniversalId, PeerRecommendation>();
+        this.weights = new HashMap<UniversalId, WeightResponse>();
     }
     
+    /**
+     * Actor Message processing
+     */
     @Override
     public void onReceive(Object message) {
-        if (message instanceof RecommendationsForUserRequest) {
+        if (message instanceof PeerToPeerActorInit) {
+            PeerToPeerActorInit init = (PeerToPeerActorInit) message;
+            super.initialisePeerToPeerActor(init);
+        }
+        else if (message instanceof PeerRecommendationAggregatorInit) {
+            PeerRecommendationAggregatorInit init = (PeerRecommendationAggregatorInit) message;
+            this.heuristic = init.getHeuristic();
+            this.startTime = System.currentTimeMillis();
+        }
+        else if (message instanceof RecommendationsForUserRequest) {
             RecommendationsForUserRequest request = 
                     (RecommendationsForUserRequest) message;
             this.processRecommendationsForUserRequest(request);
@@ -72,6 +90,7 @@ public class PeerRecommendationAggregator extends UntypedActor {
      * @param request
      */
     protected void processRecommendationsForUserRequest(RecommendationsForUserRequest request) {
+        this.id = request.getUserPeerId();
         this.sendPeerLinksRequest();
     }
     
@@ -82,7 +101,7 @@ public class PeerRecommendationAggregator extends UntypedActor {
     private void sendPeerLinksRequest() {
         PeerLinksRequest request = new PeerLinksRequest();
         
-        ActorSelection peerLinker = getContext().actorSelection("user/peerLinker");
+        ActorSelection peerLinker = getContext().actorSelection("user/" + ActorNames.PEER_LINKER);
         peerLinker.tell(request, getSelf());
     }
     
@@ -91,15 +110,18 @@ public class PeerRecommendationAggregator extends UntypedActor {
      * @param peerLinkResponse
      */
     protected void processPeerLinkResponse(PeerLinkResponse peerLinkResponse) {
-        String peerId = peerLinkResponse.getPeerId();
+        UniversalId peerId = peerLinkResponse.getPeerId();
         this.sendPeerRecommendationRequest(peerId);
     }
     
     /**
      * Asks a Peer for its Recommendations
      */
-    private void sendPeerRecommendationRequest(String peerId) {
+    private void sendPeerRecommendationRequest(UniversalId peerId) {
+        PeerRecommendationRequest request = new PeerRecommendationRequest(this.id, peerId);
         
+        ActorSelection communicator = getContext().actorSelection("user/" + ActorNames.OUTBOUND_COMM);
+        communicator.tell(request, getSelf());
     }
     
     /**
@@ -108,8 +130,7 @@ public class PeerRecommendationAggregator extends UntypedActor {
      * @param peerRecommendation
      */
     protected void processPeerRecommendation(PeerRecommendation peerRecommendation) {
-        String peerId = "To Do"; // To Do:
-        // Figure out ID system for Peers that works with AKKA ActorRef and Apache Camel URIs
+        UniversalId peerId = peerRecommendation.getPeerId();
         this.recommendations.put(peerId, peerRecommendation);
         this.sendPeerLinkWeightRequest(peerId);
     }
@@ -117,10 +138,10 @@ public class PeerRecommendationAggregator extends UntypedActor {
     /**
      * Asks Weighter what Weight this Peer's Link should have in aggregate Recommendations
      */
-    private void sendPeerLinkWeightRequest(String peerId) {
+    private void sendPeerLinkWeightRequest(UniversalId peerId) {
         WeightRequest request = new WeightRequest(peerId);
         
-        ActorSelection peerWeighter = getContext().actorSelection("user/weighter_" + peerId);
+        ActorSelection peerWeighter = getContext().actorSelection("user/weighter_" + peerId.toString());
         peerWeighter.tell(request, getSelf());
     }
     
@@ -129,7 +150,7 @@ public class PeerRecommendationAggregator extends UntypedActor {
      * theoretical link between it and this peer
      */
     protected void processWeightResponse(WeightResponse response) {
-        String peerId = response.getPeerId();
+        UniversalId peerId = response.getPeerId();
         this.weights.put(peerId, response);
         if (this.isTimeToRecommend()) {
             this.aggregatePeerRecommendations();
@@ -164,17 +185,17 @@ public class PeerRecommendationAggregator extends UntypedActor {
         List<WeightedPeerRecommendation> weightedPeerRecommendations = 
                 new LinkedList<WeightedPeerRecommendation>();
         
-        Iterator<Entry<String, PeerRecommendation>> recommendIt = 
+        Iterator<Entry<UniversalId, PeerRecommendation>> recommendIt = 
                 this.recommendations.entrySet().iterator();
         
         while (recommendIt.hasNext()) {
-            Entry<String, PeerRecommendation> entry = recommendIt.next();
-            String peerId = entry.getKey();
+            Entry<UniversalId, PeerRecommendation> entry = recommendIt.next();
+            UniversalId peerId = entry.getKey();
             PeerRecommendation peerRecommendation = entry.getValue();
             
             WeightResponse weightResponse = this.weights.get(peerId);
             if (weightResponse != null) {
-                double weight = weightResponse.getLinkWeight();
+                Weight weight = weightResponse.getLinkWeight();
                 WeightedPeerRecommendation weightedRecommendation = 
                         new WeightedPeerRecommendation(peerRecommendation, weight);
                 weightedPeerRecommendations.add(weightedRecommendation);
@@ -183,7 +204,7 @@ public class PeerRecommendationAggregator extends UntypedActor {
         RecommendationsForUser forUser = 
                 this.heuristic.getRecommendationsForUser(weightedPeerRecommendations.iterator());
         
-        ActorSelection viewer = getContext().actorSelection("user/viewer");
+        ActorSelection viewer = getContext().actorSelection("user/" + ActorNames.VIEWER);
         viewer.tell(forUser, getSelf());
     }
 }

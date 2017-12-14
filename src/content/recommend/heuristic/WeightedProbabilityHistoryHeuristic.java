@@ -7,7 +7,6 @@ import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
 import content.content.Content;
-import content.recommend.PeerRecommendation;
 import content.view.ContentView;
 import content.view.ViewHistory;
 import content.view.ViewHistoryResponse;
@@ -22,9 +21,7 @@ public class WeightedProbabilityHistoryHeuristic implements HistoryHeuristic {
     /**
      * Gets Recommendation of the Top N viewed Content from View History
      */
-    public PeerRecommendation getRecommendation(ViewHistoryResponse viewHistoryResponse) {
-        PeerRecommendation recommendation;
-        
+    public List<Content> getRecommendation(ViewHistoryResponse viewHistoryResponse) {
         List<Content> contentList = new LinkedList<Content>();
         
         ViewHistory viewHistory = viewHistoryResponse.getViewHistory();
@@ -42,8 +39,7 @@ public class WeightedProbabilityHistoryHeuristic implements HistoryHeuristic {
                 }
             }
         }
-        recommendation = new PeerRecommendation(contentList, viewHistoryResponse.getMessageTrace());
-        return recommendation;
+        return contentList;
     }
     
     /**

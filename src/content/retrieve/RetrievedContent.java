@@ -1,15 +1,22 @@
 package content.retrieve;
 
-import core.ActorMessage;
+import content.content.Content;
+import core.RequestCommunication;
+import core.UniversalId;
 
-public class RetrievedContent extends ActorMessage {
-    private String url;
+/**
+ * Content retrieved for the original Requester from the original Target
+ *
+ */
+public class RetrievedContent extends RequestCommunication {
+    private Content content;
     
-    public RetrievedContent(String url) {
-        
+    public RetrievedContent(UniversalId originalRequester, UniversalId originalTarget, Content content) {
+        super(originalRequester, originalTarget);
+        this.content = content;
     }
     
-    public String getURLString() {
-        return this.url;
+    public Content getContent() {
+        return this.content;
     }
 }
