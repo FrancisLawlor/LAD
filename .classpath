@@ -2,47 +2,47 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/akka-actor_2.12-2.4.20.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/config-1.3.0.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/scala-library-2.12.2.jar"/>
 	<classpathentry kind="src" path=".apt_generated">
 		<attributes>
 			<attribute name="optional" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/apache-mime4j-core-0.7.2.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/camel-core-2.19.4.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/camel-core-2.19.4-sources.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/camel-http-common-2.19.4.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/camel-restlet-2.19.4.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/classworlds-1.1.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/classworlds-1.1-alpha-2.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/commons-cli-1.0.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/commons-codec-1.5.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/commons-lang3-3.1.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/commons-lang-2.1.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/commons-logging-1.1.3.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/commons-logging-api-1.1.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/doxia-sink-api-1.0-alpha-7.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/google-collections-1.0.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/httpclient-4.3.2.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/httpcore-4.3.1.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/httpmime-4.3.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/javax.servlet-api-3.1.0.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/jaxb-core-2.2.11.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/jaxb-impl-2.2.11.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/jcip-annotations-1.0.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/jsr305-2.0.1.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/junit-3.8.1.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/junit-3.8.2.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/log4j-1.2.12.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/org.restlet.ext.httpclient-2.3.6.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/org.restlet-2.3.6.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/slf4j-api-1.7.22.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/surefire-api-2.12.4.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/surefire-booter-2.12.4.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/surefire-junit3-2.12.4.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/maven/xbean-reflect-3.4.jar"/>
-	<classpathentry kind="lib" path="/home/rory/workspace2/DistributedRecommenderSystem/lib/gson-2.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/akka-actor_2.12-2.4.20.jar"/>
+	<classpathentry kind="lib" path="lib/apache-mime4j-core-0.7.2.jar"/>
+	<classpathentry kind="lib" path="lib/camel-core-2.19.4-sources.jar"/>
+	<classpathentry kind="lib" path="lib/camel-core-2.19.4.jar"/>
+	<classpathentry kind="lib" path="lib/camel-http-common-2.19.4.jar"/>
+	<classpathentry kind="lib" path="lib/camel-restlet-2.19.4.jar"/>
+	<classpathentry kind="lib" path="lib/classworlds-1.1-alpha-2.jar"/>
+	<classpathentry kind="lib" path="lib/classworlds-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-cli-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/commons-codec-1.5.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang-2.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-lang3-3.1.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-1.1.3.jar"/>
+	<classpathentry kind="lib" path="lib/commons-logging-api-1.1.jar"/>
+	<classpathentry kind="lib" path="lib/config-1.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/doxia-sink-api-1.0-alpha-7.jar"/>
+	<classpathentry kind="lib" path="lib/google-collections-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/gson-2.2.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpclient-4.3.2.jar"/>
+	<classpathentry kind="lib" path="lib/httpcore-4.3.1.jar"/>
+	<classpathentry kind="lib" path="lib/httpmime-4.3.jar"/>
+	<classpathentry kind="lib" path="lib/javax.servlet-api-3.1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-core-2.2.11.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-impl-2.2.11.jar"/>
+	<classpathentry kind="lib" path="lib/jcip-annotations-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/jsr305-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
+	<classpathentry kind="lib" path="lib/junit-3.8.2.jar"/>
+	<classpathentry kind="lib" path="lib/log4j-1.2.12.jar"/>
+	<classpathentry kind="lib" path="lib/org.restlet-2.3.6.jar"/>
+	<classpathentry kind="lib" path="lib/org.restlet.ext.httpclient-2.3.6.jar"/>
+	<classpathentry kind="lib" path="lib/scala-library-2.12.2.jar"/>
+	<classpathentry kind="lib" path="lib/slf4j-api-1.7.22.jar"/>
+	<classpathentry kind="lib" path="lib/surefire-api-2.12.4.jar"/>
+	<classpathentry kind="lib" path="lib/surefire-booter-2.12.4.jar"/>
+	<classpathentry kind="lib" path="lib/surefire-junit3-2.12.4.jar"/>
+	<classpathentry kind="lib" path="lib/xbean-reflect-3.4.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
