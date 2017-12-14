@@ -9,7 +9,7 @@ public class StateMachine {
         
     }
     
-    public void setRetrievedContentUrlString(String url) {
+    public void setRetrievedContent(Content content) {
         
     }
 }

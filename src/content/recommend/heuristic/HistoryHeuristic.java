@@ -1,6 +1,8 @@
 package content.recommend.heuristic;
 
-import content.recommend.PeerRecommendation;
+import java.util.List;
+
+import content.content.Content;
 import content.view.ViewHistoryResponse;
 
 /**
@@ -10,5 +12,5 @@ import content.view.ViewHistoryResponse;
 public interface HistoryHeuristic {
     static final int TOP_N = 10;
     
-    PeerRecommendation getRecommendation(ViewHistoryResponse viewHistoryResponse);
+    List<Content> getRecommendation(ViewHistoryResponse viewHistoryResponse);
 }

@@ -4,27 +4,31 @@ import java.util.Iterator;
 import java.util.List;
 
 import content.content.Content;
-import core.ActorMessage;
-import core.MessageTrace;
+import core.RequestCommunication;
+import core.UniversalId;
 
 /**
  * Curated List of Content a peer is recommending back to the requesting peer
  *
  */
-public class PeerRecommendation extends ActorMessage implements Iterable<Content> {
+public class PeerRecommendation extends RequestCommunication implements Iterable<Content> {
     private List<Content> contentList;
     
-    public PeerRecommendation(List<Content> contentList, MessageTrace trace) {
-        super(trace);
+    public PeerRecommendation(List<Content> contentList, UniversalId origin, UniversalId target) {
+        super(origin, target);
         this.contentList = contentList;
     }
     
-    public Iterator<Content> iterator() {
-        return contentList.iterator();
+    public UniversalId getPeerId() {
+        return super.getOriginalTarget();
     }
     
     public Content getContentAtRank(int rank) {
         return contentList.get(rank);
+    }
+    
+    public Iterator<Content> iterator() {
+        return contentList.iterator();
     }
     
     public int size() {

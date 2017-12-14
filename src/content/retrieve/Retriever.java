@@ -1,19 +1,26 @@
 package content.retrieve;
 
 import akka.actor.ActorSelection;
-import akka.actor.UntypedActor;
+import core.ActorNames;
+import core.PeerToPeerActor;
+import core.PeerToPeerActorInit;
 import core.xcept.UnknownMessageException;
 
 /**
  * Retrieves Content from network for requester
  *
  */
-public class Retriever extends UntypedActor {
-    
-    
+public class Retriever extends PeerToPeerActor {
+    /**
+     * Actor Message processing
+     */
     @Override
     public void onReceive(Object message) throws Throwable {
-        if (message instanceof LocalRetrieveContentRequest) {
+        if (message instanceof PeerToPeerActorInit) {
+            PeerToPeerActorInit init = (PeerToPeerActorInit) message;
+            super.initialisePeerToPeerActor(init);
+        }
+        else if (message instanceof LocalRetrieveContentRequest) {
             LocalRetrieveContentRequest retrievedContentRequest = 
                     (LocalRetrieveContentRequest) message;
             this.processLocalRetrieveContentRequest(retrievedContentRequest);
@@ -41,7 +48,7 @@ public class Retriever extends UntypedActor {
     protected void processLocalRetrieveContentRequest(LocalRetrieveContentRequest request) {
         PeerRetrieveContentRequest retrieveRequest = new PeerRetrieveContentRequest(request);
         
-        ActorSelection communicator = getContext().actorSelection("user/communicator");
+        ActorSelection communicator = getContext().actorSelection("user/" + ActorNames.OUTBOUND_COMM);
         communicator.tell(retrieveRequest, getSelf());
     }
     
@@ -58,7 +65,7 @@ public class Retriever extends UntypedActor {
      * @param retrievedContent
      */
     protected void processRetrievedContent(RetrievedContent retrievedContent) {
-        ActorSelection viewer = getContext().actorSelection("user/viewer");
+        ActorSelection viewer = getContext().actorSelection("user/" + ActorNames.VIEWER);
         viewer.tell(retrievedContent, getSelf());
     }
 }

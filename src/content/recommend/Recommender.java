@@ -3,7 +3,11 @@ package content.recommend;
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.Props;
-import akka.actor.UntypedActor;
+import content.recommend.heuristic.WeightedProbabilityAggregationHeuristic;
+import content.recommend.heuristic.WeightedProbabilityHistoryHeuristic;
+import core.ActorNames;
+import core.PeerToPeerActor;
+import core.PeerToPeerActorInit;
 import core.xcept.UnknownMessageException;
 
 /**
@@ -15,13 +19,17 @@ import core.xcept.UnknownMessageException;
  * Receives back a Peer Recommendation to be sent back to the original requester as this peer's recommendation
  *
  */
-public class Recommender extends UntypedActor {
-    private int aggregatorCounter = 0;
-    private int generatorCounter = 0;
-    
+public class Recommender extends PeerToPeerActor {
+    /**
+     * Actor Message processing
+     */
     @Override
-    public void onReceive(Object message) throws Throwable {
-        if (message instanceof RecommendationsForUserRequest) {
+    public void onReceive(Object message) {
+        if (message instanceof PeerToPeerActorInit) {
+            PeerToPeerActorInit init = (PeerToPeerActorInit) message;
+            super.initialisePeerToPeerActor(init);
+        }
+        else if (message instanceof RecommendationsForUserRequest) {
             RecommendationsForUserRequest recommendationForUserRequest = 
         	    (RecommendationsForUserRequest) message;
             this.processRecommendationForUserRequest(recommendationForUserRequest);
@@ -51,8 +59,11 @@ public class Recommender extends UntypedActor {
      * @param request
      */
     protected void processRecommendationForUserRequest(RecommendationsForUserRequest request) {
-        ActorRef generator = getContext().actorOf(
-                Props.create(PeerRecommendationAggregator.class), "peerAggregator_" + aggregatorCounter++);
+        final ActorRef generator = 
+                getContext().actorOf(Props.create(PeerRecommendationAggregator.class), ActorNames.AGGREGATOR);
+        HistoryRecommendationGeneratorInit init = 
+                new HistoryRecommendationGeneratorInit(super.peerId, new WeightedProbabilityHistoryHeuristic());
+        generator.tell(init, getSelf());
         generator.tell(request, getSelf());
     }
     
@@ -61,7 +72,7 @@ public class Recommender extends UntypedActor {
      * @param recommendations
      */
     protected void processRecommendationsForUser(RecommendationsForUser recommendations) {
-        ActorSelection viewer = getContext().actorSelection("user/viewer");
+        ActorSelection viewer = getContext().actorSelection("user/" + ActorNames.VIEWER);
         viewer.tell(recommendations, getSelf());
     }
     
@@ -71,10 +82,12 @@ public class Recommender extends UntypedActor {
      * @param recommendation
      */
     protected void processPeerRecommendationRequest(PeerRecommendationRequest peerRecommendationRequest) {
-        ActorRef generator = getContext().actorOf(
-                Props.create(HistoryRecommendationGenerator.class), "historyGenerator_" + generatorCounter++);
-        
-        generator.tell(peerRecommendationRequest, getSelf());
+        final ActorRef aggregator = 
+                getContext().actorOf(Props.create(HistoryRecommendationGenerator.class), ActorNames.HISTORY_GENERATOR);
+        PeerRecommendationAggregatorInit init = 
+                new PeerRecommendationAggregatorInit(new WeightedProbabilityAggregationHeuristic());
+        aggregator.tell(init, getSelf());
+        aggregator.tell(peerRecommendationRequest, getSelf());
     }
     
     /**
@@ -82,7 +95,7 @@ public class Recommender extends UntypedActor {
      * @param peerRecommendation
      */
     protected void processPeerRecommendation(PeerRecommendation peerRecommendation) {        
-        ActorSelection communicator = getContext().actorSelection("user/communicator");
+        ActorSelection communicator = getContext().actorSelection("user/" + ActorNames.OUTBOUND_COMM);
         communicator.tell(peerRecommendation, getSelf());
     }
 }

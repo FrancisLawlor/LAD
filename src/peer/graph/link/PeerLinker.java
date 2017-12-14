@@ -1,10 +1,16 @@
 package peer.graph.link;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import akka.actor.ActorRef;
-import akka.actor.UntypedActor;
+import akka.actor.Props;
+import core.PeerToPeerActor;
+import core.PeerToPeerActorInit;
+import core.UniversalId;
+import peer.graph.weight.LocalWeightUpdateRequest;
+import peer.graph.weight.Weighter;
 
 /**
  * Manages peer links
@@ -13,12 +19,26 @@ import akka.actor.UntypedActor;
  * Sends Peer IDs back from recorded links
  *
  */
-public class PeerLinker extends UntypedActor {
-    private Set<String> peerLinksIds;
+public class PeerLinker extends PeerToPeerActor {
+    private Set<UniversalId> peerLinksIds;
     
+    /**
+     * Creates a Set to contain the Universal IDs of known peers
+     */
+    public PeerLinker() {
+        this.peerLinksIds = new HashSet<UniversalId>();
+    }
+    
+    /**
+     * Actor Message processing
+     */
     @Override
     public void onReceive(Object message) {
-        if (message instanceof PeerLinkAddition) {
+        if (message instanceof PeerToPeerActorInit) {
+            PeerToPeerActorInit init = (PeerToPeerActorInit) message;
+            super.initialisePeerToPeerActor(init);
+        }
+        else if (message instanceof PeerLinkAddition) {
             PeerLinkAddition addition = 
                     (PeerLinkAddition) message;
             this.processPeerLinkAddition(addition);
@@ -38,7 +58,15 @@ public class PeerLinker extends UntypedActor {
      * @param addition
      */
     protected void processPeerLinkAddition(PeerLinkAddition addition) {
+        UniversalId peerId = addition.getPeerId();
         
+        this.peerLinksIds.add(peerId);
+        
+        String weighterName = "weighter_" + peerId.toString();
+        ActorRef weighter = getContext().actorOf(Props.create(Weighter.class), weighterName);
+        
+        LocalWeightUpdateRequest request = new LocalWeightUpdateRequest(peerId, addition.getStartingWeight());
+        weighter.tell(request, getSelf());
     }
     
     /**
@@ -55,9 +83,9 @@ public class PeerLinker extends UntypedActor {
      */
     private void sendPeerLinks() {
         ActorRef sender = getSender();
-        Iterator<String> peerLinksIdsIt = this.peerLinksIds.iterator();
+        Iterator<UniversalId> peerLinksIdsIt = this.peerLinksIds.iterator();
         while (peerLinksIdsIt.hasNext()) {
-            String peerLinksId = peerLinksIdsIt.next();
+            UniversalId peerLinksId = peerLinksIdsIt.next();
             PeerLinkResponse response = new PeerLinkResponse(peerLinksId);
             sender.tell(response, sender);
         }
