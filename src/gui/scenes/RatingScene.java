@@ -1,6 +1,6 @@
 package gui.scenes;
 
-import Panes.RatingPane;
+import gui.panes.RatingPane;
 import javafx.scene.Scene;
 
 public class RatingScene extends Scene {

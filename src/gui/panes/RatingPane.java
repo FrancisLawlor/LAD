@@ -2,7 +2,7 @@ package gui.panes;
 
 import org.controlsfx.control.Rating;
 
-import GUIUtilities.GUIText;
+import gui.utilities.GUIText;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
