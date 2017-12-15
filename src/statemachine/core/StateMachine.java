@@ -32,14 +32,14 @@ public class StateMachine {
 	
 	public StateMachine() {
 		stateMap.put(StateNames.START.toString(), new StartState(this, containerStage, gui));
-		stateMap.put(StateNames.SETUP.toString(), new SetupState(this));
-		stateMap.put(StateNames.RETRIEVE_RECOMMENDATIONS.toString(), new RetrieveRecommendationsState(this));
-		stateMap.put(StateNames.DASHBOARD.toString(), new DashboardState(this));
-		stateMap.put(StateNames.ADD_FILE.toString(), new AddFileState(this));
-		stateMap.put(StateNames.RETRIEVE_FILE_QUERY.toString(), new RetrieveFileQueryState(this));
+		stateMap.put(StateNames.SETUP.toString(), new SetupState(this, containerStage, gui));
+		stateMap.put(StateNames.RETRIEVE_RECOMMENDATIONS.toString(), new RetrieveRecommendationsState(this, containerStage, gui));
+		stateMap.put(StateNames.DASHBOARD.toString(), new DashboardState(this, containerStage, gui));
+		stateMap.put(StateNames.ADD_FILE.toString(), new AddFileState(this, containerStage));
+		stateMap.put(StateNames.RETRIEVE_FILE_QUERY.toString(), new RetrieveFileQueryState(this, containerStage, gui));
 		stateMap.put(StateNames.RETRIEVING_FILE.toString(), new RetrievingFileState(this));
-		stateMap.put(StateNames.RATING.toString(), new RatingState(this));
-		stateMap.put(StateNames.VIEWING_FILES.toString(), new ViewingFilesState(this));
+		stateMap.put(StateNames.RATING.toString(), new RatingState(this, containerStage, gui));
+		stateMap.put(StateNames.VIEWING_FILES.toString(), new ViewingFilesState(this, containerStage, gui));
 	}
 	
 	public void setCurrentState(String newState) {

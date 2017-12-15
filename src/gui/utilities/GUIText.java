@@ -14,4 +14,5 @@ public class GUIText {
 	public static final String BACK_BUTTON = "Back";
 	public static final String RATE = "Rate:";
 	public static final String SUBMIT = "Submit";
+	public static final String SELECT_FILE = "Select file";
 }

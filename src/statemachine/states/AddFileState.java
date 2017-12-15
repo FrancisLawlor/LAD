@@ -2,37 +2,36 @@ package statemachine.states;
 
 import java.io.File;
 
+import gui.core.GUI;
+import gui.core.SceneContainerStage;
+import gui.utilities.GUIText;
+import javafx.stage.FileChooser;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateNames;
 
 public class AddFileState extends State {
-	StateMachine stateMachine;
+	private StateMachine stateMachine;
+	private SceneContainerStage sceneContainerStage;
 	
-	public AddFileState(StateMachine stateMachine) {
+	public AddFileState(StateMachine stateMachine, SceneContainerStage sceneContainerStage) {
 		this.stateMachine = stateMachine;
+		this.sceneContainerStage = sceneContainerStage;
 	}
 
 	@Override
 	public void execute() {
-		//Open filechooser
-		//file is wrapped
-		//Return to dashboard
+		chooseFile();
+	}
+	
+	private void chooseFile() {		
+		FileChooser fileChooser = new FileChooser();
+		fileChooser.setTitle(GUIText.SELECT_FILE);
+		fileChooser.showOpenDialog(sceneContainerStage);
+		
+		// TODO
+		// Static object wraps file
+		// Loading bar appears (Possibly new scene)
 		
 		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
-		// change to dashboard scene
 	}
-	
-	private File chooseFile() {
-		// filechooser opens
-		// file is selected
-		// possibly restricted to certain types - check type.
-		// return file
-		
-		return null;
-	}
-	
-	private void wrapFile() {
-		// file is wrapped and returned;
-	}
-
 }

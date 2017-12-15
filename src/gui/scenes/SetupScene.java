@@ -9,7 +9,7 @@ public class SetupScene extends Scene {
 	private SetupPane setupPane;
 	
 	public SetupScene(SetupPane setupPane) {
-		super(setupPane, GUIDimensions.promptHeight, GUIDimensions.promptWidth);
+		super(setupPane, GUIDimensions.promptWidth, GUIDimensions.promptHeight);
 		this.setupPane = setupPane;
 	}
 	
