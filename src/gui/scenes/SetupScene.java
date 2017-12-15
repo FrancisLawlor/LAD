@@ -1,6 +1,7 @@
 package gui.scenes;
 
 import gui.panes.SetupPane;
+import gui.utilities.GUIDimensions;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
@@ -8,7 +9,7 @@ public class SetupScene extends Scene {
 	private SetupPane setupPane;
 	
 	public SetupScene(SetupPane setupPane) {
-		super(setupPane, 270, 120);
+		super(setupPane, GUIDimensions.promptHeight, GUIDimensions.promptWidth);
 		this.setupPane = setupPane;
 	}
 	

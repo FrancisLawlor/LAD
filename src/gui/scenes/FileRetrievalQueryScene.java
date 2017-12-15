@@ -1,13 +1,14 @@
 package gui.scenes;
 
 import gui.panes.FileRetrievalQueryPane;
+import gui.utilities.GUIDimensions;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 
 public class FileRetrievalQueryScene extends Scene {
 	private FileRetrievalQueryPane fileRetrievalQueryPane;
 	public FileRetrievalQueryScene(FileRetrievalQueryPane fileRetrievalQueryPane) {
-		super(fileRetrievalQueryPane, 270, 120);
+		super(fileRetrievalQueryPane, GUIDimensions.promptWidth, GUIDimensions.promptHeight);
 		this.fileRetrievalQueryPane = fileRetrievalQueryPane;
 	}
 	

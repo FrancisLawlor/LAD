@@ -1,13 +1,9 @@
 package statemachine.states;
 
-import java.awt.Desktop;
-
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
-import gui.scenes.RetrieveRecommendationsScene;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
-import javafx.stage.FileChooser;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateNames;
 
