@@ -4,7 +4,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import statemachine.core.StateMachine;
-import statemachine.utils.StateNames;
+import statemachine.utils.StateName;
 
 public class RetrievingFileState extends State {
 	StateMachine stateMachine;
@@ -14,8 +14,8 @@ public class RetrievingFileState extends State {
 	}
 
 	@Override
-	public void execute() {
-		stateMachine.setCurrentState(StateNames.RETRIEVING_FILE.toString());
+	public void execute(StateName param) {
+		stateMachine.setCurrentState(StateName.RETRIEVING_FILE.toString());
 
 		// start downloading file from other user
 		// listen for download to stop finishing
@@ -43,8 +43,8 @@ public class RetrievingFileState extends State {
 	}
 	
 	public void downloadFinished() {
-		stateMachine.setCurrentState(StateNames.RATING.toString());
-		stateMachine.execute();
+		stateMachine.setCurrentState(StateName.RATING.toString());
+		stateMachine.execute(null);
 	}
 
 }

@@ -4,7 +4,7 @@ import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
 import javafx.stage.FileChooser;
 import statemachine.core.StateMachine;
-import statemachine.utils.StateNames;
+import statemachine.utils.StateName;
 
 public class AddFileState extends State {
 	private StateMachine stateMachine;
@@ -16,7 +16,7 @@ public class AddFileState extends State {
 	}
 
 	@Override
-	public void execute() {
+	public void execute(StateName param) {
 		chooseFile();
 	}
 	
@@ -29,6 +29,6 @@ public class AddFileState extends State {
 		// Static object wraps file
 		// Loading bar appears (Possibly new scene)
 		
-		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
+		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
 	}
 }

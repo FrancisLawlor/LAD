@@ -3,6 +3,7 @@ package statemachine.states;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import statemachine.core.StateMachine;
+import statemachine.utils.StateName;
 
 public class ViewingFilesState extends State {
 	StateMachine stateMachine;
@@ -16,8 +17,17 @@ public class ViewingFilesState extends State {
 	}
 
 	@Override
-	public void execute() {
+	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getMyFilesScene());
+		
+		switch (param) {
+			case CLICK_BACK:
+				clicksBack();
+				break;
+			case CLICK_FILE:
+				clicksFile();
+				break;
+			}
 	}
 	
 	private void clicksBack() {

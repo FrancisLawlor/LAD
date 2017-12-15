@@ -3,7 +3,7 @@ package statemachine.states;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import statemachine.core.StateMachine;
-import statemachine.utils.StateNames;
+import statemachine.utils.StateName;
 
 public class RatingState extends State {
 	private StateMachine stateMachine;
@@ -17,7 +17,7 @@ public class RatingState extends State {
 	}
 
 	@Override
-	public void execute() {
+	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getRatingScene());
 
 		clicksSubmit();
@@ -28,7 +28,7 @@ public class RatingState extends State {
 		
 		// TODO Write this score to file
 		
-		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
-		stateMachine.execute();
+		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+		stateMachine.execute(null);
 	}
 }

@@ -6,7 +6,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import statemachine.core.StateMachine;
-import statemachine.utils.StateNames;
+import statemachine.utils.StateName;
 
 public class RetrieveRecommendationsState extends State {
 	private StateMachine stateMachine;
@@ -21,7 +21,7 @@ public class RetrieveRecommendationsState extends State {
 	}
 
 	@Override
-	public void execute() {
+	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getFileRetrievalScene());
 
 		Task<Void> sleeper = new Task<Void>() {
@@ -48,7 +48,7 @@ public class RetrieveRecommendationsState extends State {
 	}
 	
 	private void recommendationsRetrieved() {
-		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
-    		stateMachine.execute();
+		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+    		stateMachine.execute(null);
 	}
 }

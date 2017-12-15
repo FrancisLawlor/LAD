@@ -5,7 +5,7 @@ import gui.core.SceneContainerStage;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import statemachine.core.StateMachine;
-import statemachine.utils.StateNames;
+import statemachine.utils.StateName;
 
 public class StartState extends State {
 	private StateMachine stateMachine;
@@ -23,8 +23,8 @@ public class StartState extends State {
 	private void configureButtons() {
 		gui.getDashBoardScene().getMyFilesButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateNames.VIEWING_FILES.toString());
-	    	    		stateMachine.execute();
+	    	    		stateMachine.setCurrentState(StateName.VIEWING_FILES.toString());
+	    	    		stateMachine.execute(null);
 	    	    }
 	    	});
 		
@@ -36,62 +36,62 @@ public class StartState extends State {
 		
 		gui.getDashBoardScene().getAddFileButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateNames.ADD_FILE.toString());
-	    	    		stateMachine.execute();
+	    	    		stateMachine.setCurrentState(StateName.ADD_FILE.toString());
+	    	    		stateMachine.execute(null);
 	    	    }
 	    	});
 		
 		gui.getFileRetrievalQueryScene().getNoButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
-	    	    		stateMachine.execute();
+	    	    		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+	    	    		stateMachine.execute(null);
 	    	    }
 	    	});
 		
 		gui.getFileRetrievalQueryScene().getYesButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateNames.RETRIEVING_FILE.toString());
-	    	    		stateMachine.execute();
+	    	    		stateMachine.setCurrentState(StateName.RETRIEVING_FILE.toString());
+	    	    		stateMachine.execute(null);
 	    	    }
 	    	});
 		
 		gui.getMyFilesScene().getBackButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
-	    	    		stateMachine.execute();
+	    	    		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+	    	    		stateMachine.execute(null);
 	    	    }
 		});
 		
 		gui.getRatingScene().getBackButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
-	    	    		stateMachine.execute();
+	    	    		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+	    	    		stateMachine.execute(null);
 	    	    }
 		});
 		
 		gui.getRatingScene().getSubmitButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.execute();
+	    	    		stateMachine.execute(null);
 	    	    }
 		});
 		
 		gui.getSetupScene().getNextButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-    	    			stateMachine.setCurrentState(StateNames.RETRIEVING_FILE.toString());
+    	    			stateMachine.setCurrentState(StateName.RETRIEVING_FILE.toString());
     	    			sceneContainerStage.init(gui.getRetrieveRecommendationsScene());
-	    	    		stateMachine.execute();
+	    	    		stateMachine.execute(null);
 	    	    }
 		});
 	}
 
 	@Override
-	public void execute() {
+	public void execute(StateName param) {
 		if (!configFileExists()) {
-			stateMachine.setCurrentState(StateNames.SETUP.toString());
+			stateMachine.setCurrentState(StateName.SETUP.toString());
 			sceneContainerStage.init(gui.getSetupScene());
 			sceneContainerStage.show();
 		} else {
-			stateMachine.setCurrentState(StateNames.RETRIEVE_RECOMMENDATIONS.toString());
+			stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
 			sceneContainerStage.init(gui.getRetrieveRecommendationsScene());
 			sceneContainerStage.show();
 		}

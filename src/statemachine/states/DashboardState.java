@@ -3,7 +3,7 @@ package statemachine.states;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import statemachine.core.StateMachine;
-import statemachine.utils.StateNames;
+import statemachine.utils.StateName;
 
 public class DashboardState extends State {
 	private StateMachine stateMachine;
@@ -16,10 +16,23 @@ public class DashboardState extends State {
 		this.gui = gui;
 	}
 
-	@Override
-	public void execute() {
+	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getDashBoardScene());
 
+		switch (param) {
+			case ADD_FILE:
+				addFile();
+				break;
+			case RETRIEVING_FILE:
+				retrieveFile();
+				break;
+			case VIEWING_FILES:
+				viewFiles();
+				break;
+			case REFRESH:
+				refresh();
+				break;
+		}
 		// three different transitions
 		
 		// 1. Add file:
@@ -42,17 +55,17 @@ public class DashboardState extends State {
 	}
 	
 	private void addFile() {
-		stateMachine.setCurrentState(StateNames.ADD_FILE.toString());
+		stateMachine.setCurrentState(StateName.ADD_FILE.toString());
 		// change scene to add file scene
 	}
 	
 	private void retrieveFile() {
-		stateMachine.setCurrentState(StateNames.RETRIEVE_FILE_QUERY.toString());
+		stateMachine.setCurrentState(StateName.RETRIEVE_FILE_QUERY.toString());
 		// change scene to retrieve file query scene
 	}
 	
 	private void viewFiles() {
-		stateMachine.setCurrentState(StateNames.VIEWING_FILES.toString());
+		stateMachine.setCurrentState(StateName.VIEWING_FILES.toString());
 		// change scene to viewing files scene
 	}
 	

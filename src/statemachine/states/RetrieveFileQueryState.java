@@ -3,7 +3,7 @@ package statemachine.states;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import statemachine.core.StateMachine;
-import statemachine.utils.StateNames;
+import statemachine.utils.StateName;
 
 public class RetrieveFileQueryState extends State {
 	StateMachine stateMachine;
@@ -17,17 +17,26 @@ public class RetrieveFileQueryState extends State {
 	}
 
 	@Override
-	public void execute() {
+	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getFileRetrievalScene());
+		
+		switch (param) {
+			case CLICK_YES:
+				clicksYes();
+				break;
+			case CLICK_NO:
+				clicksNo();
+				break;
+		}
 	}
 
 	private void clicksYes() {
-		stateMachine.setCurrentState(StateNames.RETRIEVING_FILE.toString());
-		stateMachine.execute();
+		stateMachine.setCurrentState(StateName.RETRIEVING_FILE.toString());
+		stateMachine.execute(null);
 	}
 	
 	private void clicksNo() {
-		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
-		stateMachine.execute();
+		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+		stateMachine.execute(null);
 	}
 }

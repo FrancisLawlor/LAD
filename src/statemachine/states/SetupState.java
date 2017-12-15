@@ -3,7 +3,7 @@ package statemachine.states;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import statemachine.core.StateMachine;
-import statemachine.utils.StateNames;
+import statemachine.utils.StateName;
 
 public class SetupState extends State {
 	private StateMachine stateMachine;
@@ -17,13 +17,13 @@ public class SetupState extends State {
 	}
 
 	@Override
-	public void execute() {
+	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getSetupScene());
 		
 		if (portIsAvailable("UserInput")) {
 			writePortNumberToConfigFile("portNumber");
-			stateMachine.setCurrentState(StateNames.RETRIEVE_RECOMMENDATIONS.toString());
-    			stateMachine.execute();
+			stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
+    			stateMachine.execute(null);
 		} else {
 			//Tell user port is not available
 			//Throw exception.

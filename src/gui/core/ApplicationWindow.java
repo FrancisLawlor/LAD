@@ -1,21 +1,17 @@
 package gui.core;
 
-import content.content.Content;
-import gui.scenes.DashBoardScene;
 import javafx.application.Application;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.stage.Stage;
 import statemachine.core.StateMachine;
-import statemachine.utils.StateNames;
+import statemachine.utils.StateName;
 
 public class ApplicationWindow extends Application {	
     public void start(Stage stage) {
     		StateMachine stateMachine = new StateMachine();
     		
-    		stateMachine.setCurrentState(StateNames.START.toString());
+    		stateMachine.setCurrentState(StateName.START.toString());
     		
-    		stateMachine.execute();
+    		stateMachine.execute(null);
 //    		SceneContainerStage containerStage = new SceneContainerStage();
 //    		
 //    		ObservableList<Content> data = FXCollections.observableArrayList();
