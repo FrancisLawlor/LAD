@@ -22,9 +22,9 @@ public class StartState extends State {
 	private void configureButtons() {
 		gui.getDashBoardScene().getMyFilesButton().setOnAction(new StateMachineEventHandler(StateName.VIEWING_FILES, stateMachine));
 		gui.getDashBoardScene().getRefreshButton().setOnAction(new StateMachineEventHandler(StateName.REFRESH, stateMachine));
-		gui.getDashBoardScene().getRefreshButton().setOnAction(new StateMachineEventHandler(StateName.ADD_FILE, stateMachine));
+		gui.getDashBoardScene().getAddFileButton().setOnAction(new StateMachineEventHandler(StateName.ADD_FILE, stateMachine));
 		gui.getFileRetrievalQueryScene().getNoButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_NO, stateMachine));
-		gui.getFileRetrievalQueryScene().getNoButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_YES, stateMachine));
+		gui.getFileRetrievalQueryScene().getYesButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_YES, stateMachine));
 		gui.getMyFilesScene().getBackButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_BACK, stateMachine));
 		gui.getRatingScene().getBackButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_BACK, stateMachine));
 		gui.getRatingScene().getSubmitButton().setOnAction(new StateMachineEventHandler(null, stateMachine));
