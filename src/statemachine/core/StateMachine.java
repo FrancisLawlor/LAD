@@ -10,6 +10,8 @@ import gui.core.SceneContainerStage;
 import gui.scenes.DashBoardScene;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import statemachine.states.AddFileState;
 import statemachine.states.DashboardState;
 import statemachine.states.RatingState;
