@@ -23,49 +23,43 @@ public class StartState extends State {
 	private void configureButtons() {
 		gui.getDashBoardScene().getMyFilesButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateName.VIEWING_FILES.toString());
-	    	    		stateMachine.execute(null);
+	    	    		stateMachine.execute(StateName.VIEWING_FILES);
 	    	    }
 	    	});
 		
 		gui.getDashBoardScene().getRefreshButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		//TODO add logic for refresh
+	    	    		stateMachine.execute(StateName.REFRESH);
 	    	    }
 	    	});
 		
 		gui.getDashBoardScene().getAddFileButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateName.ADD_FILE.toString());
-	    	    		stateMachine.execute(null);
+	    	    		stateMachine.execute(StateName.ADD_FILE);
 	    	    }
 	    	});
 		
 		gui.getFileRetrievalQueryScene().getNoButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
-	    	    		stateMachine.execute(null);
+	    	    		stateMachine.execute(StateName.CLICK_NO);
 	    	    }
 	    	});
 		
 		gui.getFileRetrievalQueryScene().getYesButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateName.RETRIEVING_FILE.toString());
-	    	    		stateMachine.execute(null);
+    	    			stateMachine.execute(StateName.CLICK_YES);
 	    	    }
 	    	});
 		
 		gui.getMyFilesScene().getBackButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
-	    	    		stateMachine.execute(null);
+	    	    		stateMachine.execute(StateName.CLICK_BACK);
 	    	    }
 		});
 		
 		gui.getRatingScene().getBackButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
-	    	    		stateMachine.execute(null);
+	    	    		stateMachine.execute(StateName.CLICK_BACK);
 	    	    }
 		});
 		
@@ -77,8 +71,6 @@ public class StartState extends State {
 		
 		gui.getSetupScene().getNextButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-    	    			stateMachine.setCurrentState(StateName.RETRIEVING_FILE.toString());
-    	    			sceneContainerStage.init(gui.getRetrieveRecommendationsScene());
 	    	    		stateMachine.execute(null);
 	    	    }
 		});

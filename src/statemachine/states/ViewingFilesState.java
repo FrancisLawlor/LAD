@@ -27,15 +27,18 @@ public class ViewingFilesState extends State {
 			case CLICK_FILE:
 				clicksFile();
 				break;
+			default:
+				break;
 			}
 	}
 	
 	private void clicksBack() {
-		// changes state to Dashboard
-		// changes scene to Dashboard
+		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+		stateMachine.execute(null);
 	}
 	
 	private void clicksFile() {
+		// TODO
 		// file opens
 		// change to rating state
 		// change to rating scene

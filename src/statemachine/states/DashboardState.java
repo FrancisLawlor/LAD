@@ -32,46 +32,30 @@ public class DashboardState extends State {
 			case REFRESH:
 				refresh();
 				break;
+			default:
+				break;
 		}
-		// three different transitions
-		
-		// 1. Add file:
-		//	
-		//	Click button - Need reference to Add file button
-		//	Transition to Add file state
-		//	Change to add file scene
-		
-		// 2. Retrieve File Query:
-		//	
-		//	Click recommendation - Need reference to the ListView components
-		//	Change to retrieve file state.
-		//	Change to retrieve file scene.
-		
-		// 3. Viewing files:
-		//
-		// Click button - Need reference to button.
-		// Change to retrieve file state.
-		// Change to retrieve file scene.
 	}
 	
 	private void addFile() {
 		stateMachine.setCurrentState(StateName.ADD_FILE.toString());
-		// change scene to add file scene
+		stateMachine.execute(null);
 	}
 	
 	private void retrieveFile() {
 		stateMachine.setCurrentState(StateName.RETRIEVE_FILE_QUERY.toString());
-		// change scene to retrieve file query scene
+		stateMachine.execute(null);
 	}
 	
 	private void viewFiles() {
 		stateMachine.setCurrentState(StateName.VIEWING_FILES.toString());
-		// change scene to viewing files scene
+		stateMachine.execute(null);
 	}
 	
 	private void refresh() {
-		//get recommendations
-		// Change observable list with new data.
+		// TODO
+		// get recommendations
+		// Update observable list with new data.
 	}
 
 }

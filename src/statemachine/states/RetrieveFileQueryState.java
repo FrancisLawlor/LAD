@@ -27,6 +27,8 @@ public class RetrieveFileQueryState extends State {
 			case CLICK_NO:
 				clicksNo();
 				break;
+			default:
+				break;
 		}
 	}
 

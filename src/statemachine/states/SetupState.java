@@ -20,22 +20,19 @@ public class SetupState extends State {
 	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getSetupScene());
 		
-		if (portIsAvailable("UserInput")) {
-			writePortNumberToConfigFile("portNumber");
-			stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
-    			stateMachine.execute(null);
-		} else {
-			//Tell user port is not available
-			//Throw exception.
-		}
+		clicksSubmit();
 	}
 	
-	private boolean portIsAvailable(String portNumber) {
-		return true;
+	private void clicksSubmit() {
+		// TODO
+		// Gets Number from TextField
+		String portNumber = gui.getSetupScene().getPortNumberTextField().getText();
+		System.out.println(portNumber);
+		// Checks if port is open using static object
+		// If port is open write port number to config file 
+		// change to dashboard
+		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+		stateMachine.execute(null);
+		// if port is not open/ does not exist then prompt the user to try a different number
 	}
-	
-	private void writePortNumberToConfigFile(String portNumber) {
-		
-	}
-	
 }
