@@ -9,6 +9,9 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
 public class FileRetrievalQueryPane extends BorderPane {
+	private Button yesButton;
+	private Button noButton;
+
 	public FileRetrievalQueryPane() {
 		BorderPane fileRetrievalQuery = configureBorderPane();
 		this.setCenter(fileRetrievalQuery);
@@ -20,7 +23,10 @@ public class FileRetrievalQueryPane extends BorderPane {
 
 	    Text confirmFileRetrieval = new Text(GUIText.CONFIRMATION_FILE_RETRIEVAL);
 	    Button yesButton = new Button(GUIText.CONFIRMATION_YES);
+	    this.yesButton = yesButton;
+	    
 	    Button noButton = new Button(GUIText.CONFIRMATION_NO);
+	    this.noButton = noButton;
 	    
 	    content.setTop(confirmFileRetrieval);
 	    	    
@@ -34,5 +40,13 @@ public class FileRetrievalQueryPane extends BorderPane {
 	    content.setBottom(buttons);
 	    
 	    return content;
+	}
+	
+	public Button getYesButton() {
+		return yesButton;
+	}
+
+	public Button getNoButton() {
+		return noButton;
 	}
 }

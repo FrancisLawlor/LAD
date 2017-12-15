@@ -48,13 +48,58 @@ public class StartState extends State {
 	    	    		//TODO implement file chooser functionality
 	    	    }
 	    	});
+		
+		gui.getFileRetrievalQueryScene().getNoButton().setOnAction(new EventHandler<ActionEvent>() {
+	    	    @Override public void handle(ActionEvent e) {
+	    	    		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
+	    	    		sceneContainerStage.changeScene(gui.getDashBoardScene());
+	    	    }
+	    	});
+		
+		gui.getFileRetrievalQueryScene().getYesButton().setOnAction(new EventHandler<ActionEvent>() {
+	    	    @Override public void handle(ActionEvent e) {
+	    	    		stateMachine.setCurrentState(StateNames.RETRIEVING_FILE.toString());
+	    	    		sceneContainerStage.changeScene(gui.getFileRetrievalScene());
+	    	    		//TODO retrieve file
+	    	    }
+	    	});
+		
+		gui.getMyFilesScene().getBackButton().setOnAction(new EventHandler<ActionEvent>() {
+	    	    @Override public void handle(ActionEvent e) {
+	    	    		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
+	    	    		sceneContainerStage.changeScene(gui.getDashBoardScene());
+	    	    }
+		});
+		
+		gui.getRatingScene().getBackButton().setOnAction(new EventHandler<ActionEvent>() {
+	    	    @Override public void handle(ActionEvent e) {
+	    	    		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
+	    	    		sceneContainerStage.changeScene(gui.getDashBoardScene());
+	    	    }
+		});
+		
+		gui.getRatingScene().getSubmitButton().setOnAction(new EventHandler<ActionEvent>() {
+	    	    @Override public void handle(ActionEvent e) {
+	    	    		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
+	    	    		sceneContainerStage.changeScene(gui.getDashBoardScene());
+	    	    		//TODO write ratings
+	    	    }
+		});
+		
+		gui.getSetupScene().getNextButton().setOnAction(new EventHandler<ActionEvent>() {
+	    	    @Override public void handle(ActionEvent e) {
+	    	    		stateMachine.setCurrentState(StateNames.RETRIEVE_RECOMMENDATIONS.toString());
+	    	    		sceneContainerStage.changeScene(gui.getRetrieveRecommendationsScene());
+	    	    		//TODO check that port is open
+	    	    }
+		});
 	}
 
 	@Override
 	public void execute() {
 		if (!configFileExists()) {
-			stateMachine.setCurrentState(StateNames.SETUP.toString());
-			sceneContainerStage.init(gui.getSetupScene());
+			stateMachine.setCurrentState(StateNames.RETRIEVE_FILE_QUERY.toString());
+			sceneContainerStage.init(gui.getDashBoardScene());
 			sceneContainerStage.show();
 		} else {
 			stateMachine.setCurrentState(StateNames.RETRIEVE_RECOMMENDATIONS.toString());
@@ -65,7 +110,7 @@ public class StartState extends State {
 	
 	// TODO
 	private boolean configFileExists() {
-		return true;
+		return false;
 	}
 
 }

@@ -15,9 +15,9 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 
 public class DashBoardPane extends BorderPane {
-	Button myFilesButton;
-	Button addFileButton;
-	Button refreshButton;
+	private Button myFilesButton;
+	private Button addFileButton;
+	private Button refreshButton;
 	
 	public DashBoardPane(ObservableList<Content> data) {
 		VBox leftBar = configureLeftBar();
