@@ -1,12 +1,18 @@
 package gui.scenes;
 
-import content.content.Content;
 import gui.panes.MyFilesPane;
-import javafx.collections.ObservableList;
+import gui.utilities.GUIDimensions;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 
 public class MyFilesScene extends Scene {
-	public MyFilesScene(ObservableList<Content> data) {
-		super(new MyFilesPane(data), 900, 600);
+	private MyFilesPane myFilesPane;
+	public MyFilesScene(MyFilesPane myFilesPane) {
+		super(myFilesPane, GUIDimensions.mainWindowWidth, GUIDimensions.mainWindowHeight);
+		this.myFilesPane = myFilesPane;
+	}
+	
+	public Button getBackButton() {
+		return myFilesPane.getBackButton();
 	}
 }

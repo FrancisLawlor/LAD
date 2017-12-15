@@ -15,6 +15,10 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 
 public class DashBoardPane extends BorderPane {
+	private Button myFilesButton;
+	private Button addFileButton;
+	private Button refreshButton;
+	
 	public DashBoardPane(ObservableList<Content> data) {
 		VBox leftBar = configureLeftBar();
 		this.setLeft(leftBar);
@@ -31,11 +35,14 @@ public class DashBoardPane extends BorderPane {
 	    content.setPadding(new Insets(10));
 	    content.setSpacing(8);
 	    
-	    Button myFiles = new Button(GUIText.MY_FILES);
-	    Button addFile = new Button(GUIText.ADD_FILE);
+	    Button myFilesButton = new Button(GUIText.MY_FILES);
+	    Button addFileButton = new Button(GUIText.ADD_FILE);
 	    
-        content.getChildren().add(myFiles);
-        content.getChildren().add(addFile);
+	    this.myFilesButton = myFilesButton;
+	    this.addFileButton = addFileButton;
+	    
+        content.getChildren().add(myFilesButton);
+        content.getChildren().add(addFileButton);
 	    
 	    return content;
 	}
@@ -71,9 +78,22 @@ public class DashBoardPane extends BorderPane {
 		BorderPane content = new BorderPane();
 		content.setPadding(new Insets(10));
 	    
-	    Button myFiles = new Button(GUIText.REFRESH);
-	    content.setBottom(myFiles);
+	    Button refreshButton = new Button(GUIText.REFRESH);
+	    content.setBottom(refreshButton);
+	    this.refreshButton = refreshButton;
         
 		return content;
+	}
+
+	public Button getMyFilesButton() {
+		return myFilesButton;
+	}
+
+	public Button getAddFileButton() {
+		return addFileButton;
+	}
+
+	public Button getRefreshButton() {
+		return refreshButton;
 	}
 }

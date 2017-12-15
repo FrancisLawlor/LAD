@@ -2,7 +2,7 @@ package gui.panes;
 
 import org.controlsfx.control.Rating;
 
-import GUIUtilities.GUIText;
+import gui.utilities.GUIText;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
@@ -12,6 +12,10 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 
 public class RatingPane extends BorderPane {
+	private Button submitButton;
+	private Button backButton;
+	private Rating rating;
+	
 	public RatingPane() {
 		VBox leftBar = configureLeftBar();
 		this.setLeft(leftBar);
@@ -29,6 +33,8 @@ public class RatingPane extends BorderPane {
 	    content.setSpacing(8);
 	    
 	    Button backButton = new Button(GUIText.BACK_BUTTON);
+	    this.backButton = backButton;
+	    
         content.getChildren().add(backButton);
 	    
 	    return content;
@@ -39,6 +45,8 @@ public class RatingPane extends BorderPane {
 	    content.setPadding(new Insets(5));
 
 	    final Rating rating = new Rating();
+	    this.rating = rating;
+	    
 	    content.add(rating, 0, 0);
 	    content.setAlignment(Pos.CENTER);
 	    
@@ -50,8 +58,22 @@ public class RatingPane extends BorderPane {
 	    content.setPadding(new Insets(5));
 		
 		Button submitButton = new Button(GUIText.SUBMIT);
+		this.submitButton = submitButton;
+		
 		content.setBottom(submitButton);
 		
 		return content;
+	}
+	
+	public Button getSubmitButton() {
+		return this.submitButton;
+	}
+
+	public Button getBackButton() {
+		return this.backButton;
+	}
+	
+	public Rating getRating() {
+		return this.rating;
 	}
 }

@@ -11,6 +11,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
 public class SetupPane extends BorderPane {
+	private Button nextButton;
+	private TextField portNumberTextField;
+	
 	public SetupPane(SceneContainerStage stage) {
 		GridPane setupForm = configureGridPane(stage);
 		this.setCenter(setupForm);
@@ -23,18 +26,28 @@ public class SetupPane extends BorderPane {
 	    content.setVgap(5);
 
 	    Label portNumberLabel = new Label(GUIText.PORT_NUMBER);
-	    TextField portNumberInputField = new TextField();
+	    TextField portNumberTextField = new TextField();
+	    this.portNumberTextField = portNumberTextField;
 	    Button nextButton = new Button(GUIText.BUTTON_NEXT);
+	    this.nextButton = nextButton;
 
 	    GridPane.setHalignment(portNumberLabel, HPos.RIGHT);
 	    content.add(portNumberLabel, 0, 0);
 	    
-	    GridPane.setHalignment(portNumberInputField, HPos.LEFT);
-	    content.add(portNumberInputField, 1, 0);
+	    GridPane.setHalignment(portNumberTextField, HPos.LEFT);
+	    content.add(portNumberTextField, 1, 0);
 
 	    GridPane.setHalignment(nextButton, HPos.RIGHT);
 	    content.add(nextButton, 1, 2);
 	    
 	    return content;
+	}
+
+	public Button getNextButton() {
+		return this.nextButton;
+	}
+
+	public TextField getPortNumberTextField() {
+		return this.portNumberTextField;
 	}
 }

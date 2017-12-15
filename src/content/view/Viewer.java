@@ -9,9 +9,9 @@ import content.retrieve.RetrievedContent;
 import core.ActorNames;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
-import core.StateMachine;
 import core.UniversalId;
 import core.xcept.UnknownMessageException;
+import statemachine.core.StateMachine;
 
 /**
  * Handles view related matters

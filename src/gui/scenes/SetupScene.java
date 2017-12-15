@@ -1,11 +1,24 @@
 package gui.scenes;
 
-import gui.core.SceneContainerStage;
 import gui.panes.SetupPane;
+import gui.utilities.GUIDimensions;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 
 public class SetupScene extends Scene {
-	public SetupScene(SceneContainerStage stage) {
-		super(new SetupPane(stage), 270, 120);
+	private SetupPane setupPane;
+	
+	public SetupScene(SetupPane setupPane) {
+		super(setupPane, GUIDimensions.mainWindowWidth, GUIDimensions.mainWindowHeight);
+		this.setupPane = setupPane;
+	}
+	
+	public Button getNextButton() {
+		return setupPane.getNextButton();
+	}
+
+	public TextField getPortNumberTextField() {
+		return setupPane.getPortNumberTextField();
 	}
 }

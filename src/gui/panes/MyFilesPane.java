@@ -15,6 +15,8 @@ import javafx.scene.text.Text;
 import javafx.util.Callback;
 
 public class MyFilesPane extends BorderPane {
+	private Button backButton;
+	
 	public MyFilesPane(ObservableList<Content> data) {
 		VBox leftBar = configureLeftBar();
 		this.setLeft(leftBar);
@@ -29,11 +31,13 @@ public class MyFilesPane extends BorderPane {
 	    content.setSpacing(8);
 	    
 	    Button backButton = new Button(GUIText.BACK_BUTTON);
+	    this.backButton = backButton;
+	    
         content.getChildren().add(backButton);
 	    
 	    return content;
 	}
-	
+
 	private ListView<Content> configureListView(ObservableList<Content> data) {
 		final ListView<Content> listView = new ListView<Content>(data);
         listView.setCellFactory(new Callback<ListView<Content>, ListCell<Content>>() {
@@ -59,5 +63,9 @@ public class MyFilesPane extends BorderPane {
         });
         
         return listView;
+	}
+	
+	public Button getBackButton() {
+		return backButton;
 	}
 }
