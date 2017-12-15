@@ -4,7 +4,7 @@ import gui.panes.RatingPane;
 import javafx.scene.Scene;
 
 public class RatingScene extends Scene {
-	public RatingScene() {
-		super(new RatingPane(), 900, 600);
+	public RatingScene(RatingPane ratingsPane) {
+		super(ratingsPane, 900, 600);
 	}
 }

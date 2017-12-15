@@ -4,7 +4,7 @@ import gui.panes.FileRetrievalQueryPane;
 import javafx.scene.Scene;
 
 public class FileRetrievalQueryScene extends Scene {
-	public FileRetrievalQueryScene() {
-		super(new FileRetrievalQueryPane(), 270, 120);
+	public FileRetrievalQueryScene(FileRetrievalQueryPane fileRetrievalQueryPane) {
+		super(fileRetrievalQueryPane, 270, 120);
 	}
 }
