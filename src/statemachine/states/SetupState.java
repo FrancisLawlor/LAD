@@ -2,6 +2,7 @@ package statemachine.states;
 
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
+import gui.utilities.GUIText;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
@@ -19,6 +20,7 @@ public class SetupState extends State {
 	@Override
 	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getSetupScene());
+		sceneContainerStage.setTitle(GUIText.SETUP);
 		
 		clicksSubmit();
 	}
@@ -31,7 +33,7 @@ public class SetupState extends State {
 		// Checks if port is open using static object
 		// If port is open write port number to config file 
 		// change to dashboard
-		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+		stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
 		stateMachine.execute(null);
 		// if port is not open/ does not exist then prompt the user to try a different number
 	}

@@ -2,9 +2,8 @@ package statemachine.states;
 
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import statemachine.core.StateMachine;
+import statemachine.core.StateMachineEventHandler;
 import statemachine.utils.StateName;
 
 public class StartState extends State {
@@ -21,59 +20,15 @@ public class StartState extends State {
 	}
 
 	private void configureButtons() {
-		gui.getDashBoardScene().getMyFilesButton().setOnAction(new EventHandler<ActionEvent>() {
-	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.execute(StateName.VIEWING_FILES);
-	    	    }
-	    	});
-		
-		gui.getDashBoardScene().getRefreshButton().setOnAction(new EventHandler<ActionEvent>() {
-	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.execute(StateName.REFRESH);
-	    	    }
-	    	});
-		
-		gui.getDashBoardScene().getAddFileButton().setOnAction(new EventHandler<ActionEvent>() {
-	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.execute(StateName.ADD_FILE);
-	    	    }
-	    	});
-		
-		gui.getFileRetrievalQueryScene().getNoButton().setOnAction(new EventHandler<ActionEvent>() {
-	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.execute(StateName.CLICK_NO);
-	    	    }
-	    	});
-		
-		gui.getFileRetrievalQueryScene().getYesButton().setOnAction(new EventHandler<ActionEvent>() {
-	    	    @Override public void handle(ActionEvent e) {
-    	    			stateMachine.execute(StateName.CLICK_YES);
-	    	    }
-	    	});
-		
-		gui.getMyFilesScene().getBackButton().setOnAction(new EventHandler<ActionEvent>() {
-	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.execute(StateName.CLICK_BACK);
-	    	    }
-		});
-		
-		gui.getRatingScene().getBackButton().setOnAction(new EventHandler<ActionEvent>() {
-	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.execute(StateName.CLICK_BACK);
-	    	    }
-		});
-		
-		gui.getRatingScene().getSubmitButton().setOnAction(new EventHandler<ActionEvent>() {
-	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.execute(null);
-	    	    }
-		});
-		
-		gui.getSetupScene().getNextButton().setOnAction(new EventHandler<ActionEvent>() {
-	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.execute(null);
-	    	    }
-		});
+		gui.getDashBoardScene().getMyFilesButton().setOnAction(new StateMachineEventHandler(StateName.VIEWING_FILES, stateMachine));
+		gui.getDashBoardScene().getRefreshButton().setOnAction(new StateMachineEventHandler(StateName.REFRESH, stateMachine));
+		gui.getDashBoardScene().getRefreshButton().setOnAction(new StateMachineEventHandler(StateName.ADD_FILE, stateMachine));
+		gui.getFileRetrievalQueryScene().getNoButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_NO, stateMachine));
+		gui.getFileRetrievalQueryScene().getNoButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_YES, stateMachine));
+		gui.getMyFilesScene().getBackButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_BACK, stateMachine));
+		gui.getRatingScene().getBackButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_BACK, stateMachine));
+		gui.getRatingScene().getSubmitButton().setOnAction(new StateMachineEventHandler(null, stateMachine));
+		gui.getSetupScene().getNextButton().setOnAction(new StateMachineEventHandler(null, stateMachine));
 	}
 
 	@Override

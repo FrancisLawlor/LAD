@@ -2,6 +2,7 @@ package statemachine.states;
 
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
+import gui.utilities.GUIText;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
@@ -22,7 +23,8 @@ public class RetrieveRecommendationsState extends State {
 
 	@Override
 	public void execute(StateName param) {
-		sceneContainerStage.changeScene(gui.getFileRetrievalScene());
+		sceneContainerStage.changeScene(gui.getRetrieveRecommendationsScene());
+		sceneContainerStage.setTitle(GUIText.SETUP);
 
 		Task<Void> sleeper = new Task<Void>() {
             @Override

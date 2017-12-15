@@ -15,4 +15,7 @@ public class GUIText {
 	public static final String RATE = "Rate:";
 	public static final String SUBMIT = "Submit";
 	public static final String SELECT_FILE = "Select file";
+	public static final String DASHBOARD = "Dashboard";
+	public static final String RATING = "Rate";
+	public static final String FILE_RETRIEVAL = "Retrieve file";
 }

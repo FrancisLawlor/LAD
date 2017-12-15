@@ -1,5 +1,7 @@
 package statemachine.states;
 
+import gui.core.SceneContainerStage;
+import gui.utilities.GUIText;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
@@ -8,14 +10,18 @@ import statemachine.utils.StateName;
 
 public class RetrievingFileState extends State {
 	StateMachine stateMachine;
+	SceneContainerStage sceneContainerStage;
 	
-	public RetrievingFileState(StateMachine stateMachine) {
+	public RetrievingFileState(StateMachine stateMachine, SceneContainerStage sceneContainerStage) {
 		this.stateMachine = stateMachine;
+		this.sceneContainerStage = sceneContainerStage;
 	}
 
 	@Override
 	public void execute(StateName param) {
 		stateMachine.setCurrentState(StateName.RETRIEVING_FILE.toString());
+		sceneContainerStage.setTitle(GUIText.FILE_RETRIEVAL);
+
 
 		// start downloading file from other user
 		// listen for download to stop finishing

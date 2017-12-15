@@ -2,6 +2,7 @@ package statemachine.states;
 
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
+import gui.utilities.GUIText;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
@@ -19,6 +20,7 @@ public class RatingState extends State {
 	@Override
 	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getRatingScene());
+		sceneContainerStage.setTitle(GUIText.RATING);
 
 		clicksSubmit();
 	}

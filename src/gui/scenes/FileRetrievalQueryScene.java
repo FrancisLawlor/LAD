@@ -8,7 +8,7 @@ import javafx.scene.control.Button;
 public class FileRetrievalQueryScene extends Scene {
 	private FileRetrievalQueryPane fileRetrievalQueryPane;
 	public FileRetrievalQueryScene(FileRetrievalQueryPane fileRetrievalQueryPane) {
-		super(fileRetrievalQueryPane, GUIDimensions.promptWidth, GUIDimensions.promptHeight);
+		super(fileRetrievalQueryPane, GUIDimensions.mainWindowWidth, GUIDimensions.mainWindowHeight);
 		this.fileRetrievalQueryPane = fileRetrievalQueryPane;
 	}
 	
