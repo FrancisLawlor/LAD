@@ -71,7 +71,6 @@ public class StartState extends State {
 		
 		gui.getRatingScene().getSubmitButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
-	    	    		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
 	    	    		stateMachine.execute();
 	    	    }
 		});
@@ -79,6 +78,7 @@ public class StartState extends State {
 		gui.getSetupScene().getNextButton().setOnAction(new EventHandler<ActionEvent>() {
 	    	    @Override public void handle(ActionEvent e) {
     	    			stateMachine.setCurrentState(StateNames.RETRIEVING_FILE.toString());
+    	    			sceneContainerStage.init(gui.getRetrieveRecommendationsScene());
 	    	    		stateMachine.execute();
 	    	    }
 		});

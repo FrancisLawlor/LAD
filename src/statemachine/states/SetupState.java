@@ -18,17 +18,12 @@ public class SetupState extends State {
 
 	@Override
 	public void execute() {
-		// Create listener for button
-		// Button clicked
-		// Get port number from textfield
-		// Check if port is available.
+		sceneContainerStage.changeScene(gui.getSetupScene());
 		
 		if (portIsAvailable("UserInput")) {
 			writePortNumberToConfigFile("portNumber");
 			stateMachine.setCurrentState(StateNames.RETRIEVE_RECOMMENDATIONS.toString());
-    			sceneContainerStage.changeScene(gui.getRetrieveRecommendationsScene());
     			stateMachine.execute();
-			//Change to RetrieveRecommendationsScene
 		} else {
 			//Tell user port is not available
 			//Throw exception.

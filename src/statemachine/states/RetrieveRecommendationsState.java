@@ -1,10 +1,5 @@
 package statemachine.states;
 
-import java.util.Iterator;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import content.content.Content;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import javafx.concurrent.Task;
@@ -17,7 +12,6 @@ public class RetrieveRecommendationsState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
-	private int TIME_OUT = 10000;
 	
 
 	public RetrieveRecommendationsState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui) {
@@ -28,12 +22,15 @@ public class RetrieveRecommendationsState extends State {
 
 	@Override
 	public void execute() {
+		sceneContainerStage.changeScene(gui.getFileRetrievalScene());
+
 		Task<Void> sleeper = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
                     Thread.sleep(5000);
                 } catch (InterruptedException e) {
+                	
                 }
                 return null;
             }
@@ -41,48 +38,17 @@ public class RetrieveRecommendationsState extends State {
         sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
             @Override
             public void handle(WorkerStateEvent event) {
-	            	stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
-	        		sceneContainerStage.changeScene(gui.getDashBoardScene());
+	            recommendationsRetrieved();
             }
         });
         new Thread(sleeper).start();
-
-//		Iterator<Content> recommendations;
-//		try {
-//			recommendations = retrieveRecommendations();
-//		} catch (InterruptedException | TimeoutException e) {
-//			e.printStackTrace();
-//		}
-		
-		// Put recommendations in to observable list for Dashboard.
-		
-	}
-
-	private Iterator<Content> retrieveRecommendations() throws InterruptedException, TimeoutException {
-		int i = 0;
-		
-		Iterator<Content> recommendations = null;
-		
-		while (i != TIME_OUT) {
-			recommendations = getRecommendations();
-			if (recommendations != null) {
-				break;
-			} else {
-	            TimeUnit.SECONDS.sleep(1);
-	            i++;
-			}
-			if (i == TIME_OUT) {
-                throw new TimeoutException("Timed out..");
-                // TODO tell user it has timed out and close program.
-            }
-		}
-		
-		return recommendations;
+        
+        // Listen for recommendations.
+        // Change state when received.
 	}
 	
-	private Iterator<Content> getRecommendations() {
-		// TODO
-		return null;
+	private void recommendationsRetrieved() {
+		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
+    		stateMachine.execute();
 	}
-
 }

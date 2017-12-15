@@ -1,5 +1,7 @@
 package gui.scenes;
 
+import org.controlsfx.control.Rating;
+
 import gui.panes.RatingPane;
 import gui.utilities.GUIDimensions;
 import javafx.scene.Scene;
@@ -18,5 +20,9 @@ public class RatingScene extends Scene {
 	
 	public Button getBackButton() {
 		return this.ratingsPane.getBackButton();
+	}
+	
+	public Rating getRating() {
+		return this.ratingsPane.getRating();
 	}
 }

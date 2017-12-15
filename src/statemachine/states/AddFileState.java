@@ -1,8 +1,5 @@
 package statemachine.states;
 
-import java.io.File;
-
-import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
 import javafx.stage.FileChooser;

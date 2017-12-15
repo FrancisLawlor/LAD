@@ -14,6 +14,7 @@ import javafx.scene.layout.VBox;
 public class RatingPane extends BorderPane {
 	private Button submitButton;
 	private Button backButton;
+	private Rating rating;
 	
 	public RatingPane() {
 		VBox leftBar = configureLeftBar();
@@ -44,6 +45,8 @@ public class RatingPane extends BorderPane {
 	    content.setPadding(new Insets(5));
 
 	    final Rating rating = new Rating();
+	    this.rating = rating;
+	    
 	    content.add(rating, 0, 0);
 	    content.setAlignment(Pos.CENTER);
 	    
@@ -63,10 +66,14 @@ public class RatingPane extends BorderPane {
 	}
 	
 	public Button getSubmitButton() {
-		return submitButton;
+		return this.submitButton;
 	}
 
 	public Button getBackButton() {
-		return backButton;
+		return this.backButton;
+	}
+	
+	public Rating getRating() {
+		return this.rating;
 	}
 }

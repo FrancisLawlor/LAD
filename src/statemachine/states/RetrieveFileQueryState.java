@@ -19,20 +19,15 @@ public class RetrieveFileQueryState extends State {
 	@Override
 	public void execute() {
 		sceneContainerStage.changeScene(gui.getFileRetrievalScene());
-		// User clicks yes
-		// change to retrieving file state
-		
-		// User clicks no
-		// change back to dashboard
 	}
 
 	private void clicksYes() {
 		stateMachine.setCurrentState(StateNames.RETRIEVING_FILE.toString());
-		// change to retrieving file scene
+		stateMachine.execute();
 	}
 	
 	private void clicksNo() {
 		stateMachine.setCurrentState(StateNames.DASHBOARD.toString());
-		// change to retrieving file scene
+		stateMachine.execute();
 	}
 }
