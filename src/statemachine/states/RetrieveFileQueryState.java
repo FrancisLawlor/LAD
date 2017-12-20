@@ -19,7 +19,7 @@ public class RetrieveFileQueryState extends State {
 
 	@Override
 	public void execute(StateName param) {
-		sceneContainerStage.changeScene(gui.getFileRetrievalScene());
+		sceneContainerStage.changeScene(gui.getFileRetrievalQueryScene());
 		sceneContainerStage.setTitle(GUIText.FILE_RETRIEVAL);
 
 		switch (param) {

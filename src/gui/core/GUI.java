@@ -1,5 +1,6 @@
 package gui.core;
 
+import content.content.Content;
 import gui.panes.DashBoardPane;
 import gui.panes.FileRetrievalQueryPane;
 import gui.panes.MyFilesPane;
@@ -14,6 +15,8 @@ import gui.scenes.RatingScene;
 import gui.scenes.RetrieveRecommendationsScene;
 import gui.scenes.SetupScene;
 import gui.utilities.GUIText;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 
 public class GUI {
 	private DashBoardScene dashBoardScene;
@@ -32,7 +35,10 @@ public class GUI {
 	private SetupPane setupPane;
 	
 	public GUI(SceneContainerStage containerStage) {
-		this.dashBoardPane = new DashBoardPane(null);
+		ObservableList<Content> data = FXCollections.observableArrayList();
+		data.addAll(new Content("234134", "Akira", ".mp4"), new Content("234134as", "Shakira - Shewolf", ".mp4"), new Content("31234da", "My Chemical Romance - I am Sad", ".mp3"));
+
+		this.dashBoardPane = new DashBoardPane(data);
 		this.fileRetrievalQueryPane = new FileRetrievalQueryPane();
 		this.fileRetrievalPane = new WaitingPane(GUIText.RETRIEVING_FILE);
 		this.myFilesPane = new MyFilesPane(null);

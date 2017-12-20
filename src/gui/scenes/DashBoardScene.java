@@ -1,9 +1,11 @@
 package gui.scenes;
 
+import content.content.Content;
 import gui.panes.DashBoardPane;
 import gui.utilities.GUIDimensions;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ListView;
 
 public class DashBoardScene extends Scene {
 	DashBoardPane dashBoardPane;
@@ -23,5 +25,9 @@ public class DashBoardScene extends Scene {
 	
 	public Button getRefreshButton() {
 		return this.dashBoardPane.getRefreshButton();
+	}
+	
+	public ListView<Content> getListView() {
+		return this.dashBoardPane.getListView();
 	}
 }

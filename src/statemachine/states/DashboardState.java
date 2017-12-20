@@ -21,13 +21,12 @@ public class DashboardState extends State {
 		sceneContainerStage.changeScene(gui.getDashBoardScene());
 		sceneContainerStage.setTitle(GUIText.DASHBOARD);
 
-
 		switch (param) {
 			case ADD_FILE:
 				addFile();
 				break;
-			case RETRIEVING_FILE:
-				retrieveFile();
+			case RETRIEVE_FILE_QUERY:
+				retrieveFileQuery();
 				break;
 			case VIEWING_FILES:
 				viewFiles();
@@ -45,7 +44,7 @@ public class DashboardState extends State {
 		stateMachine.execute(null);
 	}
 	
-	private void retrieveFile() {
+	private void retrieveFileQuery() {
 		stateMachine.setCurrentState(StateName.RETRIEVE_FILE_QUERY.toString());
 		stateMachine.execute(null);
 	}
