@@ -1,6 +1,7 @@
 package content.retrieve;
 
-import content.content.Content;
+import content.Content;
+import core.ActorMessageType;
 import core.RequestCommunication;
 import core.UniversalId;
 
@@ -12,7 +13,7 @@ public class RetrievedContent extends RequestCommunication {
     private Content content;
     
     public RetrievedContent(UniversalId originalRequester, UniversalId originalTarget, Content content) {
-        super(originalRequester, originalTarget);
+        super(ActorMessageType.RetrievedContent, originalRequester, originalTarget);
         this.content = content;
     }
     

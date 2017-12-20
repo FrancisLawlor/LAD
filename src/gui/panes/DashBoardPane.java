@@ -1,6 +1,6 @@
 package gui.panes;
 
-import content.content.Content;
+import content.Content;
 import gui.utilities.GUIText;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;

@@ -1,7 +1,7 @@
 package content.view;
 
 import akka.actor.ActorSelection;
-import content.content.Content;
+import content.Content;
 import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
 import content.retrieve.LocalRetrieveContentRequest;
@@ -22,8 +22,6 @@ import statemachine.core.StateMachine;
  */
 public class Viewer extends PeerToPeerActor {
     private StateMachine stateMachine;
-    
-    // Get statemachine somehow
     
     /**
      * Viewer will ask the Recommender Actor for Recommendations For User
@@ -52,6 +50,10 @@ public class Viewer extends PeerToPeerActor {
         if (message instanceof PeerToPeerActorInit) {
             PeerToPeerActorInit init = (PeerToPeerActorInit) message;
             super.initialisePeerToPeerActor(init);
+        }
+        else if (message instanceof ViewerInit) {
+            ViewerInit init = (ViewerInit) message;
+            this.stateMachine = init.getStateMachine();
         }
         else if (message instanceof RecommendationsForUser) {
             RecommendationsForUser recommendations = (RecommendationsForUser) message;

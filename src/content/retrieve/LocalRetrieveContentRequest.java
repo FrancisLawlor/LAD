@@ -1,11 +1,12 @@
 package content.retrieve;
 
-import content.content.Content;
+import content.Content;
+import core.ActorMessageType;
 import core.RequestCommunication;
 import core.UniversalId;
 
 public class LocalRetrieveContentRequest extends RequestCommunication {
     public LocalRetrieveContentRequest(UniversalId originatingPeer, UniversalId targetPeer, Content content) {
-        super(originatingPeer, targetPeer);
+        super(ActorMessageType.LocalRetrieveContentRequest, originatingPeer, targetPeer);
     }
 }

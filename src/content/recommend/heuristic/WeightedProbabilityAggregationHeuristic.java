@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
-import content.content.Content;
+import content.Content;
 import content.recommend.RecommendationsForUser;
 import content.recommend.WeightedPeerRecommendation;
 

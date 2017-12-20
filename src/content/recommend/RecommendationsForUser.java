@@ -3,8 +3,9 @@ package content.recommend;
 import java.util.Iterator;
 import java.util.List;
 
-import content.content.Content;
+import content.Content;
 import core.ActorMessage;
+import core.ActorMessageType;
 
 /**
  * Contains Curated Aggregated Content Recommendations from other peers
@@ -15,6 +16,7 @@ public class RecommendationsForUser extends ActorMessage implements Iterable<Con
     private List<Content> recommendations;
     
     public RecommendationsForUser(List<Content> recommendations) {
+        super(ActorMessageType.PeerRecommendationsForUser);
         this.recommendations = recommendations;
     }
     

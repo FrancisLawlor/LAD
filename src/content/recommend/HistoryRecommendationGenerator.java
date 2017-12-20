@@ -4,7 +4,7 @@ package content.recommend;
 import java.util.List;
 
 import akka.actor.ActorSelection;
-import content.content.Content;
+import content.Content;
 import content.recommend.heuristic.HistoryHeuristic;
 import content.view.ViewHistoryRequest;
 import content.view.ViewHistoryResponse;

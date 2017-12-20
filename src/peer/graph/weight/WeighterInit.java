@@ -1,6 +1,7 @@
 package peer.graph.weight;
 
 import core.ActorMessage;
+import core.ActorMessageType;
 import core.UniversalId;
 
 /**
@@ -13,6 +14,7 @@ public class WeighterInit extends ActorMessage {
     private Weight initialLinkWeight;
     
     public WeighterInit(UniversalId linkedPeerId, Weight initialLinkWeight) {
+        super(ActorMessageType.WeighterInit);
         this.linkedPeerId = linkedPeerId;
         this.initialLinkWeight = initialLinkWeight;
     }
