@@ -46,5 +46,6 @@
 	<classpathentry kind="lib" path="lib/surefire-junit3-2.12.4.jar"/>
 	<classpathentry kind="lib" path="lib/xbean-reflect-3.4.jar"/>
 	<classpathentry kind="lib" path="lib/json-20140107.jar"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

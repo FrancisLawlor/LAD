@@ -12,7 +12,7 @@ public class UniversalId {
     }
     
     public String toString() {
-        return null;
+        return this.ipAndPort;
     }
     
     public boolean equals(UniversalId other) {

@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import content.content.Content;
+import content.Content;
 import content.recommend.PeerRecommendation;
 import content.recommend.RecommendationsForUser;
 import content.recommend.WeightedPeerRecommendation;

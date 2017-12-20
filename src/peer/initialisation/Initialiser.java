@@ -6,24 +6,24 @@ import org.apache.camel.impl.DefaultCamelContext;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import content.recommend.PeerRecommendationAggregator;
 import content.recommend.Recommender;
 import content.retrieve.Retriever;
 import content.view.ViewHistorian;
 import content.view.Viewer;
+import content.view.ViewerInit;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
 import peer.communicate.InboundCommunicator;
 import peer.communicate.OutboundCommInit;
 import peer.graph.link.PeerLinker;
+import statemachine.core.StateMachine;
 
 /**
  * Initialises the permanent Actors for this Peer
  * Initialises the Apache Camel Communication System for this Peer
  *
  */
-@SuppressWarnings("unused")
 public class Initialiser {
     private static UniversalId peerId;
     private static ActorSystem actorSystem;
@@ -59,8 +59,10 @@ public class Initialiser {
      */
     private static void initialiseViewingSystem() throws Exception {
         final ActorRef viewer = actorSystem.actorOf(Props.create(Viewer.class), ActorNames.VIEWER);
-        PeerToPeerActorInit viewerInit = new PeerToPeerActorInit(peerId, ActorNames.VIEWER);
-        viewer.tell(viewerInit, null);
+        PeerToPeerActorInit viewerActorInit = new PeerToPeerActorInit(peerId, ActorNames.VIEWER);
+        viewer.tell(viewerActorInit, null);
+        ViewerInit viewerStateMachineInit = new ViewerInit(new StateMachine());
+        viewer.tell(viewerStateMachineInit, null);
         
         final ActorRef viewHistorian = actorSystem.actorOf(Props.create(ViewHistorian.class), ActorNames.VIEW_HISTORIAN);
         PeerToPeerActorInit viewHistorianInit = new PeerToPeerActorInit(peerId, ActorNames.VIEW_HISTORIAN);

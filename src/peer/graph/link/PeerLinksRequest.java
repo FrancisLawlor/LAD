@@ -1,6 +1,7 @@
 package peer.graph.link;
 
 import core.ActorMessage;
+import core.ActorMessageType;
 
 /**
  * Actor message requesting Peer IDs from 
@@ -8,5 +9,7 @@ import core.ActorMessage;
  *
  */
 public class PeerLinksRequest extends ActorMessage {
-
+    public PeerLinksRequest() {
+        super(ActorMessageType.PeerLinksRequest);
+    }
 }

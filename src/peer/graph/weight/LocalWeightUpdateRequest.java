@@ -1,6 +1,7 @@
 package peer.graph.weight;
 
 import core.ActorMessage;
+import core.ActorMessageType;
 import core.UniversalId;
 
 /**
@@ -12,6 +13,7 @@ public class LocalWeightUpdateRequest extends ActorMessage {
     private Weight newWeight;
     
     public LocalWeightUpdateRequest(UniversalId linkedPeerId, Weight newWeight){
+        super(ActorMessageType.LocalWeightUpdateRequest);
         this.linkedPeerId = linkedPeerId;
         this.newWeight = newWeight;
     }

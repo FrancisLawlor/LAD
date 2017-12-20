@@ -2,7 +2,7 @@ package content.recommend.heuristic;
 
 import java.util.List;
 
-import content.content.Content;
+import content.Content;
 import content.view.ViewHistoryResponse;
 
 /**

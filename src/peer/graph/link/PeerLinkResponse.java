@@ -1,6 +1,7 @@
 package peer.graph.link;
 
 import core.ActorMessage;
+import core.ActorMessageType;
 import core.UniversalId;
 
 /**
@@ -11,6 +12,7 @@ public class PeerLinkResponse extends ActorMessage {
     private UniversalId peerId;
     
     public PeerLinkResponse(UniversalId peerId) {
+        super(ActorMessageType.PeerLinkResponse);
         this.peerId = peerId;
     }
     
