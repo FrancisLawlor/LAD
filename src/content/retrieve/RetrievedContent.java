@@ -1,6 +1,6 @@
 package content.retrieve;
 
-import content.Content;
+import content.impl.Content;
 import core.ActorMessageType;
 import core.RequestCommunication;
 import core.UniversalId;

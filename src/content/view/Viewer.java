@@ -1,7 +1,7 @@
 package content.view;
 
 import akka.actor.ActorSelection;
-import content.Content;
+import content.impl.Content;
 import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
 import content.retrieve.LocalRetrieveContentRequest;

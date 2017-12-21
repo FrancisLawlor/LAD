@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
-import content.Content;
+import content.impl.Content;
 import content.view.ContentView;
 import content.view.ViewHistory;
 import content.view.ViewHistoryResponse;

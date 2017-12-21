@@ -59,12 +59,12 @@ public class Recommender extends PeerToPeerActor {
      * @param request
      */
     protected void processRecommendationForUserRequest(RecommendationsForUserRequest request) {
-        final ActorRef generator = 
+        final ActorRef aggregator = 
                 getContext().actorOf(Props.create(PeerRecommendationAggregator.class), ActorNames.AGGREGATOR);
-        HistoryRecommendationGeneratorInit init = 
-                new HistoryRecommendationGeneratorInit(super.peerId, new WeightedProbabilityHistoryHeuristic());
-        generator.tell(init, getSelf());
-        generator.tell(request, getSelf());
+        PeerRecommendationAggregatorInit init = 
+                new PeerRecommendationAggregatorInit(new WeightedProbabilityAggregationHeuristic());
+        aggregator.tell(init, getSelf());
+        aggregator.tell(request, getSelf());
     }
     
     /**
@@ -82,12 +82,12 @@ public class Recommender extends PeerToPeerActor {
      * @param recommendation
      */
     protected void processPeerRecommendationRequest(PeerRecommendationRequest peerRecommendationRequest) {
-        final ActorRef aggregator = 
+        final ActorRef generator = 
                 getContext().actorOf(Props.create(HistoryRecommendationGenerator.class), ActorNames.HISTORY_GENERATOR);
-        PeerRecommendationAggregatorInit init = 
-                new PeerRecommendationAggregatorInit(new WeightedProbabilityAggregationHeuristic());
-        aggregator.tell(init, getSelf());
-        aggregator.tell(peerRecommendationRequest, getSelf());
+        HistoryRecommendationGeneratorInit init = 
+                new HistoryRecommendationGeneratorInit(super.peerId, new WeightedProbabilityHistoryHeuristic());
+        generator.tell(init, getSelf());
+        generator.tell(peerRecommendationRequest, getSelf());
     }
     
     /**

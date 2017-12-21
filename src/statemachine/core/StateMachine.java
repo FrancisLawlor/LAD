@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 
-import content.Content;
+import content.impl.Content;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import statemachine.states.AddFileState;
