@@ -3,6 +3,7 @@ package statemachine.states;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.util.Properties;
@@ -47,14 +48,23 @@ public class SetupState extends State {
 		// TODO
 		String portNumber = gui.getSetupScene().getPortNumberTextField().getText();
 		System.out.println(portNumber);
-		//if (portIsAvailable(portNumber)) {
+		if (portIsAvailable(portNumber)) {
+			try {
+				createConfigFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			
 			writePortNumberToConfigFile(portNumber);
+			
 			stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
-			stateMachine.execute(null);
-//		} else {
-//			System.out.println("port is not available");
-//		}
-		// if port is not open/ does not exist then prompt the user to try a different number
+			stateMachine.execute(StateName.INIT);
+		} else {
+			gui.getSetupScene().getErrorLabel().setText(GUIText.PORT_UNAVAILABLE);
+		}
+		//if port is not open/ does not exist then prompt the user to try a different number
 	}
 	
 	private void createConfigFile() throws IOException, URISyntaxException {
@@ -74,34 +84,16 @@ public class SetupState extends State {
 		props.store(configFile, FileConstants.ADDED_PORTNUMBER);
 	}
 	
-	private boolean portIsAvailable(String portNumber) {
-		Socket socket = null;
-		
-		try {
-			socket = new Socket("localhost", Integer.parseInt(portNumber));
-			return true;
-		} catch (Exception e) {
-			return false;
-		} finally {
-			if (socket != null) {
-				try {
-					socket.close();
-				} catch (Exception e) {
-				}
-			}
-		}
+	private boolean portIsAvailable(String portNumber) {		
+		try (Socket ignored = new Socket("localhost", Integer.parseInt(portNumber))) {
+	        return false;
+	    } catch (IOException ignored) {
+	        return true;
+	    }
 	}
 	
 	private void initialise() {
 		sceneContainerStage.changeScene(gui.getSetupScene());
 		sceneContainerStage.setTitle(GUIText.SETUP);
-		
-		try {
-			createConfigFile();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
-		}
 	}
 }

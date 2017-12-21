@@ -7,14 +7,20 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
 public class SetupPane extends BorderPane {
 	private Button nextButton;
 	private TextField portNumberTextField;
+	private Label errorLabel;
 	
 	public SetupPane(SceneContainerStage stage) {
+		Label errorLabel = new Label();
+		this.errorLabel = errorLabel;
+		this.setTop(errorLabel);
+		
 		GridPane setupForm = configureGridPane(stage);
 		this.setCenter(setupForm);
 	}
@@ -49,5 +55,9 @@ public class SetupPane extends BorderPane {
 
 	public TextField getPortNumberTextField() {
 		return this.portNumberTextField;
+	}
+
+	public Label getErrorLabel() {
+		return this.errorLabel;
 	}
 }
