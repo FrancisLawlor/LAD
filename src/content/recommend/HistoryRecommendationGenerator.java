@@ -8,7 +8,7 @@ import content.impl.Content;
 import content.recommend.heuristic.HistoryHeuristic;
 import content.view.ViewHistoryRequest;
 import content.view.ViewHistoryResponse;
-import core.ActorNames;
+import core.ActorPaths;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
@@ -64,7 +64,7 @@ public class HistoryRecommendationGenerator extends PeerToPeerActor {
         
         ViewHistoryRequest historyRequest = new ViewHistoryRequest(request);
         
-        ActorSelection viewHistorian = getContext().actorSelection("user/" + ActorNames.VIEW_HISTORIAN);
+        ActorSelection viewHistorian = getContext().actorSelection(ActorPaths.getPathToViewHistorian());
         viewHistorian.tell(historyRequest, getSelf());
     }
     
@@ -77,7 +77,7 @@ public class HistoryRecommendationGenerator extends PeerToPeerActor {
         PeerRecommendation peerRecommendation = 
                 this.getPeerRecommendationBasedOnHistory(response);
         
-        ActorSelection recommender = getContext().actorSelection("user/" + ActorNames.RECOMMENDER);
+        ActorSelection recommender = getContext().actorSelection(ActorPaths.getPathToAggregator());
         recommender.tell(peerRecommendation, getSelf());
     }
     

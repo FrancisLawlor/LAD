@@ -14,7 +14,7 @@ public class WeightResponse extends ActorMessage {
     private UniversalId peerId;
     private Weight linkWeight;
     
-    WeightResponse(UniversalId peerId, Weight linkWeight) {
+    public WeightResponse(UniversalId peerId, Weight linkWeight) {
         super(ActorMessageType.WeightResponse);
         this.peerId = peerId;
         this.linkWeight = linkWeight;

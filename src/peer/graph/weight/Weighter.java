@@ -2,11 +2,12 @@ package peer.graph.weight;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
-import core.ActorNames;
+import core.ActorPaths;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
 import core.xcept.UnknownMessageException;
+import core.xcept.WeightRequestPeerIdMismatchException;
 import core.xcept.WeightUpdateRequestPeerIdMismatchException;
 import core.xcept.WrongPeerIdException;
 
@@ -59,10 +60,12 @@ public class Weighter extends PeerToPeerActor {
      * @param weightRequest
      */
     protected void processWeightRequest(WeightRequest weightRequest) {
-        UniversalId peerId = weightRequest.getPeerId();
-        WeightResponse weightResponse = new WeightResponse(peerId, this.linkWeight);
-        ActorRef requester = getSender();
-        requester.tell(weightResponse, getSelf());
+        if (weightRequest.getPeerId().equals(this.linkedPeerId)) {
+            WeightResponse weightResponse = new WeightResponse(linkedPeerId, this.linkWeight);
+            ActorRef requester = getSender();
+            requester.tell(weightResponse, getSelf());
+        }
+        else throw new WeightRequestPeerIdMismatchException();
     }
     
     /**
@@ -77,7 +80,7 @@ public class Weighter extends PeerToPeerActor {
         this.linkWeight = weight;
         
         PeerWeightUpdateRequest request = new PeerWeightUpdateRequest(super.peerId, this.linkedPeerId, weight);
-        ActorSelection communicator = getContext().actorSelection("user/" + ActorNames.OUTBOUND_COMM);
+        ActorSelection communicator = getContext().actorSelection(ActorPaths.getPathToOutComm());
         communicator.tell(request, getSelf());
     }
     

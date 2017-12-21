@@ -1,7 +1,7 @@
 package content.retrieve;
 
 import akka.actor.ActorSelection;
-import core.ActorNames;
+import core.ActorPaths;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
 import core.xcept.UnknownMessageException;
@@ -48,7 +48,7 @@ public class Retriever extends PeerToPeerActor {
     protected void processLocalRetrieveContentRequest(LocalRetrieveContentRequest request) {
         PeerRetrieveContentRequest retrieveRequest = new PeerRetrieveContentRequest(request);
         
-        ActorSelection communicator = getContext().actorSelection("user/" + ActorNames.OUTBOUND_COMM);
+        ActorSelection communicator = getContext().actorSelection(ActorPaths.getPathToOutComm());
         communicator.tell(retrieveRequest, getSelf());
     }
     
@@ -65,7 +65,7 @@ public class Retriever extends PeerToPeerActor {
      * @param retrievedContent
      */
     protected void processRetrievedContent(RetrievedContent retrievedContent) {
-        ActorSelection viewer = getContext().actorSelection("user/" + ActorNames.VIEWER);
+        ActorSelection viewer = getContext().actorSelection(ActorPaths.getPathToViewer());
         viewer.tell(retrievedContent, getSelf());
     }
 }

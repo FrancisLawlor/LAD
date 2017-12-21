@@ -9,10 +9,10 @@ public class WeightedPeerRecommendationComparator implements Comparator<Weighted
     public int compare(WeightedPeerRecommendation a, WeightedPeerRecommendation b) {
         int comparison;
         if (a.getWeight() < b.getWeight()) {
-            comparison = -1;
+            comparison = 1;
         }
         else if (a.getWeight() > b.getWeight()) {
-            comparison = 1;
+            comparison = -1;
         }
         else {
             comparison = 0;

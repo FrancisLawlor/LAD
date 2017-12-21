@@ -5,7 +5,7 @@ import content.recommend.PeerRecommendation;
 import content.recommend.PeerRecommendationRequest;
 import content.retrieve.PeerRetrieveContentRequest;
 import content.retrieve.RetrievedContent;
-import core.ActorNames;
+import core.ActorPaths;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
@@ -65,7 +65,7 @@ public class InboundCommunicator extends PeerToPeerActor {
         if (!request.getOriginalTarget().equals(super.peerId))
             throw new RequestCommunicationTargetPeerIdMismatchException();
         
-        ActorSelection recommender = getContext().actorSelection("user/" + ActorNames.RECOMMENDER);
+        ActorSelection recommender = getContext().actorSelection(ActorPaths.getPathToRecommender());
         recommender.tell(request, getSelf());
     }
     
@@ -77,7 +77,7 @@ public class InboundCommunicator extends PeerToPeerActor {
         if (!recommendation.getOriginalRequester().equals(super.peerId)) 
             throw new RequestCommunicationOriginPeerIdMismatchException();
         
-        ActorSelection aggregator = getContext().actorSelection("user/" + ActorNames.AGGREGATOR);
+        ActorSelection aggregator = getContext().actorSelection(ActorPaths.getPathToAggregator());
         aggregator.tell(recommendation, getSelf());
     }
     
@@ -89,7 +89,7 @@ public class InboundCommunicator extends PeerToPeerActor {
         if (contentRequest.getOriginalTarget().equals(super.peerId)) 
             throw new RequestCommunicationTargetPeerIdMismatchException();
         
-        ActorSelection retriever = getContext().actorSelection("user/" + ActorNames.RETRIEVER);
+        ActorSelection retriever = getContext().actorSelection(ActorPaths.getPathToRetriever());
         retriever.tell(contentRequest, getSelf());
     }
     
@@ -101,7 +101,7 @@ public class InboundCommunicator extends PeerToPeerActor {
         if (!retrievedContent.getOriginalRequester().equals(super.peerId)) 
             throw new RequestCommunicationOriginPeerIdMismatchException();
         
-        ActorSelection aggregator = getContext().actorSelection("user/" + ActorNames.RETRIEVER);
+        ActorSelection aggregator = getContext().actorSelection(ActorPaths.getPathToRetriever());
         aggregator.tell(retrievedContent, getSelf());
     }
     
@@ -114,12 +114,8 @@ public class InboundCommunicator extends PeerToPeerActor {
             throw new RequestCommunicationTargetPeerIdMismatchException();
         
         UniversalId linkedPeerId = updateWeightRequest.getOriginalRequester();
-        String actorName = ActorNames.getWeighterName(linkedPeerId);
-        ActorSelection weighter = getContext().actorSelection("user/" + actorName);
-        if (weighter != null) {
-            weighter.tell(updateWeightRequest, getSelf());
-        }
-        else throw new RuntimeException("TEMPORARY DEBUG: Weighted Link does not exist!");
+        ActorSelection weighter = getContext().actorSelection(ActorPaths.getPathToWeighter(linkedPeerId));
+        weighter.tell(updateWeightRequest, getSelf());
     }
     
     // TEAM NOTE:
