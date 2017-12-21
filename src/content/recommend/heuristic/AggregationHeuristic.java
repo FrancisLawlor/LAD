@@ -1,6 +1,6 @@
 package content.recommend.heuristic;
 
-import java.util.Iterator;
+import java.util.List;
 
 import content.recommend.RecommendationsForUser;
 import content.recommend.WeightedPeerRecommendation;
@@ -8,6 +8,5 @@ import content.recommend.WeightedPeerRecommendation;
 public interface AggregationHeuristic {
     static final int LIMIT = 10;
     
-    RecommendationsForUser getRecommendationsForUser(
-            Iterator<WeightedPeerRecommendation> weightedPeerRecommendations);
+    RecommendationsForUser getRecommendationsForUser(List<WeightedPeerRecommendation> peerRecommends);
 }

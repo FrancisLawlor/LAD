@@ -5,6 +5,7 @@ import java.util.List;
 import akka.actor.ActorRef;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
+import core.xcept.UnknownMessageException;
 
 /**
  * Keeps a record of the view history
@@ -29,7 +30,7 @@ public class ViewHistorian extends PeerToPeerActor {
             this.processViewHistoryRequest(viewHistoryRequest);
         }
         else {
-            throw new RuntimeException("Unrecognised Message; Debug");
+            throw new UnknownMessageException();
         }
     }
     

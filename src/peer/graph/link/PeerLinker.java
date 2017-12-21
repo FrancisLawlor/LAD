@@ -6,11 +6,13 @@ import java.util.Set;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
+import core.ActorNames;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
-import peer.graph.weight.LocalWeightUpdateRequest;
+import core.xcept.UnknownMessageException;
 import peer.graph.weight.Weighter;
+import peer.graph.weight.WeighterInit;
 
 /**
  * Manages peer links
@@ -49,7 +51,7 @@ public class PeerLinker extends PeerToPeerActor {
             this.processPeerLinksRequest(peerLinksRequest);
         }
         else {
-            throw new RuntimeException("Unrecognised Message; Debug");
+            throw new UnknownMessageException();
         }
     }
     
@@ -60,13 +62,13 @@ public class PeerLinker extends PeerToPeerActor {
     protected void processPeerLinkAddition(PeerLinkAddition addition) {
         UniversalId peerId = addition.getPeerId();
         
-        this.peerLinksIds.add(peerId);
-        
-        String weighterName = "weighter_" + peerId.toString();
-        ActorRef weighter = getContext().actorOf(Props.create(Weighter.class), weighterName);
-        
-        LocalWeightUpdateRequest request = new LocalWeightUpdateRequest(peerId, addition.getStartingWeight());
-        weighter.tell(request, getSelf());
+        if (!this.peerLinksIds.contains(peerId)) {
+            this.peerLinksIds.add(peerId);
+            
+            ActorRef weighter = getContext().actorOf(Props.create(Weighter.class), ActorNames.getWeighterName(peerId));
+            WeighterInit init = new WeighterInit(peerId, addition.getStartingWeight());
+            weighter.tell(init, getSelf());
+        }
     }
     
     /**
@@ -87,7 +89,7 @@ public class PeerLinker extends PeerToPeerActor {
         while (peerLinksIdsIt.hasNext()) {
             UniversalId peerLinksId = peerLinksIdsIt.next();
             PeerLinkResponse response = new PeerLinkResponse(peerLinksId);
-            sender.tell(response, sender);
+            sender.tell(response, getSelf());
         }
     }
 }

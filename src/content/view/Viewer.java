@@ -6,7 +6,7 @@ import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
 import content.retrieve.LocalRetrieveContentRequest;
 import content.retrieve.RetrievedContent;
-import core.ActorNames;
+import core.ActorPaths;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
@@ -27,7 +27,7 @@ public class Viewer extends PeerToPeerActor {
      * Viewer will ask the Recommender Actor for Recommendations For User
      */
     public void getRecommendationsForUser() {
-        ActorSelection recommender = getContext().actorSelection("user/" + ActorNames.RECOMMENDER);
+        ActorSelection recommender = getContext().actorSelection(ActorPaths.getPathToRecommender());
         recommender.tell(new RecommendationsForUserRequest(super.peerId), getSelf());
     }
     
@@ -38,7 +38,7 @@ public class Viewer extends PeerToPeerActor {
      */
     public void getContent(Content content, UniversalId fromPeerId) {
         LocalRetrieveContentRequest request = new LocalRetrieveContentRequest(super.peerId, fromPeerId, content);
-        ActorSelection retriever = getContext().actorSelection("user/" + ActorNames.RETRIEVER);
+        ActorSelection retriever = getContext().actorSelection(ActorPaths.getPathToRetriever());
         retriever.tell(request, getSelf());
     }
     
