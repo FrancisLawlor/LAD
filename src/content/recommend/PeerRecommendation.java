@@ -3,7 +3,7 @@ package content.recommend;
 import java.util.Iterator;
 import java.util.List;
 
-import content.Content;
+import content.impl.Content;
 import core.ActorMessageType;
 import core.RequestCommunication;
 import core.UniversalId;

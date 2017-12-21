@@ -10,7 +10,7 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 
-import content.Content;
+import content.impl.Content;
 import content.recommend.PeerRecommendation;
 import core.UniversalId;
 
