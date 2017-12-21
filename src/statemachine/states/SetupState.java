@@ -1,11 +1,9 @@
 package statemachine.states;
 
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.Reader;
+import java.net.Socket;
 import java.net.URISyntaxException;
 import java.util.Properties;
 
@@ -29,6 +27,72 @@ public class SetupState extends State {
 
 	@Override
 	public void execute(StateName param) {
+		switch (param) {
+			case INIT:
+				initialise();
+				break;
+			case CLICK_SUBMIT:
+				try {
+					clicksSubmit();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+			default:
+				break;
+		}
+	}
+	
+	private void clicksSubmit() throws IOException {
+		// TODO
+		String portNumber = gui.getSetupScene().getPortNumberTextField().getText();
+		System.out.println(portNumber);
+		//if (portIsAvailable(portNumber)) {
+			writePortNumberToConfigFile(portNumber);
+			stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
+			stateMachine.execute(null);
+//		} else {
+//			System.out.println("port is not available");
+//		}
+		// if port is not open/ does not exist then prompt the user to try a different number
+	}
+	
+	private void createConfigFile() throws IOException, URISyntaxException {
+		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME);
+		String filesPath = new File(".").getAbsolutePath();
+		
+		Properties props = new Properties();
+		props.setProperty(FileConstants.DIRECTORY_KEY, filesPath);
+		props.store(configFile, FileConstants.INITIALISATION_COMMENT);
+	}
+	
+	private void writePortNumberToConfigFile(String portNumber) throws IOException {
+		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME);
+		
+		Properties props = new Properties();
+		props.setProperty(FileConstants.PORT_NUMBER, portNumber);
+		props.store(configFile, FileConstants.ADDED_PORTNUMBER);
+	}
+	
+	private boolean portIsAvailable(String portNumber) {
+		Socket socket = null;
+		
+		try {
+			socket = new Socket("localhost", Integer.parseInt(portNumber));
+			return true;
+		} catch (Exception e) {
+			return false;
+		} finally {
+			if (socket != null) {
+				try {
+					socket.close();
+				} catch (Exception e) {
+				}
+			}
+		}
+	}
+	
+	private void initialise() {
 		sceneContainerStage.changeScene(gui.getSetupScene());
 		sceneContainerStage.setTitle(GUIText.SETUP);
 		
@@ -39,36 +103,5 @@ public class SetupState extends State {
 		} catch (URISyntaxException e) {
 			e.printStackTrace();
 		}
-		
-		switch (param) {
-			case CLICK_SUBMIT:
-				clicksSubmit();
-				break;
-			default:
-				break;
-		}
-	}
-	
-	private void clicksSubmit() {
-		// TODO
-		// Gets Number from TextField
-		String portNumber = gui.getSetupScene().getPortNumberTextField().getText();
-		System.out.println(portNumber);
-		// Checks if port is open using static object
-		// If port is open write port number to config file
-		// change to dashboard
-		stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
-		stateMachine.execute(null);
-		// if port is not open/ does not exist then prompt the user to try a different number
-	}
-	
-	private void createConfigFile() throws IOException, URISyntaxException {
-		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME);
-		String filesPath = AddFileState.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath();
-		//System.out.println("FilePath: " + filesPath);
-		
-		Properties props = new Properties();
-		props.setProperty("filesDirectory", filesPath);
-		props.store(configFile, "File initialised.");
 	}
 }

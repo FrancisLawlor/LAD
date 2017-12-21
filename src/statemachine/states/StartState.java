@@ -1,7 +1,11 @@
 package statemachine.states;
 
+import java.io.File;
+
+import filemanagement.core.FileConstants;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
+import gui.utilities.GUIText;
 import statemachine.core.StateMachine;
 import statemachine.eventhandlers.ListViewEventHandler;
 import statemachine.eventhandlers.StateMachineEventHandler;
@@ -37,18 +41,19 @@ public class StartState extends State {
 	public void execute(StateName param) {
 		if (!configFileExists()) {
 			stateMachine.setCurrentState(StateName.SETUP.toString());
-			sceneContainerStage.init(gui.getSetupScene());
+			sceneContainerStage.setTitle(GUIText.SETUP);
+			stateMachine.execute(StateName.INIT);
 			sceneContainerStage.show();
 		} else {
 			stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
-			sceneContainerStage.init(gui.getRetrieveRecommendationsScene());
+			sceneContainerStage.setTitle(GUIText.SETUP);
+			stateMachine.execute(StateName.INIT);
 			sceneContainerStage.show();
 		}
 	}
 	
-	// TODO
 	private boolean configFileExists() {
-		return false;
+		return new File(FileConstants.CONFIG_FILE_NAME).exists();
 	}
 
 }
