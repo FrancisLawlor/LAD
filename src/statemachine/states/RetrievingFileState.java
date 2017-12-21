@@ -3,14 +3,15 @@ package statemachine.states;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+
+import filemanagement.fileretrieval.FileRetriever;
+import filemanagement.fileretrieval.RetrievedFile;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
 import javafx.concurrent.Task;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
-import utilities.FileRetriever;
-import utilities.RetrievedFile;
 
 public class RetrievingFileState extends State {
 	StateMachine stateMachine;

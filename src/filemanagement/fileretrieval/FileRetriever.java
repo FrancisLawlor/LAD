@@ -1,4 +1,4 @@
-package utilities;
+package filemanagement.fileretrieval;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,11 +42,5 @@ public class FileRetriever {
 	
 	private static String parseFileName(String remoteFileURL) {
 		return remoteFileURL.substring(remoteFileURL.lastIndexOf('/') + 1, remoteFileURL.length());
-	}
-	
-	public static void main(String[] args) throws IOException {
-		String url = "http://francislawlor.com/modules.html";
-		String path = "/Users/francis/Desktop";
-		downloadFile(url, path);
 	}
 }

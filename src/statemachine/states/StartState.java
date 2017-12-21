@@ -30,7 +30,7 @@ public class StartState extends State {
 		gui.getMyFilesScene().getBackButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_BACK, stateMachine));
 		gui.getRatingScene().getBackButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_BACK, stateMachine));
 		gui.getRatingScene().getSubmitButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_SUBMIT, stateMachine));
-		gui.getSetupScene().getNextButton().setOnAction(new StateMachineEventHandler(null, stateMachine));
+		gui.getSetupScene().getNextButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_SUBMIT, stateMachine));
 	}
 
 	@Override
