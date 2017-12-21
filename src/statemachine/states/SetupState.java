@@ -1,6 +1,7 @@
 package statemachine.states;
 
 import java.io.File;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
@@ -49,6 +50,7 @@ public class SetupState extends State {
 		if (portIsAvailable(portNumber)) {
 			try {
 				createConfigFile();
+				createFilesDirectory();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (URISyntaxException e) {
@@ -72,6 +74,22 @@ public class SetupState extends State {
 		props.setProperty(FileConstants.DIRECTORY_KEY, filesPath);
 		props.store(configFile, FileConstants.INITIALISATION_COMMENT);
 		configFile.close();
+	}
+	
+	private void createFilesDirectory() throws IOException {
+		FileReader configFile = new FileReader(FileConstants.CONFIG_FILE_NAME);
+		
+		Properties props = new Properties();
+		props.load(configFile);
+		
+		String fileDirectoryPath = props.getProperty(FileConstants.DIRECTORY_KEY);
+		File fileDirectory = new File(fileDirectoryPath + "/" + FileConstants.FILES_DIRECTORY_NAME);
+		
+		if (fileDirectory.mkdir()) {
+			System.out.println(FileConstants.CREATED_FILE_DIRECTORY);
+		} else {
+			System.out.println(FileConstants.FAILED_TO_CREATE_FILES_DIRECTORY);
+		}
 	}
 	
 	private void writePortNumberToConfigFile(String portNumber) throws IOException {

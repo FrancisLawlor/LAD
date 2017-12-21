@@ -18,7 +18,7 @@ public class DashBoardPane extends BorderPane {
 	private Button myFilesButton;
 	private Button addFileButton;
 	private Button refreshButton;
-	private ListView listView;
+	private ListView<Content> listView;
 	
 	public DashBoardPane(ObservableList<Content> data) {
 		VBox leftBar = configureLeftBar();
@@ -100,7 +100,7 @@ public class DashBoardPane extends BorderPane {
 		return refreshButton;
 	}
 
-	public ListView getListView() {
+	public ListView<Content> getListView() {
 		return listView;
 	}
 }
