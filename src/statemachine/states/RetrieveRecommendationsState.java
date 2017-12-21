@@ -25,7 +25,7 @@ public class RetrieveRecommendationsState extends State {
 	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getRetrieveRecommendationsScene());
 		sceneContainerStage.setTitle(GUIText.SETUP);
-
+				
 		Task<Void> sleeper = new Task<Void>() {
             @Override
             protected Void call() throws Exception {

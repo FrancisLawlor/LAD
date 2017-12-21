@@ -1,5 +1,6 @@
 package utilities;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -7,8 +8,8 @@ import java.io.OutputStream;
 import java.net.URL;
 
 
-public class FileDownloader {
-	public static void downloadFile(String remoteFileURL, String localSaveDirectory) throws IOException {
+public class FileRetriever {
+	public static File downloadFile(String remoteFileURL, String localSaveDirectory) throws IOException {
 		URL remoteLocationURL = new URL(remoteFileURL);
 		int fileBytes;
 		byte[] bytes = new byte[1024];
@@ -16,14 +17,18 @@ public class FileDownloader {
 		String localFilePath = buildLocalFilePath(parseFileName(remoteFileURL), localSaveDirectory);
 	 
 		InputStream remoteFileInputStream = remoteLocationURL.openConnection().getInputStream();
-		OutputStream localFileOutputStream = new FileOutputStream(localFilePath);
+		File retrievedFile = new File(localFilePath);
+
+		OutputStream localFileOutputStream = new FileOutputStream(retrievedFile);
 	 
 		while ((fileBytes = remoteFileInputStream.read(bytes)) > 0) {
 			localFileOutputStream.write(bytes, 0, fileBytes);
 		}
- 
+		
 		localFileOutputStream.close();
 		remoteFileInputStream.close();
+		
+		return retrievedFile;
 	}
 	
 	private static String buildLocalFilePath(String remoteFileURL, String localSaveDirectory) {

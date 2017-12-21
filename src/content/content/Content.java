@@ -9,11 +9,13 @@ public class Content {
     private String uniqueId;
     private String fileName;
     private String fileFormat;
+    private String fileLocation;
     
-    public Content(String uniqueId, String fileName, String fileFormat) {
+    public Content(String uniqueId, String fileName, String fileFormat, String fileLocation) {
     		this.uniqueId = uniqueId;
     		this.fileName = fileName;
     		this.fileFormat = fileFormat;
+    		this.fileLocation = fileLocation;
     }
     
     public String getId() {
@@ -26,6 +28,10 @@ public class Content {
     
     public String getFileFormat() {
     		return this.fileFormat;
+    }
+    
+    public String getFileLocation() {
+    		return this.fileLocation;
     }
     
     public int getViewLength() {

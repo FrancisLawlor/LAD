@@ -36,7 +36,7 @@ public class RetrieveFileQueryState extends State {
 
 	private void clicksYes() {
 		stateMachine.setCurrentState(StateName.RETRIEVING_FILE.toString());
-		stateMachine.execute(null);
+		stateMachine.execute(StateName.RETRIEVING_FILE);
 	}
 	
 	private void clicksNo() {
