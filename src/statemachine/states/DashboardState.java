@@ -41,17 +41,17 @@ public class DashboardState extends State {
 	
 	private void addFile() {
 		stateMachine.setCurrentState(StateName.ADD_FILE.toString());
-		stateMachine.execute(null);
+		stateMachine.execute(StateName.INIT);
 	}
 	
 	private void retrieveFileQuery() {
 		stateMachine.setCurrentState(StateName.RETRIEVE_FILE_QUERY.toString());
-		stateMachine.execute(null);
+		stateMachine.execute(StateName.INIT);
 	}
 	
 	private void viewFiles() {
 		stateMachine.setCurrentState(StateName.VIEWING_FILES.toString());
-		stateMachine.execute(null);
+		stateMachine.execute(StateName.INIT);
 	}
 	
 	private void refresh() {

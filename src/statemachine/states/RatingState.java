@@ -36,7 +36,7 @@ public class RatingState extends State {
 	
 	private void clicksBack() {
 		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
-		stateMachine.execute(null);
+		stateMachine.execute(StateName.INIT);
 	}
 
 	private void clicksSubmit() {
@@ -45,6 +45,6 @@ public class RatingState extends State {
 		// TODO Write this score to file
 		
 		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
-		stateMachine.execute(null);
+		stateMachine.execute(StateName.INIT);
 	}
 }

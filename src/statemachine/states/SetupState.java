@@ -71,7 +71,7 @@ public class SetupState extends State {
 		String filesPath = new File(".").getAbsolutePath();
 		
 		Properties props = new Properties();
-		props.setProperty(FileConstants.DIRECTORY_KEY, filesPath);
+		props.setProperty(FileConstants.DIRECTORY_KEY, filesPath + "/" + FileConstants.FILES_DIRECTORY_NAME);
 		props.store(configFile, FileConstants.INITIALISATION_COMMENT);
 		configFile.close();
 	}
@@ -82,8 +82,7 @@ public class SetupState extends State {
 		Properties props = new Properties();
 		props.load(configFile);
 		
-		String fileDirectoryPath = props.getProperty(FileConstants.DIRECTORY_KEY);
-		File fileDirectory = new File(fileDirectoryPath + "/" + FileConstants.FILES_DIRECTORY_NAME);
+		File fileDirectory = new File(props.getProperty(FileConstants.DIRECTORY_KEY));
 		
 		if (fileDirectory.mkdir()) {
 			System.out.println(FileConstants.CREATED_FILE_DIRECTORY);

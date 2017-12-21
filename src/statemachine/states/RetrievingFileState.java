@@ -2,8 +2,11 @@ package statemachine.states;
 
 import java.awt.Desktop;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.Properties;
 
+import filemanagement.core.FileConstants;
 import filemanagement.fileretrieval.FileRetriever;
 import filemanagement.fileretrieval.RetrievedFile;
 import gui.core.GUI;
@@ -65,7 +68,7 @@ public class RetrievingFileState extends State {
 		File retrievedFile = null;
 		try {
 			//TODO get local storage directory from config file.
-			retrievedFile = FileRetriever.downloadFile(remoteFileLocation, "/Users/francis/Desktop/");
+			retrievedFile = FileRetriever.downloadFile(remoteFileLocation, getLocalFileStorageDirectoryPath());
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}
@@ -75,7 +78,7 @@ public class RetrievingFileState extends State {
 	
 	private void openFile(RetrievedFile retrievedFile) throws IOException {
 		if (!Desktop.isDesktopSupported()) {
-			System.err.println("Desktop not supported");
+			System.err.println(FileConstants.DESKTOP_NOT_SUPPORTED);
 			return;
 		}
 		
@@ -87,6 +90,18 @@ public class RetrievingFileState extends State {
 	
 	private void rateFile() {
 		stateMachine.setCurrentState(StateName.RATING.toString());
-		stateMachine.execute(null);
+		stateMachine.execute(StateName.INIT);
+	}
+	
+	private String getLocalFileStorageDirectoryPath() throws IOException {
+		FileReader configFile = new FileReader(FileConstants.CONFIG_FILE_NAME);
+		
+		Properties props = new Properties();
+		props.load(configFile);
+		
+		String localFilesDirectory = props.getProperty(FileConstants.DIRECTORY_KEY);
+		configFile.close();
+		
+		return localFilesDirectory;
 	}
 }

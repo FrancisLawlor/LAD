@@ -9,4 +9,5 @@ public class FileConstants {
 	public static final String CREATED_FILE_DIRECTORY = "Created files directory.";
 	public static final String FILES_DIRECTORY_NAME = "files";
 	public static final String FAILED_TO_CREATE_FILES_DIRECTORY = "Failed to create files directory.";
+	public static final String DESKTOP_NOT_SUPPORTED = "Desktop not supported.";
 }
