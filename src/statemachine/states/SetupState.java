@@ -3,7 +3,6 @@ package statemachine.states;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.URISyntaxException;
 import java.util.Properties;
@@ -45,9 +44,8 @@ public class SetupState extends State {
 	}
 	
 	private void clicksSubmit() throws IOException {
-		// TODO
 		String portNumber = gui.getSetupScene().getPortNumberTextField().getText();
-		System.out.println(portNumber);
+		
 		if (portIsAvailable(portNumber)) {
 			try {
 				createConfigFile();
@@ -64,24 +62,25 @@ public class SetupState extends State {
 		} else {
 			gui.getSetupScene().getErrorLabel().setText(GUIText.PORT_UNAVAILABLE);
 		}
-		//if port is not open/ does not exist then prompt the user to try a different number
 	}
 	
 	private void createConfigFile() throws IOException, URISyntaxException {
-		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME);
+		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME, true);
 		String filesPath = new File(".").getAbsolutePath();
 		
 		Properties props = new Properties();
 		props.setProperty(FileConstants.DIRECTORY_KEY, filesPath);
 		props.store(configFile, FileConstants.INITIALISATION_COMMENT);
+		configFile.close();
 	}
 	
 	private void writePortNumberToConfigFile(String portNumber) throws IOException {
-		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME);
+		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME, true);
 		
 		Properties props = new Properties();
 		props.setProperty(FileConstants.PORT_NUMBER, portNumber);
 		props.store(configFile, FileConstants.ADDED_PORTNUMBER);
+		configFile.close();
 	}
 	
 	private boolean portIsAvailable(String portNumber) {		
