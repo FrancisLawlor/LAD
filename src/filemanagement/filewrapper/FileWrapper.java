@@ -18,7 +18,7 @@ public class FileWrapper {
 		
 		long headerLength = headerArray.length;
 		
-		byte[] appendedFilesArray = new byte[headerArray.length + mediaArray.length + Long.SIZE];
+		byte[] appendedFilesArray = new byte[headerArray.length + mediaArray.length + Long.BYTES];
 		byte[] headerLengthAsByteArray = ArrayToLongConverter.longToByteArray(headerLength);
 		
 		int i;
