@@ -7,7 +7,6 @@ import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.control.TextInputControl;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 
@@ -21,11 +20,11 @@ public class SetupPane extends BorderPane {
 		this.errorLabel = errorLabel;
 		this.setTop(errorLabel);
 		
-		GridPane setupForm = configureGridPane(stage);
+		GridPane setupForm = configureGridPane();
 		this.setCenter(setupForm);
 	}
 	
-	private GridPane configureGridPane(SceneContainerStage stage) {
+	private GridPane configureGridPane() {
 		GridPane content = new GridPane();
 	    content.setPadding(new Insets(5));
 	    content.setHgap(5);

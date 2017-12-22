@@ -1,7 +1,7 @@
 package filemanagement.filewrapper;
 
 public class FileUnwrapper {
-	public byte[] extractHeaderArray(byte[] appendedFilesArray) {
+	public static byte[] extractHeaderArray(byte[] appendedFilesArray) {
 		byte[] headerLengthArray = new byte[Long.BYTES];
 		
 		for (int i = 0; i < Long.BYTES; i++) {
@@ -19,7 +19,7 @@ public class FileUnwrapper {
 		return headerArray;
 	}
 	
-	public byte[] extractFileArray(byte[] appendedFilesArray) {
+	public static byte[] extractFileArray(byte[] appendedFilesArray) {
 		byte[] headerLengthArray = new byte[Long.BYTES];
 		
 		for (int i = 0; i < Long.BYTES; i++) {
