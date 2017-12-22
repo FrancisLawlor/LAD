@@ -23,9 +23,27 @@ public class RetrieveRecommendationsState extends State {
 
 	@Override
 	public void execute(StateName param) {
+		switch (param) {
+			case INIT:
+				init();
+				break;
+			default:
+				break;
+		}
+	}
+	
+	private void recommendationsRetrieved() {
+		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+    		stateMachine.execute(StateName.INIT);
+	}
+	
+	private void init() {
+		// Listen for recommendations.
+        // Change state when received.
+		
 		sceneContainerStage.changeScene(gui.getRetrieveRecommendationsScene());
 		sceneContainerStage.setTitle(GUIText.SETUP);
-
+				
 		Task<Void> sleeper = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -44,13 +62,5 @@ public class RetrieveRecommendationsState extends State {
             }
         });
         new Thread(sleeper).start();
-        
-        // Listen for recommendations.
-        // Change state when received.
-	}
-	
-	private void recommendationsRetrieved() {
-		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
-    		stateMachine.execute(null);
 	}
 }

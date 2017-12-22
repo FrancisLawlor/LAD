@@ -1,5 +1,14 @@
 package statemachine.states;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.net.Socket;
+import java.net.URISyntaxException;
+import java.util.Properties;
+
+import filemanagement.core.FileConstants;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
@@ -19,22 +28,88 @@ public class SetupState extends State {
 
 	@Override
 	public void execute(StateName param) {
-		sceneContainerStage.changeScene(gui.getSetupScene());
-		sceneContainerStage.setTitle(GUIText.SETUP);
-		
-		clicksSubmit();
+		switch (param) {
+			case INIT:
+				initialise();
+				break;
+			case CLICK_SUBMIT:
+				try {
+					clicksSubmit();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				break;
+			default:
+				break;
+		}
 	}
 	
-	private void clicksSubmit() {
-		// TODO
-		// Gets Number from TextField
+	private void clicksSubmit() throws IOException {
 		String portNumber = gui.getSetupScene().getPortNumberTextField().getText();
-		System.out.println(portNumber);
-		// Checks if port is open using static object
-		// If port is open write port number to config file 
-		// change to dashboard
-		stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
-		stateMachine.execute(null);
-		// if port is not open/ does not exist then prompt the user to try a different number
+		
+		if (portIsAvailable(portNumber)) {
+			try {
+				createConfigFile();
+				createFilesDirectory();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (URISyntaxException e) {
+				e.printStackTrace();
+			}
+			
+			writePortNumberToConfigFile(portNumber);
+			
+			stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
+			stateMachine.execute(StateName.INIT);
+		} else {
+			gui.getSetupScene().getErrorLabel().setText(GUIText.PORT_UNAVAILABLE);
+		}
+	}
+	
+	private void createConfigFile() throws IOException, URISyntaxException {
+		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME, true);
+		String filesPath = new File(".").getAbsolutePath();
+		
+		Properties props = new Properties();
+		props.setProperty(FileConstants.DIRECTORY_KEY, filesPath + "/" + FileConstants.FILES_DIRECTORY_NAME);
+		props.store(configFile, FileConstants.INITIALISATION_COMMENT);
+		configFile.close();
+	}
+	
+	private void createFilesDirectory() throws IOException {
+		FileReader configFile = new FileReader(FileConstants.CONFIG_FILE_NAME);
+		
+		Properties props = new Properties();
+		props.load(configFile);
+		
+		File fileDirectory = new File(props.getProperty(FileConstants.DIRECTORY_KEY));
+		
+		if (fileDirectory.mkdir()) {
+			System.out.println(FileConstants.CREATED_FILE_DIRECTORY);
+		} else {
+			System.out.println(FileConstants.FAILED_TO_CREATE_FILES_DIRECTORY);
+		}
+	}
+	
+	private void writePortNumberToConfigFile(String portNumber) throws IOException {
+		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME, true);
+		
+		Properties props = new Properties();
+		props.setProperty(FileConstants.PORT_NUMBER, portNumber);
+		props.store(configFile, FileConstants.ADDED_PORTNUMBER);
+		configFile.close();
+	}
+	
+	private boolean portIsAvailable(String portNumber) {		
+		try (Socket ignored = new Socket("localhost", Integer.parseInt(portNumber))) {
+	        return false;
+	    } catch (IOException ignored) {
+	        return true;
+	    }
+	}
+	
+	private void initialise() {
+		sceneContainerStage.changeScene(gui.getSetupScene());
+		sceneContainerStage.setTitle(GUIText.SETUP);
 	}
 }

@@ -46,7 +46,7 @@ public class DummyViewHistorian extends DummyActor {
     private List<Content> getContent() {
         List<Content> contentList = new LinkedList<Content>();
         for (int i = 1; i <= 20; i++) {
-            contentList.add(new Content(""+i, ""+i, ""+i, 20));
+            contentList.add(new Content(""+i, ""+i, ""+i, null, 20));
             super.logger.logMessage("Creating fake Content with id and name: " + i + " and view length 20");
         }
         return contentList;

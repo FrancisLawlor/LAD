@@ -1,7 +1,8 @@
-package statemachine.core;
+package statemachine.eventhandlers;
 
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
 public class StateMachineEventHandler implements EventHandler<ActionEvent> {

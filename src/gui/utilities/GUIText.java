@@ -18,4 +18,7 @@ public class GUIText {
 	public static final String DASHBOARD = "Dashboard";
 	public static final String RATING = "Rate";
 	public static final String FILE_RETRIEVAL = "Retrieve file";
+	public static final String PORT_UNAVAILABLE = "Port is unavailable. Please try another.";
+	public static final String FILE_NAME = "File name";
+	public static final String GENRE = "Genre";
 }

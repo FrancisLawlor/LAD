@@ -5,7 +5,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.text.Text;
 
-public class WaitingPane extends BorderPane {
+public class WaitingPane extends BorderPane {	
 	public WaitingPane(String waitingMessage) {
 		StackPane waitingContent = configureStackPane(waitingMessage);
 		
@@ -16,7 +16,6 @@ public class WaitingPane extends BorderPane {
 		StackPane content = new StackPane();
 		ProgressIndicator progressIndicator = new ProgressIndicator();
 		progressIndicator.setMaxSize(150, 150);
-			    	
 	    	content.getChildren().add(progressIndicator);
 	    	content.getChildren().add(new Text(waitingMessage));
 	    	

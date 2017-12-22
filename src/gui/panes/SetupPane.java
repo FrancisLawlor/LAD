@@ -13,13 +13,18 @@ import javafx.scene.layout.GridPane;
 public class SetupPane extends BorderPane {
 	private Button nextButton;
 	private TextField portNumberTextField;
+	private Label errorLabel;
 	
 	public SetupPane(SceneContainerStage stage) {
-		GridPane setupForm = configureGridPane(stage);
+		Label errorLabel = new Label();
+		this.errorLabel = errorLabel;
+		this.setTop(errorLabel);
+		
+		GridPane setupForm = configureGridPane();
 		this.setCenter(setupForm);
 	}
 	
-	private GridPane configureGridPane(SceneContainerStage stage) {
+	private GridPane configureGridPane() {
 		GridPane content = new GridPane();
 	    content.setPadding(new Insets(5));
 	    content.setHgap(5);
@@ -49,5 +54,9 @@ public class SetupPane extends BorderPane {
 
 	public TextField getPortNumberTextField() {
 		return this.portNumberTextField;
+	}
+
+	public Label getErrorLabel() {
+		return this.errorLabel;
 	}
 }

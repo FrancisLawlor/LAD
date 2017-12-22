@@ -22,15 +22,29 @@ public class RatingState extends State {
 		sceneContainerStage.changeScene(gui.getRatingScene());
 		sceneContainerStage.setTitle(GUIText.RATING);
 
-		clicksSubmit();
+		switch (param) {
+			case CLICK_SUBMIT:
+				clicksSubmit();
+				break;
+			case CLICK_BACK:
+				clicksBack();
+				break;
+			default:
+				break;
+		}
 	}
 	
+	private void clicksBack() {
+		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+		stateMachine.execute(StateName.INIT);
+	}
+
 	private void clicksSubmit() {
 		Double score = gui.getRatingScene().getRating().getRating();
 		
 		// TODO Write this score to file
 		
 		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
-		stateMachine.execute(null);
+		stateMachine.execute(StateName.INIT);
 	}
 }
