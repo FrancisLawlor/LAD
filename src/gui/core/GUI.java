@@ -40,9 +40,9 @@ public class GUI {
 	
 	public GUI(SceneContainerStage containerStage) {
 		ObservableList<Content> data = FXCollections.observableArrayList();
-		data.addAll(new Content("234134", "Akira", ".mp4", "https://speed.hetzner.de/100MB.bin"), 
-				new Content("234134as", "Shakira - Shewolf", ".mp4", "http://francislawlor.com/modules.html"), 
-				new Content("31234da", "My Chemical Romance - I am Sad", ".mp3", "http://francislawlor.com/modules.html"));
+		data.addAll(new Content("234134", "Akira", ".mp4", "https://speed.hetzner.de/100MB.bin", 0), 
+				new Content("234134as", "Shakira - Shewolf", ".mp4", "http://francislawlor.com/modules.html", 0), 
+				new Content("31234da", "My Chemical Romance - I am Sad", ".mp3", "http://francislawlor.com/modules.html", 0));
 
 		this.dashBoardPane = new DashBoardPane(data);
 		this.fileRetrievalQueryPane = new FileRetrievalQueryPane();

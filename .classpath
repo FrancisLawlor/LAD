@@ -2,11 +2,6 @@
 <classpath>
 	<classpathentry kind="src" path="src"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
-	<classpathentry kind="src" path=".apt_generated">
-		<attributes>
-			<attribute name="optional" value="true"/>
-		</attributes>
-	</classpathentry>
 	<classpathentry kind="lib" path="lib/akka-actor_2.12-2.4.20.jar"/>
 	<classpathentry kind="lib" path="lib/apache-mime4j-core-0.7.2.jar"/>
 	<classpathentry kind="lib" path="lib/camel-core-2.19.4-sources.jar"/>
@@ -33,6 +28,7 @@
 	<classpathentry kind="lib" path="lib/jaxb-core-2.2.11.jar"/>
 	<classpathentry kind="lib" path="lib/jaxb-impl-2.2.11.jar"/>
 	<classpathentry kind="lib" path="lib/jcip-annotations-1.0.jar"/>
+	<classpathentry kind="lib" path="lib/json-20140107.jar"/>
 	<classpathentry kind="lib" path="lib/jsr305-2.0.1.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.1.jar"/>
 	<classpathentry kind="lib" path="lib/junit-3.8.2.jar"/>
@@ -45,10 +41,6 @@
 	<classpathentry kind="lib" path="lib/surefire-booter-2.12.4.jar"/>
 	<classpathentry kind="lib" path="lib/surefire-junit3-2.12.4.jar"/>
 	<classpathentry kind="lib" path="lib/xbean-reflect-3.4.jar"/>
-<<<<<<< HEAD
-	<classpathentry kind="lib" path="lib/json-20140107.jar"/>
-=======
->>>>>>> 23538a8cfa942af2d6546ab22412db5a79abe27d
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

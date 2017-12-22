@@ -17,14 +17,14 @@ public class DummyOutboundCommunicator extends DummyActor {
     
     public DummyOutboundCommunicator() {
         this.contentListPeerTwo = new LinkedList<Content>();
-        this.contentListPeerTwo.add(new Content("2a", "2a", "2a"));
-        this.contentListPeerTwo.add(new Content("2b", "2b", "2b"));
+        this.contentListPeerTwo.add(new Content("2a", "2a", "2a", null, 0));
+        this.contentListPeerTwo.add(new Content("2b", "2b", "2b", null, 0));
         this.contentListPeerThree = new LinkedList<Content>();
-        this.contentListPeerThree.add(new Content("3a", "3a", "3a"));
-        this.contentListPeerThree.add(new Content("3b", "3b", "3b"));
+        this.contentListPeerThree.add(new Content("3a", "3a", "3a", null, 0));
+        this.contentListPeerThree.add(new Content("3b", "3b", "3b", null, 0));
         this.contentListPeerFour = new LinkedList<Content>();
-        this.contentListPeerFour.add(new Content("4a", "4a", "4a"));
-        this.contentListPeerFour.add(new Content("4b", "4b", "4b"));
+        this.contentListPeerFour.add(new Content("4a", "4a", "4a", null, 0));
+        this.contentListPeerFour.add(new Content("4b", "4b", "4b", null, 0));
     }
     
     @Override

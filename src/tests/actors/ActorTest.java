@@ -1,7 +1,5 @@
 package tests.actors;
 
-import static org.junit.Assert.*;
-
 import org.junit.Test;
 
 import akka.actor.ActorSystem;

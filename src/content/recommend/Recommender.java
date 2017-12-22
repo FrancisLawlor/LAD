@@ -63,13 +63,7 @@ public class Recommender extends PeerToPeerActor {
      * @param request
      */
     protected void processRecommendationForUserRequest(RecommendationsForUserRequest request) {
-<<<<<<< HEAD
-        final ActorRef aggregator = 
-                getContext().actorOf(Props.create(PeerRecommendationAggregator.class), ActorNames.AGGREGATOR);
-        PeerRecommendationAggregatorInit init = 
-                new PeerRecommendationAggregatorInit(new DeterministicAggregationHeuristic());
-        aggregator.tell(init, getSelf());
-=======
+
         final ActorRef aggregator = getContext().actorOf(Props.create(PeerRecommendationAggregator.class), ActorNames.AGGREGATOR);
         
         PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.AGGREGATOR);
@@ -78,7 +72,6 @@ public class Recommender extends PeerToPeerActor {
         PeerRecommendationAggregatorInit init = new PeerRecommendationAggregatorInit(new WeightedProbabilityAggregationHeuristic());
         aggregator.tell(init, getSelf());
         
->>>>>>> 23538a8cfa942af2d6546ab22412db5a79abe27d
         aggregator.tell(request, getSelf());
     }
     
