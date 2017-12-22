@@ -5,6 +5,7 @@ public class PeerToPeerActorInit extends ActorMessage {
     private String nameOfActorInSystem;
     
     public PeerToPeerActorInit(UniversalId peerId, String nameOfActorInSystem) {
+        super(ActorMessageType.PeerToPeerActorInit);
         this.peerId = peerId;
         this.nameOfActorInSystem = nameOfActorInSystem;
     }

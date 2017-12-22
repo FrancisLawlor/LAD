@@ -3,7 +3,8 @@ package content.recommend;
 import java.util.Iterator;
 import java.util.List;
 
-import content.content.Content;
+import content.impl.Content;
+import core.ActorMessageType;
 import core.RequestCommunication;
 import core.UniversalId;
 
@@ -15,7 +16,7 @@ public class PeerRecommendation extends RequestCommunication implements Iterable
     private List<Content> contentList;
     
     public PeerRecommendation(List<Content> contentList, UniversalId origin, UniversalId target) {
-        super(origin, target);
+        super(ActorMessageType.PeerRecommendation, origin, target);
         this.contentList = contentList;
     }
     

@@ -6,8 +6,10 @@ import akka.actor.Props;
 import content.recommend.heuristic.WeightedProbabilityAggregationHeuristic;
 import content.recommend.heuristic.WeightedProbabilityHistoryHeuristic;
 import core.ActorNames;
+import core.ActorPaths;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
+import core.UniversalId;
 import core.xcept.UnknownMessageException;
 
 /**
@@ -59,12 +61,15 @@ public class Recommender extends PeerToPeerActor {
      * @param request
      */
     protected void processRecommendationForUserRequest(RecommendationsForUserRequest request) {
-        final ActorRef generator = 
-                getContext().actorOf(Props.create(PeerRecommendationAggregator.class), ActorNames.AGGREGATOR);
-        HistoryRecommendationGeneratorInit init = 
-                new HistoryRecommendationGeneratorInit(super.peerId, new WeightedProbabilityHistoryHeuristic());
-        generator.tell(init, getSelf());
-        generator.tell(request, getSelf());
+        final ActorRef aggregator = getContext().actorOf(Props.create(PeerRecommendationAggregator.class), ActorNames.AGGREGATOR);
+        
+        PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.AGGREGATOR);
+        aggregator.tell(peerIdInit, getSelf());
+
+        PeerRecommendationAggregatorInit init = new PeerRecommendationAggregatorInit(new WeightedProbabilityAggregationHeuristic());
+        aggregator.tell(init, getSelf());
+        
+        aggregator.tell(request, getSelf());
     }
     
     /**
@@ -72,7 +77,7 @@ public class Recommender extends PeerToPeerActor {
      * @param recommendations
      */
     protected void processRecommendationsForUser(RecommendationsForUser recommendations) {
-        ActorSelection viewer = getContext().actorSelection("user/" + ActorNames.VIEWER);
+        ActorSelection viewer = getContext().actorSelection(ActorPaths.getPathToViewer());
         viewer.tell(recommendations, getSelf());
     }
     
@@ -82,12 +87,16 @@ public class Recommender extends PeerToPeerActor {
      * @param recommendation
      */
     protected void processPeerRecommendationRequest(PeerRecommendationRequest peerRecommendationRequest) {
-        final ActorRef aggregator = 
-                getContext().actorOf(Props.create(HistoryRecommendationGenerator.class), ActorNames.HISTORY_GENERATOR);
-        PeerRecommendationAggregatorInit init = 
-                new PeerRecommendationAggregatorInit(new WeightedProbabilityAggregationHeuristic());
-        aggregator.tell(init, getSelf());
-        aggregator.tell(peerRecommendationRequest, getSelf());
+        final ActorRef generator = getContext().actorOf(Props.create(HistoryRecommendationGenerator.class), ActorNames.HISTORY_GENERATOR);
+        
+        PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.HISTORY_GENERATOR);
+        generator.tell(peerIdInit, getSelf());
+        
+        UniversalId requestingPeerId = peerRecommendationRequest.getOriginalRequester();
+        HistoryRecommendationGeneratorInit init = new HistoryRecommendationGeneratorInit(requestingPeerId, new WeightedProbabilityHistoryHeuristic());
+        generator.tell(init, getSelf());
+        
+        generator.tell(peerRecommendationRequest, getSelf());
     }
     
     /**
@@ -95,7 +104,7 @@ public class Recommender extends PeerToPeerActor {
      * @param peerRecommendation
      */
     protected void processPeerRecommendation(PeerRecommendation peerRecommendation) {        
-        ActorSelection communicator = getContext().actorSelection("user/" + ActorNames.OUTBOUND_COMM);
+        ActorSelection communicator = getContext().actorSelection(ActorPaths.getPathToOutComm());
         communicator.tell(peerRecommendation, getSelf());
     }
 }

@@ -1,5 +1,6 @@
 package peer.graph.weight;
 
+import core.ActorMessageType;
 import core.RequestCommunication;
 import core.UniversalId;
 
@@ -12,7 +13,7 @@ public class PeerWeightUpdateRequest extends RequestCommunication {
     private Weight newWeight;
     
     PeerWeightUpdateRequest(UniversalId originalRequester,UniversalId originalTarget, Weight newWeight){
-        super(originalRequester, originalTarget);
+        super(ActorMessageType.PeerWeightUpdateRequest, originalRequester, originalTarget);
         this.newWeight = newWeight;
     }
     

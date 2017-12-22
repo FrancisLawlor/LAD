@@ -3,6 +3,7 @@ package peer.communicate;
 import org.apache.camel.CamelContext;
 
 import core.ActorMessage;
+import core.ActorMessageType;
 
 /**
  * Initialises the OutBound Communicator
@@ -14,6 +15,7 @@ public class OutboundCommInit extends ActorMessage {
     private CamelContext camelContext;
     
     public OutboundCommInit(CamelContext camelContext) {
+        super(ActorMessageType.OutboundCommInit);
         this.camelContext = camelContext;
     }
     

@@ -12,6 +12,12 @@ import org.apache.camel.builder.RouteBuilder;
  *
  */
 public class DistributedRecommenderRouter extends RouteBuilder {
+    public static final String PEER_RECOMMENDATION_REQUEST = "/PeerRecommendationRequest";
+    public static final String PEER_RECOMMENDATION = "/PeerRecommendation";
+    public static final String PEER_RETRIEVE_CONTENT_REQUEST = "/PeerRetrieveContentRequest";
+    public static final String RETRIEVED_CONTENT = "/RetrievedContent";
+    public static final String PEER_WEIGHT_UPDATE_REQUEST = "/PeerWeightUpdateRequest";
+    
     private String component;
     private String protocol;
     private String ipAndPort;
@@ -41,21 +47,22 @@ public class DistributedRecommenderRouter extends RouteBuilder {
     
     @Override
     public void configure() {
-        String fromStr = component + protocol + ipAndPort;
+        String routedFrom = component + protocol + ipAndPort;
+        String method = "?restletMethod=post";
         
-        from(fromStr + "/PeerRecommendationRequest?restletMethod=post")
+        from(routedFrom + PEER_RECOMMENDATION_REQUEST + method)
         .process(this.peerRecommendationRequestProcessor);
         
-        from(fromStr + "/PeerRecommendation?restletMethod=post")
+        from(routedFrom + PEER_RECOMMENDATION + method)
         .process(this.peerRecommendationProcessor);
         
-        from(fromStr + "/PeerRetrieveContentRequest?restletMethod=post")
+        from(routedFrom + PEER_RETRIEVE_CONTENT_REQUEST + method)
         .process(this.peerRetrieveContentRequestProcessor);
         
-        from(fromStr + "/RetrievedContent?restletMethod=post")
+        from(routedFrom + RETRIEVED_CONTENT + method)
         .process(this.retrievedContentProcessor);
         
-        from(fromStr + "/PeerWeightUpdateRequest?restletMethod=post")
+        from(routedFrom + PEER_WEIGHT_UPDATE_REQUEST + method)
         .process(this.peerWeightUpdateRequestProcessor);
     }
 }

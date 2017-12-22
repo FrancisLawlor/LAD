@@ -1,6 +1,6 @@
 package content.view;
 
-import content.content.Content;
+import content.impl.Content;
 
 /**
  * Information on a viewable piece of Content

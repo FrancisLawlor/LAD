@@ -1,4 +1,4 @@
-package content.content;
+package content.impl;
 
 /**
  * Contains information about a piece of content
@@ -9,11 +9,13 @@ public class Content {
     private String uniqueId;
     private String fileName;
     private String fileFormat;
+    private int viewLength;
     
-    public Content(String uniqueId, String fileName, String fileFormat) {
-    		this.uniqueId = uniqueId;
-    		this.fileName = fileName;
-    		this.fileFormat = fileFormat;
+    public Content(String uniqueId, String fileName, String fileFormat, int viewLength) {
+    	this.uniqueId = uniqueId;
+    	this.fileName = fileName;
+    	this.fileFormat = fileFormat;
+    	this.viewLength = viewLength;
     }
     
     public String getId() {
@@ -21,14 +23,14 @@ public class Content {
     }
     
     public String getFileName() {
-    		return this.fileName;
+    	return this.fileName;
     }
     
     public String getFileFormat() {
-    		return this.fileFormat;
+    	return this.fileFormat;
     }
     
     public int getViewLength() {
-        return 0;
+        return this.viewLength;
     }
 }

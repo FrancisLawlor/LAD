@@ -2,6 +2,7 @@ package content.recommend;
 
 import content.recommend.heuristic.HistoryHeuristic;
 import core.ActorMessage;
+import core.ActorMessageType;
 import core.UniversalId;
 
 /**
@@ -14,6 +15,7 @@ public class HistoryRecommendationGeneratorInit extends ActorMessage {
     private HistoryHeuristic heuristic;
     
     public HistoryRecommendationGeneratorInit(UniversalId requestingPeerId, HistoryHeuristic heuristic) {
+        super(ActorMessageType.HistoryRecommendationGeneratorInit);
         this.requestingPeerId = requestingPeerId;
         this.heuristic = heuristic;
     }

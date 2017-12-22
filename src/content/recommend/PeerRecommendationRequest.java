@@ -1,5 +1,6 @@
 package content.recommend;
 
+import core.ActorMessageType;
 import core.RequestCommunication;
 import core.UniversalId;
 
@@ -10,6 +11,6 @@ import core.UniversalId;
 public class PeerRecommendationRequest extends RequestCommunication {
     
     public PeerRecommendationRequest(UniversalId origin, UniversalId target) {
-        super(origin, target);
+        super(ActorMessageType.PeerRecommendationRequest, origin, target);
     }
 }

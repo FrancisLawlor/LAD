@@ -3,6 +3,8 @@ package peer.communicate;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 
+import com.google.gson.Gson;
+
 import content.recommend.PeerRecommendation;
 import content.recommend.PeerRecommendationRequest;
 import content.retrieve.PeerRetrieveContentRequest;
@@ -22,6 +24,11 @@ import peer.graph.weight.PeerWeightUpdateRequest;
 public class OutboundCommunicator extends PeerToPeerActor {
     private CamelContext camelContext;
     private ProducerTemplate camelTemplate;
+    private Gson gson;
+    
+    public OutboundCommunicator() {
+        this.gson = new Gson();
+    }
     
     /**
      * Actor Message processing
@@ -77,7 +84,7 @@ public class OutboundCommunicator extends PeerToPeerActor {
     protected void processPeerRecommendationRequest(PeerRecommendationRequest request) {
         UniversalId peerId = request.getOriginalTarget();
         String restletUri = CamelURIFormatter.getPeerRestletUri(peerId);
-        String requestJson = JsonConverter.getPeerRecommendationRequestInJson(request);
+        String requestJson = this.gson.toJson(request);
         this.camelTemplate.sendBody(restletUri, requestJson);
     }
     
@@ -88,7 +95,7 @@ public class OutboundCommunicator extends PeerToPeerActor {
     protected void processPeerRecommendation(PeerRecommendation recommendation) {
         UniversalId peerId = recommendation.getOriginalTarget();
         String restletUri = CamelURIFormatter.getPeerRestletUri(peerId);
-        String requestJson = JsonConverter.getPeerRecommendationInJson(recommendation);
+        String requestJson = this.gson.toJson(recommendation);
         this.camelTemplate.sendBody(restletUri, requestJson);
     }
     
@@ -99,7 +106,7 @@ public class OutboundCommunicator extends PeerToPeerActor {
     protected void processPeerRetrieveContentRequest(PeerRetrieveContentRequest contentRequest) {
         UniversalId peerId = contentRequest.getOriginalTarget();
         String restletUri = CamelURIFormatter.getPeerRestletUri(peerId);
-        String requestJson = JsonConverter.getPeerRetrieveContentRequestInJson(contentRequest);
+        String requestJson = this.gson.toJson(contentRequest);
         this.camelTemplate.sendBody(restletUri, requestJson);
     }
     
@@ -110,7 +117,7 @@ public class OutboundCommunicator extends PeerToPeerActor {
     protected void processRetrievedContent(RetrievedContent content) {
         UniversalId peerId = content.getOriginalTarget();
         String restletUri = CamelURIFormatter.getPeerRestletUri(peerId);
-        String requestJson = JsonConverter.getRetrievedContentInJson(content);
+        String requestJson = this.gson.toJson(content);
         this.camelTemplate.sendBody(restletUri, requestJson);
     }
     
@@ -122,7 +129,7 @@ public class OutboundCommunicator extends PeerToPeerActor {
     protected void processPeerWeightUpdateRequest(PeerWeightUpdateRequest request) {
         UniversalId peerId = request.getOriginalTarget();
         String restletUri = CamelURIFormatter.getPeerRestletUri(peerId);
-        String requestJson = JsonConverter.getPeerWeightUpdateRequestInJson(request);
+        String requestJson = this.gson.toJson(request);
         this.camelTemplate.sendBody(restletUri, requestJson);
     }
 

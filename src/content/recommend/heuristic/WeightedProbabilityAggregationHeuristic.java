@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
-import content.content.Content;
+import content.impl.Content;
 import content.recommend.RecommendationsForUser;
 import content.recommend.WeightedPeerRecommendation;
 
@@ -25,19 +25,10 @@ public class WeightedProbabilityAggregationHeuristic implements AggregationHeuri
      * ...Checks if the chance of entry exceeds a random threshold
      * @return recommendationsForUser generated from contentList
      */
-    public RecommendationsForUser getRecommendationsForUser(
-            Iterator<WeightedPeerRecommendation> weightedPeerRecommendations) {
-        List<WeightedPeerRecommendation> recommendationList = 
-                new LinkedList<WeightedPeerRecommendation>();
-        
-        while (weightedPeerRecommendations.hasNext()) {
-            WeightedPeerRecommendation recommendation = weightedPeerRecommendations.next();
-            recommendationList.add(recommendation);
-        }
-        
-        double maxWeight = this.getMaxWeight(recommendationList.iterator());
+    public RecommendationsForUser getRecommendationsForUser(List<WeightedPeerRecommendation> peerRecommends) {
+        double maxWeight = this.getMaxWeight(peerRecommends.iterator());
         List<Content> contentList = new LinkedList<Content>();
-        for (WeightedPeerRecommendation recommendation : recommendationList) {
+        for (WeightedPeerRecommendation recommendation : peerRecommends) {
             if (contentList.size() < LIMIT) {
                 double weight = recommendation.getWeight();
                 double weightedChanceOfEntry = weight / maxWeight;

@@ -1,4 +1,4 @@
-package tests.communicator;
+package tests.camel;
 
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
