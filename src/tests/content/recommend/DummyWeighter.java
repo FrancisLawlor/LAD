@@ -1,4 +1,4 @@
-package tests.content;
+package tests.content.recommend;
 
 import akka.actor.ActorRef;
 import core.PeerToPeerActorInit;
@@ -7,6 +7,8 @@ import peer.graph.weight.Weight;
 import peer.graph.weight.WeightRequest;
 import peer.graph.weight.WeightResponse;
 import peer.graph.weight.WeighterInit;
+import tests.actors.DummyActor;
+import tests.actors.DummyInit;
 
 public class DummyWeighter extends DummyActor {
     private UniversalId linkedPeerId;

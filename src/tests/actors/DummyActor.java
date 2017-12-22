@@ -1,9 +1,8 @@
-package tests.content;
+package tests.actors;
 
 import java.util.Iterator;
 
 import core.PeerToPeerActor;
-import tests.actors.AsynchronousLogger;
 
 public abstract class DummyActor extends PeerToPeerActor {
     protected AsynchronousLogger logger;

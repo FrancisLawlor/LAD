@@ -1,6 +1,4 @@
-package tests.content;
-
-import tests.actors.AsynchronousLogger;
+package tests.actors;
 
 public class DummyInit {
     private AsynchronousLogger logger;

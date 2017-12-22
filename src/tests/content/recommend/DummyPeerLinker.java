@@ -1,4 +1,4 @@
-package tests.content;
+package tests.content.recommend;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
@@ -9,6 +9,8 @@ import peer.graph.link.PeerLinkResponse;
 import peer.graph.link.PeerLinksRequest;
 import peer.graph.weight.Weight;
 import peer.graph.weight.WeighterInit;
+import tests.actors.DummyActor;
+import tests.actors.DummyInit;
 
 public class DummyPeerLinker extends DummyActor {    
     @Override
