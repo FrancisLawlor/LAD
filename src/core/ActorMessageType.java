@@ -29,11 +29,14 @@ public enum ActorMessageType {
     PeerLinkAddition("PeerLinkAddition"),
     PeerLinkResponse("PeerLinkResponse"),
     PeerLinksRequest("PeerLinksRequest"),
+    PeerLinkExistenceRequest("PeerLinkExistenceRequest"),
+    PeerLinkExistenceResponse("PeerLinkExistenceResponse"),
     LocalWeightUpdateRequest("LocalWeightUpdateRequest"),
     PeerWeightUpdateRequest("PeerWeightUpdateRequest"),
     WeighterInit("WeighterInit"),
     WeightRequest("WeightRequest"),
-    WeightResponse("WeightResponse");
+    WeightResponse("WeightResponse"),
+    PeerSimilarViewAlert("PeerSimilarViewAlert");
     
     
     private String typeName;

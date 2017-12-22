@@ -1,7 +1,7 @@
 package peer.graph.weight;
 
 import core.ActorMessageType;
-import core.RequestCommunication;
+import core.PeerToPeerRequest;
 import core.UniversalId;
 
 /**
@@ -9,7 +9,7 @@ import core.UniversalId;
  * Weights need to be kept consistent on both sides of the theoretical link
  *
  */
-public class PeerWeightUpdateRequest extends RequestCommunication {
+public class PeerWeightUpdateRequest extends PeerToPeerRequest {
     private Weight newWeight;
     
     PeerWeightUpdateRequest(UniversalId originalRequester,UniversalId originalTarget, Weight newWeight){

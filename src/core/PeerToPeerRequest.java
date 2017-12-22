@@ -1,10 +1,10 @@
 package core;
 
-public class RequestCommunication extends ActorMessage {
+public class PeerToPeerRequest extends ActorMessage {
     private UniversalId origin;
     private UniversalId target;
     
-    public RequestCommunication(ActorMessageType type, UniversalId origin, UniversalId target) {
+    public PeerToPeerRequest(ActorMessageType type, UniversalId origin, UniversalId target) {
         super(type);
         this.origin = origin;
         this.target = target;

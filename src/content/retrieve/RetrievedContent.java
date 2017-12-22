@@ -2,14 +2,14 @@ package content.retrieve;
 
 import content.impl.Content;
 import core.ActorMessageType;
-import core.RequestCommunication;
+import core.PeerToPeerRequest;
 import core.UniversalId;
 
 /**
  * Content retrieved for the original Requester from the original Target
  *
  */
-public class RetrievedContent extends RequestCommunication {
+public class RetrievedContent extends PeerToPeerRequest {
     private Content content;
     
     public RetrievedContent(UniversalId originalRequester, UniversalId originalTarget, Content content) {

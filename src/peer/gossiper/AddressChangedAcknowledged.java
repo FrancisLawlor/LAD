@@ -1,10 +1,10 @@
 package peer.gossiper;
 
 import core.ActorMessageType;
-import core.RequestCommunication;
+import core.PeerToPeerRequest;
 import core.UniversalId;
 
-public class AddressChangedAcknowledged extends RequestCommunication {
+public class AddressChangedAcknowledged extends PeerToPeerRequest {
     public AddressChangedAcknowledged(UniversalId originalRequester, UniversalId originalTarget) {
         super(ActorMessageType.AddressChangedAcknowledged, originalRequester, originalTarget);
     }

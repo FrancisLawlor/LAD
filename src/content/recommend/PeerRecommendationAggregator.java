@@ -33,8 +33,8 @@ import peer.graph.weight.WeightResponse;
 public class PeerRecommendationAggregator extends PeerToPeerActor {
     private UniversalId id;
     private AggregationHeuristic heuristic;
-    private Map<String, PeerRecommendation> recommendations;
-    private Map<String, WeightResponse> weights;
+    private Map<UniversalId, PeerRecommendation> recommendations;
+    private Map<UniversalId, WeightResponse> weights;
     private int peerRecommendationRequestsSentOut;
     private long startTime;
     
@@ -45,8 +45,8 @@ public class PeerRecommendationAggregator extends PeerToPeerActor {
      * Creates a map to the weight of these peer recommendations
      */
     public PeerRecommendationAggregator() {
-        this.recommendations = new HashMap<String, PeerRecommendation>();
-        this.weights = new HashMap<String, WeightResponse>();
+        this.recommendations = new HashMap<UniversalId, PeerRecommendation>();
+        this.weights = new HashMap<UniversalId, WeightResponse>();
         this.peerRecommendationRequestsSentOut = 0;
     }
     
@@ -137,7 +137,7 @@ public class PeerRecommendationAggregator extends PeerToPeerActor {
      */
     protected void processPeerRecommendation(PeerRecommendation peerRecommendation) {
         UniversalId peerId = peerRecommendation.getPeerId();
-        this.recommendations.put(peerId.toString(), peerRecommendation);
+        this.recommendations.put(peerId, peerRecommendation);
         this.sendPeerLinkWeightRequest(peerId);
     }
     
@@ -157,7 +157,7 @@ public class PeerRecommendationAggregator extends PeerToPeerActor {
      */
     protected void processWeightResponse(WeightResponse response) {
         UniversalId peerId = response.getPeerId();
-        this.weights.put(peerId.toString(), response);
+        this.weights.put(peerId, response);
         if (this.isTimeToRecommend()) {
             this.aggregatePeerRecommendations();
         }
@@ -191,10 +191,10 @@ public class PeerRecommendationAggregator extends PeerToPeerActor {
     protected void aggregatePeerRecommendations() {
         List<WeightedPeerRecommendation> weightedPeerRecommendations = new LinkedList<WeightedPeerRecommendation>();
         
-        Iterator<Entry<String, PeerRecommendation>> recommendIt = this.recommendations.entrySet().iterator();
+        Iterator<Entry<UniversalId, PeerRecommendation>> recommendIt = this.recommendations.entrySet().iterator();
         while (recommendIt.hasNext()) {
-            Entry<String, PeerRecommendation> entry = recommendIt.next();
-            String peerId = entry.getKey();
+            Entry<UniversalId, PeerRecommendation> entry = recommendIt.next();
+            UniversalId peerId = entry.getKey();
             PeerRecommendation peerRecommendation = entry.getValue();
             
             WeightResponse weightResponse = this.weights.get(peerId);

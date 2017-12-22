@@ -45,6 +45,10 @@ public class PeerLinker extends PeerToPeerActor {
                     (PeerLinkAddition) message;
             this.processPeerLinkAddition(addition);
         }
+        else if (message instanceof PeerLinkExistenceRequest) {
+            PeerLinkExistenceRequest request = (PeerLinkExistenceRequest) message;
+            this.processPeerLinkExistenceRequest(request);
+        }
         else if (message instanceof PeerLinksRequest) {
             PeerLinksRequest peerLinksRequest =
                     (PeerLinksRequest) message;
@@ -69,6 +73,18 @@ public class PeerLinker extends PeerToPeerActor {
             WeighterInit init = new WeighterInit(peerId, addition.getStartingWeight());
             weighter.tell(init, getSelf());
         }
+    }
+    
+    /**
+     * Checks for the existence of a stored link between this peer and another specified peer
+     * @param request
+     */
+    protected void processPeerLinkExistenceRequest(PeerLinkExistenceRequest request) {
+        UniversalId linkToCheck = request.getLinkToCheckPeerId();
+        boolean exists = this.peerLinksIds.contains(linkToCheck);
+        PeerLinkExistenceResponse response = new PeerLinkExistenceResponse(linkToCheck, exists);
+        ActorRef sender = getSender();
+        sender.tell(response, sender);
     }
     
     /**
