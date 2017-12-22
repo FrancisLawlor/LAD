@@ -28,9 +28,10 @@ public class TestJson {
         UniversalId origin = new UniversalId("origin");
         UniversalId target = new UniversalId("target");
         List<Content> contentList = new LinkedList<Content>();
-        contentList.add(new Content("abc", "abc", "file"));
-        contentList.add(new Content("def", "def", "file"));
-        contentList.add(new Content("ghi", "ghi", "file"));
+
+        contentList.add(new Content("abc", "abc", "file", 1));
+        contentList.add(new Content("def", "def", "file", 2));
+        contentList.add(new Content("ghi", "ghi", "file", 3));
         peerRecommendation = new PeerRecommendation(contentList, origin, target);
         
         return peerRecommendation;

@@ -1,6 +1,6 @@
 package gui.scenes;
 
-import content.content.Content;
+import content.impl.Content;
 import gui.panes.DashBoardPane;
 import gui.utilities.GUIDimensions;
 import javafx.scene.Scene;

@@ -41,7 +41,8 @@ public class PeerRecommendationAggregator extends PeerToPeerActor {
     private static final long timeOut = 60000;
     
     /**
-     * Creates a map of Universal IDs to peer recommendations and also to the weight of these
+     * Creates a map of Universal IDs to peer recommendations
+     * Creates a map to the weight of these peer recommendations
      */
     public PeerRecommendationAggregator() {
         this.recommendations = new HashMap<String, PeerRecommendation>();

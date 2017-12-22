@@ -1,6 +1,6 @@
 package gui.core;
 
-import content.content.Content;
+import content.impl.Content;
 import gui.panes.AddFilePane;
 import gui.panes.DashBoardPane;
 import gui.panes.FileRetrievalQueryPane;

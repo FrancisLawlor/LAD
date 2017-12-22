@@ -10,7 +10,7 @@ public class AsynchronousLogger implements Iterable<String> {
         this.loggedMessages = new ArrayList<String>();
     }
     
-    synchronized public void logMessage(String message) {
+    public void logMessage(String message) {
         this.loggedMessages.add(message);
     }
     

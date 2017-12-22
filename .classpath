@@ -45,7 +45,10 @@
 	<classpathentry kind="lib" path="lib/surefire-booter-2.12.4.jar"/>
 	<classpathentry kind="lib" path="lib/surefire-junit3-2.12.4.jar"/>
 	<classpathentry kind="lib" path="lib/xbean-reflect-3.4.jar"/>
+<<<<<<< HEAD
 	<classpathentry kind="lib" path="lib/json-20140107.jar"/>
+=======
+>>>>>>> 23538a8cfa942af2d6546ab22412db5a79abe27d
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

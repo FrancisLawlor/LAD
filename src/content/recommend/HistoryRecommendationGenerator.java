@@ -74,10 +74,9 @@ public class HistoryRecommendationGenerator extends PeerToPeerActor {
      * @param response
      */
     protected void processViewHistoryResponse(ViewHistoryResponse response) {
-        PeerRecommendation peerRecommendation = 
-                this.getPeerRecommendationBasedOnHistory(response);
+        PeerRecommendation peerRecommendation = this.getPeerRecommendationBasedOnHistory(response);
         
-        ActorSelection recommender = getContext().actorSelection(ActorPaths.getPathToAggregator());
+        ActorSelection recommender = getContext().actorSelection(ActorPaths.getPathToRecommender());
         recommender.tell(peerRecommendation, getSelf());
     }
     

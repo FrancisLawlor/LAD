@@ -2,7 +2,8 @@ package content.view;
 
 import java.util.List;
 
-import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
+import core.ActorPaths;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
 import core.xcept.UnknownMessageException;
@@ -42,7 +43,7 @@ public class ViewHistorian extends PeerToPeerActor {
         ViewHistory history = new ViewHistory(this.viewHistory);
         ViewHistoryResponse response = new ViewHistoryResponse(history, viewHistoryRequest);
 
-        ActorRef sender = getSender();
-        sender.tell(response, sender);
+        ActorSelection generator = getContext().actorSelection(ActorPaths.getPathToGenerator());
+        generator.tell(response, getSelf());
     }
 }

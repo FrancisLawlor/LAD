@@ -11,6 +11,7 @@ import core.ActorNames;
 import core.ActorPaths;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
+import core.UniversalId;
 import core.xcept.UnknownMessageException;
 
 /**
@@ -62,11 +63,22 @@ public class Recommender extends PeerToPeerActor {
      * @param request
      */
     protected void processRecommendationForUserRequest(RecommendationsForUserRequest request) {
+<<<<<<< HEAD
         final ActorRef aggregator = 
                 getContext().actorOf(Props.create(PeerRecommendationAggregator.class), ActorNames.AGGREGATOR);
         PeerRecommendationAggregatorInit init = 
                 new PeerRecommendationAggregatorInit(new DeterministicAggregationHeuristic());
         aggregator.tell(init, getSelf());
+=======
+        final ActorRef aggregator = getContext().actorOf(Props.create(PeerRecommendationAggregator.class), ActorNames.AGGREGATOR);
+        
+        PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.AGGREGATOR);
+        aggregator.tell(peerIdInit, getSelf());
+
+        PeerRecommendationAggregatorInit init = new PeerRecommendationAggregatorInit(new WeightedProbabilityAggregationHeuristic());
+        aggregator.tell(init, getSelf());
+        
+>>>>>>> 23538a8cfa942af2d6546ab22412db5a79abe27d
         aggregator.tell(request, getSelf());
     }
     
@@ -85,11 +97,15 @@ public class Recommender extends PeerToPeerActor {
      * @param recommendation
      */
     protected void processPeerRecommendationRequest(PeerRecommendationRequest peerRecommendationRequest) {
-        final ActorRef generator = 
-                getContext().actorOf(Props.create(HistoryRecommendationGenerator.class), ActorNames.HISTORY_GENERATOR);
-        HistoryRecommendationGeneratorInit init = 
-                new HistoryRecommendationGeneratorInit(super.peerId, new DeterministicHistoryHeuristic());
+        final ActorRef generator = getContext().actorOf(Props.create(HistoryRecommendationGenerator.class), ActorNames.HISTORY_GENERATOR);
+        
+        PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.HISTORY_GENERATOR);
+        generator.tell(peerIdInit, getSelf());
+        
+        UniversalId requestingPeerId = peerRecommendationRequest.getOriginalRequester();
+        HistoryRecommendationGeneratorInit init = new HistoryRecommendationGeneratorInit(requestingPeerId, new WeightedProbabilityHistoryHeuristic());
         generator.tell(init, getSelf());
+        
         generator.tell(peerRecommendationRequest, getSelf());
     }
     
