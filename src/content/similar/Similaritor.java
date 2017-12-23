@@ -1,4 +1,4 @@
-package content.contenter;
+package content.similar;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,10 +19,10 @@ import peer.graph.weight.Weight;
  * Updates PeerLinker and Weighters to increase weight of links between peers that viewed similar content to this peer
  *
  */
-public class Contenter extends PeerToPeerActor {
+public class Similaritor extends PeerToPeerActor {
     private Map<UniversalId, Weight> weights;
     
-    public Contenter() {
+    public Similaritor() {
         this.weights = new HashMap<UniversalId, Weight>();
     }
     

@@ -1,4 +1,4 @@
-package peer.gossiper;
+package peer.gossip;
 
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;

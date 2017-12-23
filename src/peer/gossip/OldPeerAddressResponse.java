@@ -1,4 +1,4 @@
-package peer.gossiper;
+package peer.gossip;
 
 import core.ActorMessage;
 import core.ActorMessageType;

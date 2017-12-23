@@ -1,4 +1,4 @@
-package content.contenter;
+package content.similar;
 
 import core.ActorMessage;
 import core.ActorMessageType;
