@@ -29,6 +29,7 @@ public class DummyAggregator extends DummyActor {
                     + " ; FileName: " + content.getFileName() 
                     + " ; ViewLength: "  + content.getViewLength());
             }
+            super.logger.logMessage("\n");
         }
     }
 }

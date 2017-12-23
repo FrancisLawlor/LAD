@@ -19,7 +19,7 @@ import peer.communicate.PeerRetrieveContentRequestProcessor;
 import peer.communicate.PeerWeightUpdateRequestProcessor;
 import peer.communicate.RetrievedContentProcessor;
 import peer.graph.link.PeerLinker;
-import tests.core.AsynchronousLogger;
+import tests.core.ActorTestLogger;
 import tests.core.DummyInit;
 
 @SuppressWarnings("unused")
@@ -54,7 +54,7 @@ public class TestCommunicatorsSideReceive {
         camelContext.start();
         
         //Initialise Dummy Actors with Logger
-        final AsynchronousLogger logger = new AsynchronousLogger();
+        final ActorTestLogger logger = new ActorTestLogger();
         DummyInit dummyInit = new DummyInit(logger);
         recommender.tell(dummyInit, null);
         peerLinker.tell(dummyInit, null);

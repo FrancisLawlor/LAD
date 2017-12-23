@@ -7,8 +7,9 @@ import content.recommend.Recommender;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
-import tests.core.AsynchronousLogger;
+import tests.core.ActorTestLogger;
 import tests.core.DummyInit;
+import tests.core.StartTest;
 
 @SuppressWarnings("unused")
 public class TestPeerRecommendationAggregator {
@@ -20,7 +21,7 @@ public class TestPeerRecommendationAggregator {
         UniversalId peerFourId = new UniversalId("Peer4");
         
         // Create logger and put in Init message
-        final AsynchronousLogger logger = new AsynchronousLogger();
+        final ActorTestLogger logger = new ActorTestLogger();
         DummyInit dummyInit = new DummyInit(logger);
         
         final ActorRef dummyPeerLinker = actSys.actorOf(Props.create(DummyPeerLinker.class), ActorNames.PEER_LINKER);

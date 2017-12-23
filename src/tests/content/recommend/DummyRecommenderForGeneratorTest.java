@@ -13,6 +13,7 @@ import core.PeerToPeerActorInit;
 import core.UniversalId;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
+import tests.core.StartTest;
 
 public class DummyRecommenderForGeneratorTest extends DummyActor {
     

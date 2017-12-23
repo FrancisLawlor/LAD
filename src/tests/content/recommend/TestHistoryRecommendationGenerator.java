@@ -11,8 +11,9 @@ import content.recommend.heuristic.DeterministicHistoryHeuristic;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
-import tests.core.AsynchronousLogger;
+import tests.core.ActorTestLogger;
 import tests.core.DummyInit;
+import tests.core.StartTest;
 
 @SuppressWarnings("unused")
 public class TestHistoryRecommendationGenerator {
@@ -22,7 +23,7 @@ public class TestHistoryRecommendationGenerator {
         UniversalId peerTwoId = new UniversalId("Peer2");
         
         // Create logger and put in Init message
-        final AsynchronousLogger logger = new AsynchronousLogger();
+        final ActorTestLogger logger = new ActorTestLogger();
         DummyInit dummyInit = new DummyInit(logger);
         
         final ActorRef recommender = actSys.actorOf(Props.create(DummyRecommenderForGeneratorTest.class), ActorNames.RECOMMENDER);

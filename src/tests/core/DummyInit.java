@@ -1,13 +1,13 @@
 package tests.core;
 
 public class DummyInit {
-    private AsynchronousLogger logger;
+    private ActorTestLogger logger;
     
-    public DummyInit(AsynchronousLogger logger) {
+    public DummyInit(ActorTestLogger logger) {
         this.logger = logger;
     }
     
-    public AsynchronousLogger getLogger() {
+    public ActorTestLogger getLogger() {
         return this.logger;
     }
 }

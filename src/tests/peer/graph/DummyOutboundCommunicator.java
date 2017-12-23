@@ -1,11 +1,12 @@
-package tests.peer.communicate;
+package tests.peer.graph;
 
 import core.PeerToPeerActorInit;
 import peer.graph.weight.PeerWeightUpdateRequest;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 
-public class DummyWeighter extends DummyActor {
+public class DummyOutboundCommunicator extends DummyActor {
+    
     @Override
     public void onReceive(Object message) {
         if (message instanceof PeerToPeerActorInit) {
@@ -18,13 +19,11 @@ public class DummyWeighter extends DummyActor {
         }
         else if (message instanceof PeerWeightUpdateRequest) {
             PeerWeightUpdateRequest request = (PeerWeightUpdateRequest) message;
-            super.logger.logMessage("Weighter received PeerWeightUpdateRequest");
+            super.logger.logMessage("PeerWeightUpdateRequest received in OutboundCommunicator");
             super.logger.logMessage("Type: " + request.getType().toString());
             super.logger.logMessage("OriginalRequester: " + request.getOriginalRequester());
             super.logger.logMessage("OriginalTarget: " + request.getOriginalTarget());
-            super.logger.logMessage("NewWeight: " + request.getNewWeight().getWeight());
-            super.logger.logMessage("RequestingPeerId: " + request.getUpdateRequestingPeerId());
-            super.logger.logMessage("TargetPeerId: "+ request.getTargetPeerId());
+            super.logger.logMessage("Weight: " + request.getNewWeight().getWeight());
             super.logger.logMessage("\n");
         }
     }

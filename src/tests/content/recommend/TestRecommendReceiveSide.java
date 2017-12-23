@@ -8,7 +8,7 @@ import content.recommend.Recommender;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
-import tests.core.AsynchronousLogger;
+import tests.core.ActorTestLogger;
 import tests.core.DummyInit;
 
 public class TestRecommendReceiveSide {
@@ -18,7 +18,7 @@ public class TestRecommendReceiveSide {
         UniversalId peerTwoId = new UniversalId("Peer2");
         
         // Create logger and put in Init message
-        final AsynchronousLogger logger = new AsynchronousLogger();
+        final ActorTestLogger logger = new ActorTestLogger();
         DummyInit dummyInit = new DummyInit(logger);
         
         final ActorRef recommenderToTest = actSys.actorOf(Props.create(Recommender.class), ActorNames.RECOMMENDER);

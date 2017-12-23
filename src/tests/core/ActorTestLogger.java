@@ -3,10 +3,10 @@ package tests.core;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-public class AsynchronousLogger implements Iterable<String> {
+public class ActorTestLogger implements Iterable<String> {
     private ArrayList<String> loggedMessages;
     
-    public AsynchronousLogger() {
+    public ActorTestLogger() {
         this.loggedMessages = new ArrayList<String>();
     }
     

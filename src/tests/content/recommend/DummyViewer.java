@@ -8,6 +8,7 @@ import core.ActorPaths;
 import core.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
+import tests.core.StartTest;
 
 public class DummyViewer extends DummyActor {
     

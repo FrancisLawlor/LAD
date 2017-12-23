@@ -71,7 +71,7 @@ public class Similaritor extends PeerToPeerActor {
         UniversalId peerId = response.getLinkToCheckPeerId();
         boolean linkExists = response.isLinkInExistence();
         if (this.weights.containsKey(peerId)) {
-            Weight weight = this.weights.get(peerId);
+            Weight weight = this.weights.remove(peerId);
             if (linkExists) {
                 LocalWeightUpdateRequest weightUpdate = new LocalWeightUpdateRequest(peerId, weight);
                 ActorSelection weighter = getContext().actorSelection(ActorPaths.getPathToWeighter(peerId));

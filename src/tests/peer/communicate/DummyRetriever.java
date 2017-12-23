@@ -28,6 +28,7 @@ public class DummyRetriever extends DummyActor {
                     + " ; FileFormat: " + content.getContent().getFileFormat()
                     + " ; ViewLength: " + content.getContent().getViewLength()
                     );
+            super.logger.logMessage("\n");
         }
         else if (message instanceof PeerRetrieveContentRequest) {
             PeerRetrieveContentRequest request = (PeerRetrieveContentRequest) message;
@@ -35,6 +36,7 @@ public class DummyRetriever extends DummyActor {
             super.logger.logMessage("Type: "+ request.getType().toString());
             super.logger.logMessage("OriginalRequester: " + request.getOriginalRequester()); 
             super.logger.logMessage("OriginalTarget: " + request.getOriginalTarget());
+            super.logger.logMessage("\n");
         }
     }
 }

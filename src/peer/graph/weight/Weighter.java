@@ -21,6 +21,10 @@ public class Weighter extends PeerToPeerActor {
     private UniversalId linkedPeerId;
     private Weight linkWeight;
     
+    public Weighter() {
+        this.linkWeight = new Weight();
+    }
+    
     /**
      * Actor Message processing
      */
@@ -79,7 +83,7 @@ public class Weighter extends PeerToPeerActor {
             throw new WeightUpdateRequestPeerIdMismatchException(updateRequest.getLinkedPeerId(), this.linkedPeerId);
         
         Weight weight = updateRequest.getNewWeight();
-        this.linkWeight = weight;
+        this.linkWeight.add(weight);
         
         PeerWeightUpdateRequest request = new PeerWeightUpdateRequest(super.peerId, this.linkedPeerId, weight);
         ActorSelection communicator = getContext().actorSelection(ActorPaths.getPathToOutComm());
@@ -95,7 +99,7 @@ public class Weighter extends PeerToPeerActor {
     protected void processPeerWeightUpdateRequest(PeerWeightUpdateRequest updateRequest) {
         if (super.peerId.equals(updateRequest.getTargetPeerId())) {
             if (this.linkedPeerId.equals(updateRequest.getUpdateRequestingPeerId())) {
-                this.linkWeight = updateRequest.getNewWeight();
+                this.linkWeight.add(updateRequest.getNewWeight());
             }
             else throw new WeightUpdateRequestPeerIdMismatchException(updateRequest.getUpdateRequestingPeerId(), this.linkedPeerId);
         }

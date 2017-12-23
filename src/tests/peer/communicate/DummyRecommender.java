@@ -26,6 +26,7 @@ public class DummyRecommender extends DummyActor {
             super.logger.logMessage("Type: " + request.getType().toString());
             super.logger.logMessage("OriginalRequester: " + request.getOriginalRequester());
             super.logger.logMessage("OriginalTarget: " + request.getOriginalTarget());
+            super.logger.logMessage("\n");
         }
     }
     
