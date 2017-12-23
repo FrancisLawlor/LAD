@@ -1,5 +1,7 @@
 package core.xcept;
 
+import core.UniversalId;
+
 /**
  * Exception thrown when using the same temporary delegated actor...
  * ... for two different Peer Recommendation generation requests
@@ -9,9 +11,11 @@ package core.xcept;
 public class PeerRecommendationRequestIdMismatchException extends RuntimeException {
     private static final long serialVersionUID = 4068680044764724566L;
     
-    public PeerRecommendationRequestIdMismatchException() {
-        super("Attempting to request Recommendations for a peer from a HistoryRecommendationGenerator that was spawned to generate for another peer\n" +
-                "Create another HistoryRecommendationGenerator to generate recommendations for the new requesting peer!");
+    public PeerRecommendationRequestIdMismatchException(UniversalId peerId, UniversalId actualIdItShouldBe) {
+        super("Attempting to request Recommendations for a peer from a HistoryRecommendationGenerator that was spawned to generate for peer: " 
+                + actualIdItShouldBe.toString() +
+                "\nCreate another HistoryRecommendationGenerator to generate recommendations for the new requesting peer: " 
+                + peerId.toString());
     }
 
 }

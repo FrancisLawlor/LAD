@@ -14,8 +14,14 @@ import content.view.ViewerInit;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
+import peer.communicate.DistributedRecommenderRouter;
 import peer.communicate.InboundCommunicator;
 import peer.communicate.OutboundCommInit;
+import peer.communicate.PeerRecommendationProcessor;
+import peer.communicate.PeerRecommendationRequestProcessor;
+import peer.communicate.PeerRetrieveContentRequestProcessor;
+import peer.communicate.PeerWeightUpdateRequestProcessor;
+import peer.communicate.RetrievedContentProcessor;
 import peer.graph.link.PeerLinker;
 import statemachine.core.StateMachine;
 
@@ -36,7 +42,6 @@ public class Initialiser {
     public static void main(String[] args) {
         peerId = initialiseUniversalId();
         
-        camelContext = new DefaultCamelContext();
         actorSystem = ActorSystem.create("ContentSystem");
         
         try {
@@ -74,11 +79,40 @@ public class Initialiser {
         PeerToPeerActorInit inboundInit = new PeerToPeerActorInit(peerId, ActorNames.INBOUND_COMM);
         inboundCommunicator.tell(inboundInit, null);
         
+        camelContext = getCamelContext(inboundCommunicator);
+        
         final ActorRef outboundCommunicator = actorSystem.actorOf(Props.create(InboundCommunicator.class), ActorNames.INBOUND_COMM);
         PeerToPeerActorInit outboundInit = new PeerToPeerActorInit(peerId, ActorNames.OUTBOUND_COMM);
         OutboundCommInit outboundCommInit = new OutboundCommInit(camelContext);
         outboundCommunicator.tell(outboundInit, null);
         outboundCommunicator.tell(outboundCommInit, null);
+        
+        camelContext.start();
+    }
+    
+    private static CamelContext getCamelContext(ActorRef inboundComm) throws Exception {
+        CamelContext camelContext = new DefaultCamelContext();
+        // Router and Processors for Routes initialisation
+        PeerRecommendationRequestProcessor peerRecommendationRequestProcessor = 
+                new PeerRecommendationRequestProcessor(inboundComm);
+        PeerRecommendationProcessor peerRecommendationProcessor = 
+                new PeerRecommendationProcessor(inboundComm);
+        PeerRetrieveContentRequestProcessor peerRetrieveContentRequestProcessor = 
+                new PeerRetrieveContentRequestProcessor(inboundComm);
+        RetrievedContentProcessor retrievedContentProcessor = 
+                new RetrievedContentProcessor(inboundComm);
+        PeerWeightUpdateRequestProcessor peerWeightUpdateRequestProcessor = 
+                new PeerWeightUpdateRequestProcessor(inboundComm);
+        DistributedRecommenderRouter router = 
+                new DistributedRecommenderRouter(
+                        peerId,
+                        peerRecommendationRequestProcessor, 
+                        peerRecommendationProcessor, 
+                        peerRetrieveContentRequestProcessor, 
+                        retrievedContentProcessor, 
+                        peerWeightUpdateRequestProcessor);
+        camelContext.addRoutes(router);
+        return camelContext;
     }
     
     private static void initialisePeerGraph() throws Exception {

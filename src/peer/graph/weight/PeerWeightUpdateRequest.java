@@ -12,7 +12,7 @@ import core.UniversalId;
 public class PeerWeightUpdateRequest extends PeerToPeerRequest {
     private Weight newWeight;
     
-    PeerWeightUpdateRequest(UniversalId originalRequester,UniversalId originalTarget, Weight newWeight){
+    public PeerWeightUpdateRequest(UniversalId originalRequester,UniversalId originalTarget, Weight newWeight){
         super(ActorMessageType.PeerWeightUpdateRequest, originalRequester, originalTarget);
         this.newWeight = newWeight;
     }

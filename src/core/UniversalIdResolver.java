@@ -6,6 +6,6 @@ package core;
  */
 public class UniversalIdResolver {
     public static String resolveID(UniversalId id) {
-        return null;
+        return id.toString();
     }
 }

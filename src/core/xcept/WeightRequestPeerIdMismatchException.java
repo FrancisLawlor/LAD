@@ -1,5 +1,7 @@
 package core.xcept;
 
+import core.UniversalId;
+
 /**
  * Exception thrown when asking the wrong weighter for the weight of a linked peer
  *
@@ -7,7 +9,8 @@ package core.xcept;
 public class WeightRequestPeerIdMismatchException extends RuntimeException {
     private static final long serialVersionUID = 4989429899420142098L;
     
-    public WeightRequestPeerIdMismatchException() {
-        super("Weighter represents weight of link with a different peer!");
+    public WeightRequestPeerIdMismatchException(UniversalId peerId, UniversalId actualIdItShouldBe) {
+        super("Weighter represents weight of link with " 
+                + actualIdItShouldBe.toString() + " not " + peerId.toString());
     }
 }

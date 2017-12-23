@@ -65,7 +65,7 @@ public class Weighter extends PeerToPeerActor {
             ActorRef requester = getSender();
             requester.tell(weightResponse, getSelf());
         }
-        else throw new WeightRequestPeerIdMismatchException();
+        else throw new WeightRequestPeerIdMismatchException(weightRequest.getPeerId(), this.linkedPeerId);
     }
     
     /**
@@ -75,7 +75,9 @@ public class Weighter extends PeerToPeerActor {
      * @param updateRequest
      */
     protected void processLocalWeightUpdateRequest(LocalWeightUpdateRequest updateRequest) {
-        if (!this.linkedPeerId.equals(updateRequest.getLinkedPeerId())) throw new WeightUpdateRequestPeerIdMismatchException();
+        if (!this.linkedPeerId.equals(updateRequest.getLinkedPeerId())) 
+            throw new WeightUpdateRequestPeerIdMismatchException(updateRequest.getLinkedPeerId(), this.linkedPeerId);
+        
         Weight weight = updateRequest.getNewWeight();
         this.linkWeight = weight;
         
@@ -95,8 +97,8 @@ public class Weighter extends PeerToPeerActor {
             if (this.linkedPeerId.equals(updateRequest.getUpdateRequestingPeerId())) {
                 this.linkWeight = updateRequest.getNewWeight();
             }
-            else throw new WeightUpdateRequestPeerIdMismatchException();
+            else throw new WeightUpdateRequestPeerIdMismatchException(updateRequest.getUpdateRequestingPeerId(), this.linkedPeerId);
         }
-        else throw new WrongPeerIdException();
+        else throw new WrongPeerIdException(updateRequest.getTargetPeerId(), super.peerId);
     }
 }

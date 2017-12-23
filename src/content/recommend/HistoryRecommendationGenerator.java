@@ -58,9 +58,10 @@ public class HistoryRecommendationGenerator extends PeerToPeerActor {
      * @param request
      */
     protected void processPeerRecommendationRequest(PeerRecommendationRequest request) {
-        if (!request.getOriginalTarget().equals(super.peerId)) throw new WrongPeerIdException();
+        if (!request.getOriginalTarget().equals(super.peerId)) 
+            throw new WrongPeerIdException(request.getOriginalTarget(), super.peerId);
         if (!this.requestingPeer.equals(request.getOriginalRequester()))
-            throw new PeerRecommendationRequestIdMismatchException();
+            throw new PeerRecommendationRequestIdMismatchException(request.getOriginalRequester(), this.requestingPeer);
         
         ViewHistoryRequest historyRequest = new ViewHistoryRequest(request);
         
