@@ -37,7 +37,7 @@ public class Weighter extends PeerToPeerActor {
         else if (message instanceof WeighterInit) {
             WeighterInit init = (WeighterInit) message;
             this.linkedPeerId = init.getLinkedPeerId();
-            this.linkWeight = init.getInitialLinkWeight();
+            this.linkWeight.add(init.getInitialLinkWeight());
         }
         else if (message instanceof WeightRequest) {
             WeightRequest weightRequest = 
@@ -64,12 +64,12 @@ public class Weighter extends PeerToPeerActor {
      * @param weightRequest
      */
     protected void processWeightRequest(WeightRequest weightRequest) {
-        if (weightRequest.getPeerId().equals(this.linkedPeerId)) {
+        if (weightRequest.getLinkedPeerId().equals(this.linkedPeerId)) {
             WeightResponse weightResponse = new WeightResponse(linkedPeerId, this.linkWeight);
             ActorRef requester = getSender();
             requester.tell(weightResponse, getSelf());
         }
-        else throw new WeightRequestPeerIdMismatchException(weightRequest.getPeerId(), this.linkedPeerId);
+        else throw new WeightRequestPeerIdMismatchException(weightRequest.getLinkedPeerId(), this.linkedPeerId);
     }
     
     /**

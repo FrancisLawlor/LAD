@@ -156,7 +156,7 @@ public class PeerRecommendationAggregator extends PeerToPeerActor {
      * theoretical link between it and this peer
      */
     protected void processWeightResponse(WeightResponse response) {
-        UniversalId peerId = response.getPeerId();
+        UniversalId peerId = response.getLinkedPeerId();
         this.weights.put(peerId, response);
         if (this.isTimeToRecommend()) {
             this.aggregatePeerRecommendations();

@@ -1,8 +1,10 @@
 package tests.peer.graph;
 
 import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
 import akka.actor.Props;
 import core.ActorNames;
+import core.ActorPaths;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
 import peer.graph.weight.LocalWeightUpdateRequest;
@@ -17,7 +19,6 @@ import tests.core.DummyInit;
 import tests.core.StartTest;
 
 public class WeighterTestor extends DummyActor {
-    private ActorRef weighter;
     private UniversalId peerTwoId;
     private int testNum = 1;
     
@@ -40,7 +41,7 @@ public class WeighterTestor extends DummyActor {
             WeightResponse response = (WeightResponse) message;
             super.logger.logMessage("WeightResponse received back in WeighterTestor");
             super.logger.logMessage("Type: " + response.getType().toString());
-            super.logger.logMessage("Represents link with: " + response.getPeerId());
+            super.logger.logMessage("Represents link with: " + response.getLinkedPeerId());
             super.logger.logMessage("LinkWeight: " + response.getLinkWeight().getWeight());
             super.logger.logMessage("\n");
             
@@ -60,7 +61,7 @@ public class WeighterTestor extends DummyActor {
     protected void setupWeighterTest() {
         peerTwoId = new UniversalId("PeerTwo");
         
-        weighter = getContext().actorOf(Props.create(Weighter.class), ActorNames.getWeighterName(peerTwoId));
+        final ActorRef weighter = getContext().actorOf(Props.create(Weighter.class), ActorNames.getWeighterName(peerTwoId));
         PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.getWeighterName(peerTwoId));
         weighter.tell(peerIdInit, getSelf());
         WeighterInit weighterInit = new WeighterInit(peerTwoId, new Weight(10.0));
@@ -68,11 +69,13 @@ public class WeighterTestor extends DummyActor {
     }
     
     protected void startWeighterTest1() {
+        ActorSelection weighter = getContext().actorSelection(ActorPaths.getPathToWeighter(peerTwoId));
         super.logger.logMessage("Sending WeightRequest");
         weighter.tell(new WeightRequest(peerTwoId), getSelf());
     }
     
-    protected void startWeighterTest2() {        
+    protected void startWeighterTest2() {
+        ActorSelection weighter = getContext().actorSelection(ActorPaths.getPathToWeighter(peerTwoId));
         super.logger.logMessage("Sending PeerWeightUpdateRequest as if from another peer keeping link weights consistent on both ends");
         weighter.tell(new PeerWeightUpdateRequest(peerTwoId, super.peerId, new Weight(5.0)), getSelf());
         super.logger.logMessage("Checking Weight has been updated");
@@ -80,6 +83,7 @@ public class WeighterTestor extends DummyActor {
     }
     
     protected void startWeighterTest3() throws Throwable {
+        ActorSelection weighter = getContext().actorSelection(ActorPaths.getPathToWeighter(peerTwoId));
         super.logger.logMessage("Sending LocalWeightUpdateRequest which should also "
                 + "send PeerWeightUpdateRequest to peerTwo to keep weights consistent on both ends");
         weighter.tell(new LocalWeightUpdateRequest(peerTwoId, new Weight(6.0)), getSelf());

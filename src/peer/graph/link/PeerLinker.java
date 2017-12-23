@@ -64,14 +64,17 @@ public class PeerLinker extends PeerToPeerActor {
      * @param addition
      */
     protected void processPeerLinkAddition(PeerLinkAddition addition) {
-        UniversalId peerId = addition.getPeerId();
+        UniversalId linkedPeerId = addition.getPeerId();
         
-        if (!this.peerLinksIds.contains(peerId)) {
-            this.peerLinksIds.add(peerId);
+        if (!this.peerLinksIds.contains(linkedPeerId)) {
+            this.peerLinksIds.add(linkedPeerId);
             
-            ActorRef weighter = getContext().actorOf(Props.create(Weighter.class), ActorNames.getWeighterName(peerId));
-            WeighterInit init = new WeighterInit(peerId, addition.getStartingWeight());
-            weighter.tell(init, getSelf());
+            ActorRef weighter = getContext().actorOf(Props.create(Weighter.class), ActorNames.getWeighterName(linkedPeerId));
+            PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.getWeighterName(linkedPeerId));
+            weighter.tell(peerIdInit, getSelf());
+            
+            WeighterInit weightInit = new WeighterInit(linkedPeerId, addition.getStartingWeight());
+            weighter.tell(weightInit, getSelf());
         }
     }
     

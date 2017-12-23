@@ -16,6 +16,7 @@ public class PeerLinkAddition extends ActorMessage {
     public PeerLinkAddition(UniversalId peerId, Weight startingWeight) {
         super(ActorMessageType.PeerLinkAddition);
         this.peerId = peerId;
+        this.startingWeight = startingWeight;
     }
     
     public UniversalId getPeerId() {

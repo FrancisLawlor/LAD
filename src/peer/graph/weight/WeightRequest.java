@@ -11,14 +11,14 @@ import core.UniversalId;
  *
  */
 public class WeightRequest extends ActorMessage {
-    private UniversalId peerId;
+    private UniversalId linkedPeerId;
     
-    public WeightRequest(UniversalId peerId) {
+    public WeightRequest(UniversalId linkedPeerId) {
         super(ActorMessageType.WeightRequest);
-        this.peerId = peerId;
+        this.linkedPeerId = linkedPeerId;
     }
     
-    public UniversalId getPeerId() {
-        return this.peerId;
+    public UniversalId getLinkedPeerId() {
+        return this.linkedPeerId;
     }
 }
