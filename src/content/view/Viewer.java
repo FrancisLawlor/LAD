@@ -1,7 +1,8 @@
 package content.view;
 
+import java.util.concurrent.BlockingQueue;
+
 import akka.actor.ActorSelection;
-import content.impl.Content;
 import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
 import content.retrieve.LocalRetrieveContentRequest;
@@ -9,9 +10,7 @@ import content.retrieve.RetrievedContent;
 import core.ActorPaths;
 import core.PeerToPeerActor;
 import core.PeerToPeerActorInit;
-import core.UniversalId;
 import core.xcept.UnknownMessageException;
-import statemachine.core.StateMachine;
 
 /**
  * Handles view related matters
@@ -21,26 +20,7 @@ import statemachine.core.StateMachine;
  *
  */
 public class Viewer extends PeerToPeerActor {
-    private StateMachine stateMachine;
-    
-    /**
-     * Viewer will ask the Recommender Actor for Recommendations For User
-     */
-    public void getRecommendationsForUser() {
-        ActorSelection recommender = getContext().actorSelection(ActorPaths.getPathToRecommender());
-        recommender.tell(new RecommendationsForUserRequest(super.peerId), getSelf());
-    }
-    
-    /**
-     * Viewer will ask the Retriever Actor to retrieve Content for viewing
-     * @param content
-     * @param fromPeerId
-     */
-    public void getContent(Content content, UniversalId fromPeerId) {
-        LocalRetrieveContentRequest request = new LocalRetrieveContentRequest(super.peerId, fromPeerId, content);
-        ActorSelection retriever = getContext().actorSelection(ActorPaths.getPathToRetriever());
-        retriever.tell(request, getSelf());
-    }
+    private BlockingQueue<RecommendationsForUser> recommendationsQueue;
     
     /**
      * Actor Message Processing
@@ -53,7 +33,15 @@ public class Viewer extends PeerToPeerActor {
         }
         else if (message instanceof ViewerInit) {
             ViewerInit init = (ViewerInit) message;
-            this.stateMachine = init.getStateMachine();
+            this.recommendationsQueue = init.getRecommendationsQueue();
+        }
+        else if (message instanceof RecommendationsForUserRequest) {
+            RecommendationsForUserRequest request = (RecommendationsForUserRequest) message;
+            this.processRecommendationsForUserRequest(request);
+        }
+        else if (message instanceof LocalRetrieveContentRequest) {
+            LocalRetrieveContentRequest request = (LocalRetrieveContentRequest) message;
+            this.processLocalRetrieveContentRequest(request);
         }
         else if (message instanceof RecommendationsForUser) {
             RecommendationsForUser recommendations = (RecommendationsForUser) message;
@@ -69,11 +57,29 @@ public class Viewer extends PeerToPeerActor {
     }
     
     /**
+     * Viewer will ask the Recommender Actor for Recommendations For User
+     */
+    public void processRecommendationsForUserRequest(RecommendationsForUserRequest request) {
+        ActorSelection recommender = getContext().actorSelection(ActorPaths.getPathToRecommender());
+        recommender.tell(request, getSelf());
+    }
+    
+    /**
+     * Viewer will ask the Retriever Actor to retrieve Content for viewing
+     * @param content
+     * @param fromPeerId
+     */
+    public void processLocalRetrieveContentRequest(LocalRetrieveContentRequest request) {
+        ActorSelection retriever = getContext().actorSelection(ActorPaths.getPathToRetriever());
+        retriever.tell(request, getSelf());
+    }
+    
+    /**
      * Send Recommendation for User to State Machine Controller
      * @param recommendations
      */
     protected void processRecommendationsForUser(RecommendationsForUser recommendations) {
-        this.stateMachine.setRecommendationsForUser(recommendations.iterator());
+        this.recommendationsQueue.add(recommendations);
     }
     
     /**
@@ -81,7 +87,7 @@ public class Viewer extends PeerToPeerActor {
      * @param content
      */
     protected void processRetrievedContent(RetrievedContent content) {
-        this.stateMachine.setRetrievedContent(content.getContent());
+        
     }
     
 }

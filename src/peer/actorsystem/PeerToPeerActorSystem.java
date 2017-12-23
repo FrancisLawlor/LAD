@@ -1,4 +1,4 @@
-package peer.initialisation;
+package peer.actorsystem;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -10,7 +10,6 @@ import content.recommend.Recommender;
 import content.retrieve.Retriever;
 import content.view.ViewHistorian;
 import content.view.Viewer;
-import content.view.ViewerInit;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
@@ -23,38 +22,36 @@ import peer.communicate.PeerRetrieveContentRequestProcessor;
 import peer.communicate.PeerWeightUpdateRequestProcessor;
 import peer.communicate.RetrievedContentProcessor;
 import peer.graph.link.PeerLinker;
-import statemachine.core.StateMachine;
 
 /**
  * Initialises the permanent Actors for this Peer
  * Initialises the Apache Camel Communication System for this Peer
  *
  */
-public class Initialiser {
-    private static UniversalId peerId;
-    private static ActorSystem actorSystem;
-    private static CamelContext camelContext;
+public class PeerToPeerActorSystem {
+    protected UniversalId peerId;
+    protected ActorSystem actorSystem;
+    protected CamelContext camelContext;
+    protected ActorRef viewer;
     
     /**
      * Initialises the Actor System and Camel Communication System for this Peer
      * @param args
      */
-    public static void main(String[] args) {
-        peerId = initialiseUniversalId();
-        
+    public PeerToPeerActorSystem(UniversalId peerId) {        
         actorSystem = ActorSystem.create("ContentSystem");
-        
-        try {
-            initialiseViewingSystem();
-            initialiseCommunicationSystem();
-            initialisePeerGraph();
-            initialiseRecommendingSystem();
-            initialiseRetrievingSystem();
-        } catch (Exception e) { };
     }
     
-    private static UniversalId initialiseUniversalId() {
-        return new UniversalId("Test");
+    public void createActors() throws Exception {
+        initialiseViewingSystem();
+        initialiseCommunicationSystem();
+        initialisePeerGraph();
+        initialiseRecommendingSystem();
+        initialiseRetrievingSystem();
+    }
+    
+    public ActorRef getViewer() {
+        return this.viewer;
     }
     
     /**
@@ -62,19 +59,17 @@ public class Initialiser {
      * @param actorSystem
      * @throws Exception
      */
-    private static void initialiseViewingSystem() throws Exception {
-        final ActorRef viewer = actorSystem.actorOf(Props.create(Viewer.class), ActorNames.VIEWER);
+    protected void initialiseViewingSystem() throws Exception {
+        viewer = actorSystem.actorOf(Props.create(Viewer.class), ActorNames.VIEWER);
         PeerToPeerActorInit viewerActorInit = new PeerToPeerActorInit(peerId, ActorNames.VIEWER);
         viewer.tell(viewerActorInit, null);
-        ViewerInit viewerStateMachineInit = new ViewerInit(new StateMachine());
-        viewer.tell(viewerStateMachineInit, null);
         
         final ActorRef viewHistorian = actorSystem.actorOf(Props.create(ViewHistorian.class), ActorNames.VIEW_HISTORIAN);
         PeerToPeerActorInit viewHistorianInit = new PeerToPeerActorInit(peerId, ActorNames.VIEW_HISTORIAN);
         viewHistorian.tell(viewHistorianInit, null);
     }
     
-    private static void initialiseCommunicationSystem() throws Exception {
+    protected void initialiseCommunicationSystem() throws Exception {
         final ActorRef inboundCommunicator = actorSystem.actorOf(Props.create(InboundCommunicator.class), ActorNames.INBOUND_COMM);
         PeerToPeerActorInit inboundInit = new PeerToPeerActorInit(peerId, ActorNames.INBOUND_COMM);
         inboundCommunicator.tell(inboundInit, null);
@@ -90,7 +85,7 @@ public class Initialiser {
         camelContext.start();
     }
     
-    private static CamelContext getCamelContext(ActorRef inboundComm) throws Exception {
+    protected CamelContext getCamelContext(ActorRef inboundComm) throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
         // Router and Processors for Routes initialisation
         PeerRecommendationRequestProcessor peerRecommendationRequestProcessor = 
@@ -115,7 +110,7 @@ public class Initialiser {
         return camelContext;
     }
     
-    private static void initialisePeerGraph() throws Exception {
+    protected void initialisePeerGraph() throws Exception {
         final ActorRef peerLinker = actorSystem.actorOf(Props.create(PeerLinker.class), ActorNames.PEER_LINKER);
         PeerToPeerActorInit peerLinkerInit = new PeerToPeerActorInit(peerId, ActorNames.PEER_LINKER);
         peerLinker.tell(peerLinkerInit, null);
@@ -126,13 +121,13 @@ public class Initialiser {
         // While looping over file tell each weighter its weight
     }
     
-    private static void initialiseRecommendingSystem() throws Exception {
+    protected void initialiseRecommendingSystem() throws Exception {
         final ActorRef recommender = actorSystem.actorOf(Props.create(Recommender.class), ActorNames.RECOMMENDER);
         PeerToPeerActorInit recommenderInit = new PeerToPeerActorInit(peerId, ActorNames.RECOMMENDER);
         recommender.tell(recommenderInit, null);
     }
     
-    private static void initialiseRetrievingSystem() throws Exception {
+    protected void initialiseRetrievingSystem() throws Exception {
         final ActorRef retriever = actorSystem.actorOf(Props.create(Retriever.class), ActorNames.RETRIEVER);
         PeerToPeerActorInit retrieverInit = new PeerToPeerActorInit(peerId, ActorNames.RETRIEVER);
         retriever.tell(retrieverInit, null);

@@ -1,5 +1,11 @@
 package statemachine.states;
 
+import java.util.concurrent.BlockingQueue;
+
+import akka.actor.ActorRef;
+import content.recommend.RecommendationsForUser;
+import content.recommend.RecommendationsForUserRequest;
+import core.UniversalId;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
@@ -13,12 +19,17 @@ public class RetrieveRecommendationsState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
-	
+	private UniversalId id;
+	private ActorRef viewer;
+    BlockingQueue<RecommendationsForUser> recommendationsQueue;
 
-	public RetrieveRecommendationsState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui) {
+	public RetrieveRecommendationsState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui,
+	        UniversalId id, ActorRef viewer, BlockingQueue<RecommendationsForUser> queue) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
+		this.viewer = viewer;
+        this.recommendationsQueue = queue;
 	}
 
 	@Override
@@ -43,12 +54,15 @@ public class RetrieveRecommendationsState extends State {
 		
 		sceneContainerStage.changeScene(gui.getRetrieveRecommendationsScene());
 		sceneContainerStage.setTitle(GUIText.SETUP);
-				
+		
 		Task<Void> sleeper = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
                 try {
-                    Thread.sleep(5000);
+                    viewer.tell(new RecommendationsForUserRequest(id), null);
+                    while (recommendationsQueue.isEmpty()) {
+                        Thread.sleep(1000);
+                    }
                 } catch (InterruptedException e) {
                 	
                 }
