@@ -11,8 +11,8 @@ import content.recommend.heuristic.WeightedProbabilityHistoryHeuristic;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyRecommenderForGeneratorTest extends DummyActor {
     

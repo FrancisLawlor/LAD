@@ -3,8 +3,8 @@ package tests.peer.communicate;
 import content.impl.Content;
 import content.recommend.PeerRecommendation;
 import core.PeerToPeerActorInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyAggregator extends DummyActor {
     @Override

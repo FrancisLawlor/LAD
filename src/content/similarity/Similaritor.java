@@ -1,4 +1,4 @@
-package content.similar;
+package content.similarity;
 
 import java.util.HashMap;
 import java.util.Map;

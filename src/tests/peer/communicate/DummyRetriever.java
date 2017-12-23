@@ -3,8 +3,8 @@ package tests.peer.communicate;
 import content.retrieve.PeerRetrieveContentRequest;
 import content.retrieve.RetrievedContent;
 import core.PeerToPeerActorInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyRetriever extends DummyActor {
     @Override

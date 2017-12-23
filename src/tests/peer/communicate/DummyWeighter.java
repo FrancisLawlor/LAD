@@ -2,8 +2,8 @@ package tests.peer.communicate;
 
 import core.PeerToPeerActorInit;
 import peer.graph.weight.PeerWeightUpdateRequest;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyWeighter extends DummyActor {
     @Override

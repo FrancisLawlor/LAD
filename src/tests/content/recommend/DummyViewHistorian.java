@@ -11,8 +11,8 @@ import content.view.ViewHistoryRequest;
 import content.view.ViewHistoryResponse;
 import core.ActorPaths;
 import core.PeerToPeerActorInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyViewHistorian extends DummyActor {
     

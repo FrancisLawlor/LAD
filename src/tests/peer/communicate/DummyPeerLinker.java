@@ -7,8 +7,8 @@ import core.PeerToPeerActorInit;
 import core.UniversalId;
 import peer.graph.weight.Weight;
 import peer.graph.weight.WeighterInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyPeerLinker extends DummyActor {
     @Override

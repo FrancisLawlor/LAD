@@ -1,4 +1,4 @@
-package tests.actors;
+package tests.core;
 
 import java.util.ArrayList;
 import java.util.Iterator;

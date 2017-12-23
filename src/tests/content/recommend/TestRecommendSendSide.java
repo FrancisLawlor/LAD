@@ -9,8 +9,8 @@ import core.PeerToPeerActorInit;
 import core.UniversalId;
 import peer.graph.weight.Weight;
 import peer.graph.weight.WeighterInit;
-import tests.actors.AsynchronousLogger;
-import tests.actors.DummyInit;
+import tests.core.AsynchronousLogger;
+import tests.core.DummyInit;
 
 @SuppressWarnings("unused")
 public class TestRecommendSendSide {

@@ -19,8 +19,8 @@ import peer.communicate.PeerRetrieveContentRequestProcessor;
 import peer.communicate.PeerWeightUpdateRequestProcessor;
 import peer.communicate.RetrievedContentProcessor;
 import peer.graph.link.PeerLinker;
-import tests.actors.AsynchronousLogger;
-import tests.actors.DummyInit;
+import tests.core.AsynchronousLogger;
+import tests.core.DummyInit;
 
 @SuppressWarnings("unused")
 public class TestCommunicatorsSideReceive {

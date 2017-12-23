@@ -9,8 +9,8 @@ import content.recommend.heuristic.DeterministicAggregationHeuristic;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyRecommenderForAggregatorTest extends DummyActor {
     

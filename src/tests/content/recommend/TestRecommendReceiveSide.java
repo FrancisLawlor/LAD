@@ -8,8 +8,8 @@ import content.recommend.Recommender;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
-import tests.actors.AsynchronousLogger;
-import tests.actors.DummyInit;
+import tests.core.AsynchronousLogger;
+import tests.core.DummyInit;
 
 public class TestRecommendReceiveSide {
     public static void main(String[] args) throws Exception {

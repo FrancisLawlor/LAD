@@ -5,8 +5,8 @@ import akka.actor.Props;
 import content.recommend.PeerRecommendationRequest;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyRecommender extends DummyActor {
     @Override

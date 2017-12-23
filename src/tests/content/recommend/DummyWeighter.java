@@ -7,8 +7,8 @@ import peer.graph.weight.Weight;
 import peer.graph.weight.WeightRequest;
 import peer.graph.weight.WeightResponse;
 import peer.graph.weight.WeighterInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyWeighter extends DummyActor {
     private UniversalId linkedPeerId;

@@ -7,8 +7,8 @@ import content.recommend.Recommender;
 import core.ActorNames;
 import core.PeerToPeerActorInit;
 import core.UniversalId;
-import tests.actors.AsynchronousLogger;
-import tests.actors.DummyInit;
+import tests.core.AsynchronousLogger;
+import tests.core.DummyInit;
 
 @SuppressWarnings("unused")
 public class TestPeerRecommendationAggregator {

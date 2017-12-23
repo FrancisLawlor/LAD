@@ -9,8 +9,8 @@ import content.recommend.PeerRecommendation;
 import content.recommend.PeerRecommendationRequest;
 import core.ActorPaths;
 import core.PeerToPeerActorInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyOutboundCommunicator extends DummyActor {
     private List<Content> contentListPeerTwo;

@@ -6,8 +6,8 @@ import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
 import core.ActorPaths;
 import core.PeerToPeerActorInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyViewer extends DummyActor {
     
