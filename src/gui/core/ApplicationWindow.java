@@ -1,20 +1,20 @@
 package gui.core;
 
-import akka.actor.ActorRef;
-import core.UniversalId;
 import javafx.application.Application;
 import javafx.stage.Stage;
-import peer.actorsystem.PeerToPeerActorSystem;
+import peer.core.PeerToPeerActorSystem;
+import peer.core.UniversalId;
+import peer.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
 public class ApplicationWindow extends Application {
-    private static UniversalId id = new UniversalId("Test");
+    private static UniversalId id;
     private static PeerToPeerActorSystem actorSystem;
-    private static ActorRef viewer;
+    private static ViewerToUIChannel viewerChannel;
     
     public void start(Stage stage) {
-    		StateMachine stateMachine = new StateMachine(id, viewer);
+    		StateMachine stateMachine = new StateMachine(viewerChannel);
     		
     		stateMachine.setCurrentState(StateName.START.toString());
     		
@@ -22,9 +22,10 @@ public class ApplicationWindow extends Application {
 	}
     
     public static void main(String[] args) throws Exception {
+        id = new UniversalId("localhost:10001");
         actorSystem = new PeerToPeerActorSystem(id);
         actorSystem.createActors();
-        viewer = actorSystem.getViewer();
+        viewerChannel = actorSystem.getViewerChannel();
         
         launch(args);
     }

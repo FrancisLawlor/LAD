@@ -1,4 +1,4 @@
-package core;
+package peer.core;
 
 public class PeerToPeerRequest extends ActorMessage {
     private UniversalId origin;

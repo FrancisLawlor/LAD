@@ -1,8 +1,8 @@
 package peer.graph.weight;
 
-import core.ActorMessageType;
-import core.PeerToPeerRequest;
-import core.UniversalId;
+import peer.core.ActorMessageType;
+import peer.core.PeerToPeerRequest;
+import peer.core.UniversalId;
 
 /**
  * Sends Update request to the other peer in the theoretical peer to peer link

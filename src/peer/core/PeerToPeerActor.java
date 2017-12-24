@@ -1,4 +1,4 @@
-package core;
+package peer.core;
 
 import akka.actor.UntypedActor;
 

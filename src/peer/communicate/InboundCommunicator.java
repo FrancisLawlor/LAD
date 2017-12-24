@@ -5,13 +5,13 @@ import content.recommend.PeerRecommendation;
 import content.recommend.PeerRecommendationRequest;
 import content.retrieve.PeerRetrieveContentRequest;
 import content.retrieve.RetrievedContent;
-import core.ActorPaths;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import core.xcept.RequestCommunicationOriginPeerIdMismatchException;
-import core.xcept.RequestCommunicationTargetPeerIdMismatchException;
-import core.xcept.UnknownMessageException;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import peer.core.xcept.RequestCommunicationOriginPeerIdMismatchException;
+import peer.core.xcept.RequestCommunicationTargetPeerIdMismatchException;
+import peer.core.xcept.UnknownMessageException;
 import peer.graph.weight.PeerWeightUpdateRequest;
 
 /**

@@ -1,6 +1,6 @@
-package core.xcept;
+package peer.core.xcept;
 
-import core.UniversalId;
+import peer.core.UniversalId;
 
 /**
  * Exception thrown when using the same temporary delegated actor...

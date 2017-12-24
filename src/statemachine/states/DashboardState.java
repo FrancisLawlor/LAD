@@ -1,13 +1,12 @@
 package statemachine.states;
 
-import java.util.concurrent.BlockingQueue;
-
-import content.impl.Content;
+import content.core.Content;
 import content.recommend.RecommendationsForUser;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
 import javafx.scene.control.ListView;
+import peer.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
@@ -15,13 +14,13 @@ public class DashboardState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
-    BlockingQueue<RecommendationsForUser> recommendationsQueue;
+	private ViewerToUIChannel viewer;
 	
-	public DashboardState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, BlockingQueue<RecommendationsForUser> queue) {
+	public DashboardState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, ViewerToUIChannel viewer) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
-        this.recommendationsQueue = queue;
+		this.viewer = viewer;
 	}
 
 	public void execute(StateName param) {
@@ -65,7 +64,7 @@ public class DashboardState extends State {
 	    ListView<Content> viewList = this.gui.getDashBoardScene().getListView();
 	    viewList.getItems().clear();
         try {
-            RecommendationsForUser recommendations = recommendationsQueue.take();
+            RecommendationsForUser recommendations = this.viewer.getRecommendations();
             for (Content content : recommendations) {
                 viewList.getItems().add(content);
             }

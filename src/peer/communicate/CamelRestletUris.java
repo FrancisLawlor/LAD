@@ -1,7 +1,7 @@
 package peer.communicate;
 
-import core.UniversalId;
-import core.UniversalIdResolver;
+import peer.core.UniversalId;
+import peer.core.UniversalIdResolver;
 
 /**
  * Formats UniversalIDs to Apache Camel URIs

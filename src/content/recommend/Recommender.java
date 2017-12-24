@@ -5,12 +5,12 @@ import akka.actor.ActorSelection;
 import akka.actor.Props;
 import content.recommend.heuristic.WeightedProbabilityAggregationHeuristic;
 import content.recommend.heuristic.WeightedProbabilityHistoryHeuristic;
-import core.ActorNames;
-import core.ActorPaths;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import core.xcept.UnknownMessageException;
+import peer.core.ActorNames;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import peer.core.xcept.UnknownMessageException;
 
 /**
  * Receives requests for Recommendations For User from the viewer

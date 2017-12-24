@@ -2,9 +2,9 @@ package tests.peer.communicate;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import core.ActorNames;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
+import peer.core.ActorNames;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
 import peer.graph.weight.Weight;
 import peer.graph.weight.WeighterInit;
 import tests.core.DummyActor;

@@ -1,19 +1,19 @@
 package tests.gui.core;
 
-import akka.actor.ActorRef;
-import core.UniversalId;
 import javafx.application.Application;
 import javafx.stage.Stage;
+import peer.core.UniversalId;
+import peer.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
 public class TestApplicationWindow1 extends Application {
     private static UniversalId id;
     private static TestPeerToPeerActorSystem1 actorSystem;
-    private static ActorRef viewer;
+    private static ViewerToUIChannel viewerChannel;
     
     public void start(Stage stage) {
-            StateMachine stateMachine = new StateMachine(id, viewer);
+            StateMachine stateMachine = new StateMachine(viewerChannel);
             
             stateMachine.setCurrentState(StateName.START.toString());
             
@@ -24,7 +24,7 @@ public class TestApplicationWindow1 extends Application {
         id = new UniversalId("localhost:10001");
         actorSystem = new TestPeerToPeerActorSystem1(id);
         actorSystem.createActors();
-        viewer = actorSystem.getViewer();
+        viewerChannel = actorSystem.getViewerChannel();
         
         launch(args);
     }

@@ -1,4 +1,4 @@
-package core;
+package peer.core;
 
 /**
  * Superclass for all Actor Messages

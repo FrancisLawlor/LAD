@@ -1,4 +1,4 @@
-package core;
+package peer.core;
 
 /**
  * Resolves UniversalIds to Apache Camel URIs

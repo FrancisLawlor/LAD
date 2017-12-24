@@ -5,7 +5,7 @@ import java.util.List;
 
 import akka.actor.ActorRef;
 import akka.actor.UntypedActor;
-import content.impl.Content;
+import content.core.Content;
 import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
 

@@ -1,4 +1,4 @@
-package core;
+package peer.core;
 
 public class ActorNames {
     public static final String VIEWER = "viewer";

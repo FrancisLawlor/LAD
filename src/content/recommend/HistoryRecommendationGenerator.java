@@ -4,17 +4,17 @@ package content.recommend;
 import java.util.List;
 
 import akka.actor.ActorSelection;
-import content.impl.Content;
+import content.core.Content;
 import content.recommend.heuristic.HistoryHeuristic;
 import content.view.ViewHistoryRequest;
 import content.view.ViewHistoryResponse;
-import core.ActorPaths;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import core.xcept.PeerRecommendationRequestIdMismatchException;
-import core.xcept.UnknownMessageException;
-import core.xcept.WrongPeerIdException;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import peer.core.xcept.PeerRecommendationRequestIdMismatchException;
+import peer.core.xcept.UnknownMessageException;
+import peer.core.xcept.WrongPeerIdException;
 
 /**
  * Generates Recommendation from this peer based on View History

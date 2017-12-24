@@ -1,4 +1,4 @@
-package content.impl;
+package content.core;
 
 /**
  * Contains information about a piece of content

@@ -3,10 +3,10 @@ package content.view;
 import java.util.List;
 
 import akka.actor.ActorSelection;
-import core.ActorPaths;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.xcept.UnknownMessageException;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.xcept.UnknownMessageException;
 
 /**
  * Keeps a record of the view history

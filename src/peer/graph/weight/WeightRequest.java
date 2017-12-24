@@ -1,8 +1,8 @@
 package peer.graph.weight;
 
-import core.ActorMessage;
-import core.ActorMessageType;
-import core.UniversalId;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
+import peer.core.UniversalId;
 
 /**
  * Actor Message that requests a Weighter's Weight

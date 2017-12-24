@@ -1,6 +1,6 @@
-package core.xcept;
+package peer.core.xcept;
 
-import core.UniversalId;
+import peer.core.UniversalId;
 
 /**
  * Exception thrown when RequestCommunication subclass has wrong originating requester peer ID

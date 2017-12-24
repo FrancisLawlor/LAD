@@ -1,8 +1,8 @@
 package content.recommend;
 
 import content.recommend.heuristic.AggregationHeuristic;
-import core.ActorMessage;
-import core.ActorMessageType;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
 
 /**
  * Initialises the PeerRecommendationAggregator with its heuristic

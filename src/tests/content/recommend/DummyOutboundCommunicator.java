@@ -4,11 +4,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import akka.actor.ActorSelection;
-import content.impl.Content;
+import content.core.Content;
 import content.recommend.PeerRecommendation;
 import content.recommend.PeerRecommendationRequest;
-import core.ActorPaths;
-import core.PeerToPeerActorInit;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

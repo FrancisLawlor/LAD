@@ -1,6 +1,6 @@
-package core.xcept;
+package peer.core.xcept;
 
-import core.UniversalId;
+import peer.core.UniversalId;
 
 /**
  * Exception if a peer tries to update its weighted linked incorrectly

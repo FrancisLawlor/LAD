@@ -6,11 +6,11 @@ import java.util.Set;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import core.ActorNames;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import core.xcept.UnknownMessageException;
+import peer.core.ActorNames;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import peer.core.xcept.UnknownMessageException;
 import peer.graph.weight.Weighter;
 import peer.graph.weight.WeighterInit;
 

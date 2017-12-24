@@ -1,4 +1,4 @@
-package core.xcept;
+package peer.core.xcept;
 
 public class UnknownMessageException extends RuntimeException {
     private static final long serialVersionUID = -2601642573950644996L;

@@ -4,7 +4,7 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import content.impl.Content;
+import content.core.Content;
 import content.view.ContentView;
 import content.view.ViewHistoryResponse;
 

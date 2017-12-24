@@ -1,9 +1,9 @@
 package tests.peer.graph;
 
 import akka.actor.ActorSelection;
-import core.ActorPaths;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
 import peer.graph.link.PeerLinkAddition;
 import peer.graph.link.PeerLinkExistenceRequest;
 import peer.graph.link.PeerLinkExistenceResponse;

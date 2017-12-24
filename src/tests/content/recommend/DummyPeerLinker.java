@@ -2,9 +2,9 @@ package tests.content.recommend;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import core.ActorNames;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
+import peer.core.ActorNames;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
 import peer.graph.link.PeerLinkResponse;
 import peer.graph.link.PeerLinksRequest;
 import peer.graph.weight.Weight;

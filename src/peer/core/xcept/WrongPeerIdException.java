@@ -1,6 +1,6 @@
-package core.xcept;
+package peer.core.xcept;
 
-import core.UniversalId;
+import peer.core.UniversalId;
 
 public class WrongPeerIdException extends RuntimeException {
     private static final long serialVersionUID = -6222170757936689434L;

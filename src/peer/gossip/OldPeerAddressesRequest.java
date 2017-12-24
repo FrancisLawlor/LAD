@@ -1,7 +1,7 @@
 package peer.gossip;
 
-import core.ActorMessage;
-import core.ActorMessageType;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
 
 public class OldPeerAddressesRequest extends ActorMessage {
     public OldPeerAddressesRequest() {

@@ -1,8 +1,8 @@
 package tests.content.recommend;
 
 import akka.actor.ActorRef;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
 import peer.graph.weight.Weight;
 import peer.graph.weight.WeightRequest;
 import peer.graph.weight.WeightResponse;

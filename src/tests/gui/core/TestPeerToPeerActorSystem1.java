@@ -1,42 +1,31 @@
 package tests.gui.core;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
+
 import org.apache.camel.CamelContext;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import content.recommend.RecommendationsForUser;
+import content.retrieve.RetrievedContent;
 import content.view.Viewer;
-import core.ActorNames;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
+import content.view.ViewerInit;
+import peer.core.ActorNames;
+import peer.core.PeerToPeerActorInit;
+import peer.core.PeerToPeerActorSystem;
+import peer.core.UniversalId;
+import peer.core.ViewerToUIChannel;
 
 @SuppressWarnings("unused")
-public class TestPeerToPeerActorSystem1 {
-    protected UniversalId peerId;
-    protected ActorSystem actorSystem;
-    protected CamelContext camelContext;
-    protected ActorRef viewer;
-    
-    public TestPeerToPeerActorSystem1(UniversalId peerId) {        
-        actorSystem = ActorSystem.create("ContentSystem");
+public class TestPeerToPeerActorSystem1 extends PeerToPeerActorSystem {    
+    public TestPeerToPeerActorSystem1(UniversalId peerId) {
+        super(peerId);
     }
     
-    public void createActors() throws Exception {
-        initialiseViewingSystem();
-        initialiseRecommendingSystem();
-    }
-    
-    public ActorRef getViewer() {
-        return this.viewer;
-    }
-    
-    protected void initialiseViewingSystem() throws Exception {
-        viewer = actorSystem.actorOf(Props.create(Viewer.class), ActorNames.VIEWER);
-        PeerToPeerActorInit viewerActorInit = new PeerToPeerActorInit(peerId, ActorNames.VIEWER);
-        viewer.tell(viewerActorInit, null);
-    }
-    
+    @Override
     protected void initialiseRecommendingSystem() throws Exception {
-        final ActorRef recommender = actorSystem.actorOf(Props.create(DummyRecommender.class), ActorNames.RECOMMENDER);
+        final ActorRef recommender = this.actorSystem.actorOf(Props.create(DummyRecommender.class), ActorNames.RECOMMENDER);
     }
 }

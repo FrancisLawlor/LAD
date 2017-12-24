@@ -5,9 +5,9 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import content.recommend.PeerRecommendationRequest;
 import content.recommend.Recommender;
-import core.ActorNames;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
+import peer.core.ActorNames;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
 import tests.core.ActorTestLogger;
 import tests.core.DummyInit;
 

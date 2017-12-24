@@ -1,8 +1,8 @@
 package peer.gossip;
 
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.xcept.UnknownMessageException;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.xcept.UnknownMessageException;
 
 /**
  * Gossiper Actor

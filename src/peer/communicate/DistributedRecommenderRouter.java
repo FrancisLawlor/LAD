@@ -3,7 +3,7 @@ package peer.communicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
-import core.UniversalId;
+import peer.core.UniversalId;
 
 /**
  * Describes Route information for Apache Camel

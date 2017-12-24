@@ -7,10 +7,10 @@ import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
 import content.retrieve.LocalRetrieveContentRequest;
 import content.retrieve.RetrievedContent;
-import core.ActorPaths;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.xcept.UnknownMessageException;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.xcept.UnknownMessageException;
 
 /**
  * Handles view related matters
@@ -21,6 +21,7 @@ import core.xcept.UnknownMessageException;
  */
 public class Viewer extends PeerToPeerActor {
     private BlockingQueue<RecommendationsForUser> recommendationsQueue;
+    private BlockingQueue<RetrievedContent> retrievedContentQueue;
     
     /**
      * Actor Message Processing
@@ -34,6 +35,7 @@ public class Viewer extends PeerToPeerActor {
         else if (message instanceof ViewerInit) {
             ViewerInit init = (ViewerInit) message;
             this.recommendationsQueue = init.getRecommendationsQueue();
+            this.retrievedContentQueue = init.getRetrievedContentQueue();
         }
         else if (message instanceof RecommendationsForUserRequest) {
             RecommendationsForUserRequest request = (RecommendationsForUserRequest) message;
@@ -86,8 +88,8 @@ public class Viewer extends PeerToPeerActor {
      * Send Retrieved Content for User to State Machine Controller
      * @param content
      */
-    protected void processRetrievedContent(RetrievedContent content) {
-        
+    protected void processRetrievedContent(RetrievedContent retrievedContent) {
+        this.retrievedContentQueue.add(retrievedContent);
     }
     
 }

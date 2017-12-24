@@ -1,4 +1,4 @@
-package core.xcept;
+package peer.core.xcept;
 
 public class InitialisationException extends RuntimeException {
     private static final long serialVersionUID = 6137401507843655018L;

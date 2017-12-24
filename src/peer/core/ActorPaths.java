@@ -1,4 +1,4 @@
-package core;
+package peer.core;
 
 public class ActorPaths {
     public static final String absolutePath = "/user/";

@@ -3,7 +3,7 @@ package content.recommend.heuristic;
 import java.util.LinkedList;
 import java.util.List;
 
-import content.impl.Content;
+import content.core.Content;
 import content.recommend.PeerRecommendation;
 import content.recommend.RecommendationsForUser;
 import content.recommend.WeightedPeerRecommendation;

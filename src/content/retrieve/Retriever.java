@@ -1,10 +1,10 @@
 package content.retrieve;
 
 import akka.actor.ActorSelection;
-import core.ActorPaths;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.xcept.UnknownMessageException;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.xcept.UnknownMessageException;
 
 /**
  * Retrieves Content from network for requester
@@ -21,18 +21,15 @@ public class Retriever extends PeerToPeerActor {
             super.initialisePeerToPeerActor(init);
         }
         else if (message instanceof LocalRetrieveContentRequest) {
-            LocalRetrieveContentRequest retrievedContentRequest = 
-                    (LocalRetrieveContentRequest) message;
+            LocalRetrieveContentRequest retrievedContentRequest = (LocalRetrieveContentRequest) message;
             this.processLocalRetrieveContentRequest(retrievedContentRequest);
         }
         else if (message instanceof LocalRetrieveContentRequest) {
-            PeerRetrieveContentRequest retrievedContentRequest = 
-                    (PeerRetrieveContentRequest) message;
+            PeerRetrieveContentRequest retrievedContentRequest = (PeerRetrieveContentRequest) message;
             this.processPeerRetrieveContentRequest(retrievedContentRequest);
         }
         else if (message instanceof RetrievedContent) {
-            RetrievedContent retrievedContent = 
-                    (RetrievedContent) message;
+            RetrievedContent retrievedContent = (RetrievedContent) message;
             this.processRetrievedContent(retrievedContent);
         }
         else {

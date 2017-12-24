@@ -3,10 +3,10 @@ package content.recommend;
 import java.util.Iterator;
 import java.util.List;
 
-import content.impl.Content;
-import core.ActorMessageType;
-import core.PeerToPeerRequest;
-import core.UniversalId;
+import content.core.Content;
+import peer.core.ActorMessageType;
+import peer.core.PeerToPeerRequest;
+import peer.core.UniversalId;
 
 /**
  * Curated List of Content a peer is recommending back to the requesting peer

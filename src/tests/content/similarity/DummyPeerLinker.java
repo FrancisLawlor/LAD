@@ -1,6 +1,6 @@
 package tests.content.similarity;
 
-import core.PeerToPeerActorInit;
+import peer.core.PeerToPeerActorInit;
 import peer.graph.link.PeerLinkAddition;
 import peer.graph.link.PeerLinkExistenceRequest;
 import tests.core.DummyActor;

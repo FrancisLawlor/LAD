@@ -3,9 +3,9 @@ package content.recommend;
 import java.util.Iterator;
 import java.util.List;
 
-import content.impl.Content;
-import core.ActorMessage;
-import core.ActorMessageType;
+import content.core.Content;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
 
 /**
  * Contains Curated Aggregated Content Recommendations from other peers

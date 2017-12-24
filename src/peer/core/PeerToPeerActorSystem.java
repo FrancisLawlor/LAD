@@ -1,4 +1,7 @@
-package peer.actorsystem;
+package peer.core;
+
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.BlockingQueue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -6,16 +9,17 @@ import org.apache.camel.impl.DefaultCamelContext;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import content.recommend.RecommendationsForUser;
 import content.recommend.Recommender;
+import content.retrieve.RetrievedContent;
 import content.retrieve.Retriever;
 import content.view.ViewHistorian;
 import content.view.Viewer;
-import core.ActorNames;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
+import content.view.ViewerInit;
 import peer.communicate.DistributedRecommenderRouter;
 import peer.communicate.InboundCommunicator;
 import peer.communicate.OutboundCommInit;
+import peer.communicate.OutboundCommunicator;
 import peer.communicate.PeerRecommendationProcessor;
 import peer.communicate.PeerRecommendationRequestProcessor;
 import peer.communicate.PeerRetrieveContentRequestProcessor;
@@ -32,14 +36,15 @@ public class PeerToPeerActorSystem {
     protected UniversalId peerId;
     protected ActorSystem actorSystem;
     protected CamelContext camelContext;
-    protected ActorRef viewer;
+    protected ViewerToUIChannel channel;
     
     /**
      * Initialises the Actor System and Camel Communication System for this Peer
      * @param args
      */
-    public PeerToPeerActorSystem(UniversalId peerId) {        
-        actorSystem = ActorSystem.create("ContentSystem");
+    public PeerToPeerActorSystem(UniversalId peerId) {
+        this.peerId = peerId;
+        this.actorSystem = ActorSystem.create("ContentSystem");
     }
     
     public void createActors() throws Exception {
@@ -50,8 +55,8 @@ public class PeerToPeerActorSystem {
         initialiseRetrievingSystem();
     }
     
-    public ActorRef getViewer() {
-        return this.viewer;
+    public ViewerToUIChannel getViewerChannel() {
+        return this.channel;
     }
     
     /**
@@ -60,29 +65,36 @@ public class PeerToPeerActorSystem {
      * @throws Exception
      */
     protected void initialiseViewingSystem() throws Exception {
-        viewer = actorSystem.actorOf(Props.create(Viewer.class), ActorNames.VIEWER);
+        ActorRef viewer = this.actorSystem.actorOf(Props.create(Viewer.class), ActorNames.VIEWER);
         PeerToPeerActorInit viewerActorInit = new PeerToPeerActorInit(peerId, ActorNames.VIEWER);
         viewer.tell(viewerActorInit, null);
         
-        final ActorRef viewHistorian = actorSystem.actorOf(Props.create(ViewHistorian.class), ActorNames.VIEW_HISTORIAN);
+        BlockingQueue<RecommendationsForUser> recommendationsQueue = new ArrayBlockingQueue<RecommendationsForUser>(10);
+        BlockingQueue<RetrievedContent> retrievedContentQueue = new ArrayBlockingQueue<RetrievedContent>(10);
+        this.channel = new ViewerToUIChannel(this.peerId, viewer, recommendationsQueue, retrievedContentQueue);
+        
+        ViewerInit viewerInit = new ViewerInit(recommendationsQueue, retrievedContentQueue);
+        viewer.tell(viewerInit, null);
+        
+        final ActorRef viewHistorian = this.actorSystem.actorOf(Props.create(ViewHistorian.class), ActorNames.VIEW_HISTORIAN);
         PeerToPeerActorInit viewHistorianInit = new PeerToPeerActorInit(peerId, ActorNames.VIEW_HISTORIAN);
         viewHistorian.tell(viewHistorianInit, null);
     }
     
     protected void initialiseCommunicationSystem() throws Exception {
-        final ActorRef inboundCommunicator = actorSystem.actorOf(Props.create(InboundCommunicator.class), ActorNames.INBOUND_COMM);
+        final ActorRef inboundCommunicator = this.actorSystem.actorOf(Props.create(InboundCommunicator.class), ActorNames.INBOUND_COMM);
         PeerToPeerActorInit inboundInit = new PeerToPeerActorInit(peerId, ActorNames.INBOUND_COMM);
         inboundCommunicator.tell(inboundInit, null);
         
-        camelContext = getCamelContext(inboundCommunicator);
+        this.camelContext = getCamelContext(inboundCommunicator);
         
-        final ActorRef outboundCommunicator = actorSystem.actorOf(Props.create(InboundCommunicator.class), ActorNames.INBOUND_COMM);
+        final ActorRef outboundCommunicator = this.actorSystem.actorOf(Props.create(OutboundCommunicator.class), ActorNames.OUTBOUND_COMM);
         PeerToPeerActorInit outboundInit = new PeerToPeerActorInit(peerId, ActorNames.OUTBOUND_COMM);
         OutboundCommInit outboundCommInit = new OutboundCommInit(camelContext);
         outboundCommunicator.tell(outboundInit, null);
         outboundCommunicator.tell(outboundCommInit, null);
         
-        camelContext.start();
+        this.camelContext.start();
     }
     
     protected CamelContext getCamelContext(ActorRef inboundComm) throws Exception {
@@ -122,13 +134,13 @@ public class PeerToPeerActorSystem {
     }
     
     protected void initialiseRecommendingSystem() throws Exception {
-        final ActorRef recommender = actorSystem.actorOf(Props.create(Recommender.class), ActorNames.RECOMMENDER);
+        final ActorRef recommender = this.actorSystem.actorOf(Props.create(Recommender.class), ActorNames.RECOMMENDER);
         PeerToPeerActorInit recommenderInit = new PeerToPeerActorInit(peerId, ActorNames.RECOMMENDER);
         recommender.tell(recommenderInit, null);
     }
     
     protected void initialiseRetrievingSystem() throws Exception {
-        final ActorRef retriever = actorSystem.actorOf(Props.create(Retriever.class), ActorNames.RETRIEVER);
+        final ActorRef retriever = this.actorSystem.actorOf(Props.create(Retriever.class), ActorNames.RETRIEVER);
         PeerToPeerActorInit retrieverInit = new PeerToPeerActorInit(peerId, ActorNames.RETRIEVER);
         retriever.tell(retrieverInit, null);
     }

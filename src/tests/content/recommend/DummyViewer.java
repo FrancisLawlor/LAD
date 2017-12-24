@@ -1,11 +1,11 @@
 package tests.content.recommend;
 
 import akka.actor.ActorSelection;
-import content.impl.Content;
+import content.core.Content;
 import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
-import core.ActorPaths;
-import core.PeerToPeerActorInit;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 import tests.core.StartTest;

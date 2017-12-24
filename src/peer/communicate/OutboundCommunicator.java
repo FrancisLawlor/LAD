@@ -9,10 +9,10 @@ import content.recommend.PeerRecommendation;
 import content.recommend.PeerRecommendationRequest;
 import content.retrieve.PeerRetrieveContentRequest;
 import content.retrieve.RetrievedContent;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import core.xcept.UnknownMessageException;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import peer.core.xcept.UnknownMessageException;
 import peer.graph.weight.PeerWeightUpdateRequest;
 
 /**

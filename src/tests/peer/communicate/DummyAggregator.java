@@ -1,8 +1,8 @@
 package tests.peer.communicate;
 
-import content.impl.Content;
+import content.core.Content;
 import content.recommend.PeerRecommendation;
-import core.PeerToPeerActorInit;
+import peer.core.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

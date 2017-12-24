@@ -2,7 +2,7 @@ package tests.peer.communicate;
 
 import content.retrieve.PeerRetrieveContentRequest;
 import content.retrieve.RetrievedContent;
-import core.PeerToPeerActorInit;
+import peer.core.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

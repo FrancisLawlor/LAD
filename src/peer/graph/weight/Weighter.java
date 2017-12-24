@@ -2,14 +2,14 @@ package peer.graph.weight;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
-import core.ActorPaths;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import core.xcept.UnknownMessageException;
-import core.xcept.WeightRequestPeerIdMismatchException;
-import core.xcept.WeightUpdateRequestPeerIdMismatchException;
-import core.xcept.WrongPeerIdException;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import peer.core.xcept.UnknownMessageException;
+import peer.core.xcept.WeightRequestPeerIdMismatchException;
+import peer.core.xcept.WeightUpdateRequestPeerIdMismatchException;
+import peer.core.xcept.WrongPeerIdException;
 
 /**
  * Represents a theoretical weight of a link between the local user and a remote peer
