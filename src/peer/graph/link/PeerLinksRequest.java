@@ -1,7 +1,7 @@
 package peer.graph.link;
 
-import core.ActorMessage;
-import core.ActorMessageType;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
 
 /**
  * Actor message requesting Peer IDs from 

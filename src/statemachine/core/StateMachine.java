@@ -1,12 +1,11 @@
 package statemachine.core;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
-import content.impl.Content;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
+import peer.core.ViewerToUIChannel;
 import statemachine.states.AddFileState;
 import statemachine.states.DashboardState;
 import statemachine.states.RatingState;
@@ -25,10 +24,10 @@ public class StateMachine {
 	SceneContainerStage containerStage = new SceneContainerStage();
 	GUI gui = new GUI(containerStage);
 	
-	public StateMachine() {
+	public StateMachine(ViewerToUIChannel viewer) {	    
 		stateMap.put(StateName.START.toString(), new StartState(this, containerStage, gui));
 		stateMap.put(StateName.SETUP.toString(), new SetupState(this, containerStage, gui));
-		stateMap.put(StateName.RETRIEVE_RECOMMENDATIONS.toString(), new RetrieveRecommendationsState(this, containerStage, gui));
+		stateMap.put(StateName.RETRIEVE_RECOMMENDATIONS.toString(), new RetrieveRecommendationsState(this, containerStage, gui, viewer));
 		stateMap.put(StateName.DASHBOARD.toString(), new DashboardState(this, containerStage, gui));
 		stateMap.put(StateName.ADD_FILE.toString(), new AddFileState(this, containerStage, gui));
 		stateMap.put(StateName.RETRIEVE_FILE_QUERY.toString(), new RetrieveFileQueryState(this, containerStage, gui));
@@ -44,12 +43,4 @@ public class StateMachine {
 	public void execute(StateName param) {
 		stateMap.get(currentState).execute(param);
 	}
-	
-    public void setRecommendationsForUser(Iterator<Content> recommendations) {
-        
-    }
-    
-    public void setRetrievedContent(Content content) {
-        
-    }
 }

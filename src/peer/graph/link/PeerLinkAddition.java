@@ -1,8 +1,8 @@
 package peer.graph.link;
 
-import core.ActorMessage;
-import core.ActorMessageType;
-import core.UniversalId;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
+import peer.core.UniversalId;
 import peer.graph.weight.Weight;
 
 /**
@@ -16,6 +16,7 @@ public class PeerLinkAddition extends ActorMessage {
     public PeerLinkAddition(UniversalId peerId, Weight startingWeight) {
         super(ActorMessageType.PeerLinkAddition);
         this.peerId = peerId;
+        this.startingWeight = startingWeight;
     }
     
     public UniversalId getPeerId() {

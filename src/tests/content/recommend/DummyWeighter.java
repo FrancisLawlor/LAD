@@ -1,14 +1,14 @@
 package tests.content.recommend;
 
 import akka.actor.ActorRef;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
 import peer.graph.weight.Weight;
 import peer.graph.weight.WeightRequest;
 import peer.graph.weight.WeightResponse;
 import peer.graph.weight.WeighterInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyWeighter extends DummyActor {
     private UniversalId linkedPeerId;
@@ -38,7 +38,7 @@ public class DummyWeighter extends DummyActor {
         super.logger.logMessage("WeightRequest received at weighter representing link from " + super.peerId.toString() + " to " + this.linkedPeerId.toString());
         
         WeightResponse response = new WeightResponse(linkedPeerId, linkWeight);
-        super.logger.logMessage("Sending WeightResponse of weight: "+ linkWeight.getWeight() + " representing weight of link between " + super.peerId.toString() + " and " + this.linkedPeerId.toString());
+        super.logger.logMessage("Sending WeightResponse of weight: "+ linkWeight.getWeight() + " representing weight of link between " + super.peerId.toString() + " and " + this.linkedPeerId.toString() + "\n");
         ActorRef sender = getSender();
         sender.tell(response, getSelf());
     }

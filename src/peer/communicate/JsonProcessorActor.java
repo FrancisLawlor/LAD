@@ -1,25 +1,43 @@
 package peer.communicate;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 import com.google.gson.Gson;
 
-import core.PeerToPeerActor;
+import akka.actor.ActorRef;
 
 /**
  * Superclass for Apache Camel Processors of JSON
  *
  */
-public abstract class JsonProcessorActor extends PeerToPeerActor implements Processor {
-    protected static final String SUCCESS = "Message RECEIVED and Processing SUCCESSFUL at ";
-    protected static final String FAIL = "Message RECEIVED but Processing FAILED at ";
+public abstract class JsonProcessorActor implements Processor {
+    protected static final String SUCCESS = "Message RECEIVED and Processing SUCCESSFUL";
+    protected static final String FAIL = "Message RECEIVED but Processing FAILED";
     
     protected Gson gson;
+    protected ActorRef inboundCommunicator;
     
-    public JsonProcessorActor() {
+    public JsonProcessorActor(ActorRef inboundCommunicator) {
         this.gson = new Gson();
+        this.inboundCommunicator = inboundCommunicator;
     }
     
-    @Override
-    public void onReceive(Object object) { }
+    /**
+     * Processes the message exchange
+     */
+    public void process(Exchange exchange) {
+        try {
+            String exchangeMessage = exchange.getIn().getBody().toString();
+            
+            this.processSpecificMessage(exchangeMessage);
+            
+            exchange.getOut().setBody(SUCCESS);
+        }
+        catch (Exception e) {
+            exchange.getOut().setBody(FAIL);
+        }
+    }
+    
+    protected abstract void processSpecificMessage(String exchangeMessage);
 }

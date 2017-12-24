@@ -2,14 +2,14 @@ package peer.graph.weight;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
-import core.ActorPaths;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import core.xcept.UnknownMessageException;
-import core.xcept.WeightRequestPeerIdMismatchException;
-import core.xcept.WeightUpdateRequestPeerIdMismatchException;
-import core.xcept.WrongPeerIdException;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import peer.core.xcept.UnknownMessageException;
+import peer.core.xcept.WeightRequestPeerIdMismatchException;
+import peer.core.xcept.WeightUpdateRequestPeerIdMismatchException;
+import peer.core.xcept.WrongPeerIdException;
 
 /**
  * Represents a theoretical weight of a link between the local user and a remote peer
@@ -20,6 +20,10 @@ import core.xcept.WrongPeerIdException;
 public class Weighter extends PeerToPeerActor {
     private UniversalId linkedPeerId;
     private Weight linkWeight;
+    
+    public Weighter() {
+        this.linkWeight = new Weight();
+    }
     
     /**
      * Actor Message processing
@@ -33,7 +37,7 @@ public class Weighter extends PeerToPeerActor {
         else if (message instanceof WeighterInit) {
             WeighterInit init = (WeighterInit) message;
             this.linkedPeerId = init.getLinkedPeerId();
-            this.linkWeight = init.getInitialLinkWeight();
+            this.linkWeight.add(init.getInitialLinkWeight());
         }
         else if (message instanceof WeightRequest) {
             WeightRequest weightRequest = 
@@ -60,12 +64,12 @@ public class Weighter extends PeerToPeerActor {
      * @param weightRequest
      */
     protected void processWeightRequest(WeightRequest weightRequest) {
-        if (weightRequest.getPeerId().equals(this.linkedPeerId)) {
+        if (weightRequest.getLinkedPeerId().equals(this.linkedPeerId)) {
             WeightResponse weightResponse = new WeightResponse(linkedPeerId, this.linkWeight);
             ActorRef requester = getSender();
             requester.tell(weightResponse, getSelf());
         }
-        else throw new WeightRequestPeerIdMismatchException();
+        else throw new WeightRequestPeerIdMismatchException(weightRequest.getLinkedPeerId(), this.linkedPeerId);
     }
     
     /**
@@ -75,9 +79,11 @@ public class Weighter extends PeerToPeerActor {
      * @param updateRequest
      */
     protected void processLocalWeightUpdateRequest(LocalWeightUpdateRequest updateRequest) {
-        if (!this.linkedPeerId.equals(updateRequest.getLinkedPeerId())) throw new WeightUpdateRequestPeerIdMismatchException();
+        if (!this.linkedPeerId.equals(updateRequest.getLinkedPeerId())) 
+            throw new WeightUpdateRequestPeerIdMismatchException(updateRequest.getLinkedPeerId(), this.linkedPeerId);
+        
         Weight weight = updateRequest.getNewWeight();
-        this.linkWeight = weight;
+        this.linkWeight.add(weight);
         
         PeerWeightUpdateRequest request = new PeerWeightUpdateRequest(super.peerId, this.linkedPeerId, weight);
         ActorSelection communicator = getContext().actorSelection(ActorPaths.getPathToOutComm());
@@ -93,10 +99,10 @@ public class Weighter extends PeerToPeerActor {
     protected void processPeerWeightUpdateRequest(PeerWeightUpdateRequest updateRequest) {
         if (super.peerId.equals(updateRequest.getTargetPeerId())) {
             if (this.linkedPeerId.equals(updateRequest.getUpdateRequestingPeerId())) {
-                this.linkWeight = updateRequest.getNewWeight();
+                this.linkWeight.add(updateRequest.getNewWeight());
             }
-            else throw new WeightUpdateRequestPeerIdMismatchException();
+            else throw new WeightUpdateRequestPeerIdMismatchException(updateRequest.getUpdateRequestingPeerId(), this.linkedPeerId);
         }
-        else throw new WrongPeerIdException();
+        else throw new WrongPeerIdException(updateRequest.getTargetPeerId(), super.peerId);
     }
 }

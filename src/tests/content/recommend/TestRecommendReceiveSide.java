@@ -5,11 +5,11 @@ import akka.actor.ActorSystem;
 import akka.actor.Props;
 import content.recommend.PeerRecommendationRequest;
 import content.recommend.Recommender;
-import core.ActorNames;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import tests.actors.AsynchronousLogger;
-import tests.actors.DummyInit;
+import peer.core.ActorNames;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import tests.core.ActorTestLogger;
+import tests.core.DummyInit;
 
 public class TestRecommendReceiveSide {
     public static void main(String[] args) throws Exception {
@@ -18,7 +18,7 @@ public class TestRecommendReceiveSide {
         UniversalId peerTwoId = new UniversalId("Peer2");
         
         // Create logger and put in Init message
-        final AsynchronousLogger logger = new AsynchronousLogger();
+        final ActorTestLogger logger = new ActorTestLogger();
         DummyInit dummyInit = new DummyInit(logger);
         
         final ActorRef recommenderToTest = actSys.actorOf(Props.create(Recommender.class), ActorNames.RECOMMENDER);

@@ -1,9 +1,6 @@
 package peer.communicate;
 
-import org.apache.camel.Exchange;
-
-import akka.actor.ActorSelection;
-import core.ActorNames;
+import akka.actor.ActorRef;
 import peer.graph.weight.PeerWeightUpdateRequest;
 
 /**
@@ -15,18 +12,12 @@ import peer.graph.weight.PeerWeightUpdateRequest;
 public class PeerWeightUpdateRequestProcessor extends JsonProcessorActor {
     private PeerWeightUpdateRequest weightUpdateRequest;
     
-    public void process(Exchange exchange) {
-        try {
-            String exchangeMessage = exchange.getIn().getBody().toString();
-            weightUpdateRequest = super.gson.fromJson(exchangeMessage, PeerWeightUpdateRequest.class);
-            
-            ActorSelection inboundComm = getContext().actorSelection("user/" + ActorNames.INBOUND_COMM);
-            inboundComm.tell(weightUpdateRequest, getSelf());
-            
-            exchange.getOut().setBody(SUCCESS + super.peerId);
-        }
-        catch (Exception e) {
-            exchange.getOut().setBody(FAIL + super.peerId);
-        }
+    public PeerWeightUpdateRequestProcessor(ActorRef inboundCommunicator) {
+        super(inboundCommunicator);
+    }
+    
+    protected void processSpecificMessage(String exchangeMessage) {
+        this.weightUpdateRequest = super.gson.fromJson(exchangeMessage, PeerWeightUpdateRequest.class);
+        super.inboundCommunicator.tell(this.weightUpdateRequest, null);
     }
 }

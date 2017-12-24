@@ -1,8 +1,8 @@
 package peer.graph.weight;
 
-import core.ActorMessage;
-import core.ActorMessageType;
-import core.UniversalId;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
+import peer.core.UniversalId;
 
 /**
  * Sent locally after content processing to change peer to peer link weight

@@ -55,10 +55,8 @@ public class DashboardState extends State {
 	}
 	
 	private void refresh() {
-		// TODO
-		// get recommendations
-		// Possibly animation while getting recommendations
-		// Update observable list with new data.
+	    stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
+	    stateMachine.execute(StateName.INIT);
 	}
 
 }

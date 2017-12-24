@@ -42,5 +42,10 @@
 	<classpathentry kind="lib" path="lib/surefire-junit3-2.12.4.jar"/>
 	<classpathentry kind="lib" path="lib/xbean-reflect-3.4.jar"/>
 	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
+	<classpathentry kind="src" path=".apt_generated">
+		<attributes>
+			<attribute name="optional" value="true"/>
+		</attributes>
+	</classpathentry>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

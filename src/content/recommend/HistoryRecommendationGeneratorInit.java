@@ -1,9 +1,9 @@
 package content.recommend;
 
 import content.recommend.heuristic.HistoryHeuristic;
-import core.ActorMessage;
-import core.ActorMessageType;
-import core.UniversalId;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
+import peer.core.UniversalId;
 
 /**
  * Initialises the HistoryRecommendationGenerator with its heuristic

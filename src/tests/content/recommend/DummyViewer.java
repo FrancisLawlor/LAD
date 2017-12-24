@@ -1,13 +1,14 @@
 package tests.content.recommend;
 
 import akka.actor.ActorSelection;
-import content.impl.Content;
+import content.recommend.Recommendation;
 import content.recommend.RecommendationsForUser;
 import content.recommend.RecommendationsForUserRequest;
-import core.ActorPaths;
-import core.PeerToPeerActorInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActorInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
+import tests.core.StartTest;
 
 public class DummyViewer extends DummyActor {
     
@@ -30,10 +31,18 @@ public class DummyViewer extends DummyActor {
     }
     
     protected void processRecommendationsForUser(RecommendationsForUser recommendations) {
+        super.logger.logMessage("Received RecommendationsForUser in Viewer");
+        super.logger.logMessage("Message type: " + recommendations.getType().toString());
         int i = 1;
-        for (Content content : recommendations) {
-            super.logger.logMessage("Recommendation " + i++ + ": " + content.getFileName());
+        for (Recommendation recommendation : recommendations) {
+            super.logger.logMessage("Recommendation no. " + i++ + ":");
+            super.logger.logMessage("Content ID: " + recommendation.getContentId());
+            super.logger.logMessage("Content Name: " + recommendation.getContentName());
+            super.logger.logMessage("Content Type: " + recommendation.getContentType());
+            super.logger.logMessage("Content Length: " + recommendation.getContentLength());
+            super.logger.logMessage("");
         }
+        super.logger.logMessage("\n");
     }
     
     private void getRecommendationsForUser() {

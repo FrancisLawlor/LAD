@@ -3,6 +3,8 @@ package peer.communicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
+import peer.core.UniversalId;
+
 /**
  * Describes Route information for Apache Camel
  * Tells Apache Camel what component and protocol to use
@@ -12,15 +14,7 @@ import org.apache.camel.builder.RouteBuilder;
  *
  */
 public class DistributedRecommenderRouter extends RouteBuilder {
-    public static final String PEER_RECOMMENDATION_REQUEST = "/PeerRecommendationRequest";
-    public static final String PEER_RECOMMENDATION = "/PeerRecommendation";
-    public static final String PEER_RETRIEVE_CONTENT_REQUEST = "/PeerRetrieveContentRequest";
-    public static final String RETRIEVED_CONTENT = "/RetrievedContent";
-    public static final String PEER_WEIGHT_UPDATE_REQUEST = "/PeerWeightUpdateRequest";
-    
-    private String component;
-    private String protocol;
-    private String ipAndPort;
+    private UniversalId peerId;
     private Processor peerRecommendationRequestProcessor;
     private Processor peerRecommendationProcessor;
     private Processor peerRetrieveContentRequestProcessor;
@@ -28,16 +22,13 @@ public class DistributedRecommenderRouter extends RouteBuilder {
     private Processor peerWeightUpdateRequestProcessor;
     
     public DistributedRecommenderRouter(
-            String ip, 
-            String port, 
-            Processor peerRecommendationRequestProcessor, 
-            Processor peerRecommendationProcessor, 
-            Processor peerRetrieveContentRequestProcessor, 
-            Processor retrievedContentProcessor, 
-            Processor peerWeightUpdateRequestProcessor) {
-        this.component = "restlet:";
-        this.protocol = "http://";
-        this.ipAndPort = ip + ":" + port;
+            UniversalId peerId,
+            PeerRecommendationRequestProcessor peerRecommendationRequestProcessor, 
+            PeerRecommendationProcessor peerRecommendationProcessor, 
+            PeerRetrieveContentRequestProcessor peerRetrieveContentRequestProcessor, 
+            RetrievedContentProcessor retrievedContentProcessor, 
+            PeerWeightUpdateRequestProcessor peerWeightUpdateRequestProcessor) {
+        this.peerId = peerId;
         this.peerRecommendationRequestProcessor = peerRecommendationRequestProcessor;
         this.peerRecommendationProcessor = peerRecommendationProcessor;
         this.peerRetrieveContentRequestProcessor = peerRetrieveContentRequestProcessor;
@@ -46,23 +37,20 @@ public class DistributedRecommenderRouter extends RouteBuilder {
     }
     
     @Override
-    public void configure() {
-        String routedFrom = component + protocol + ipAndPort;
-        String method = "?restletMethod=post";
-        
-        from(routedFrom + PEER_RECOMMENDATION_REQUEST + method)
+    public void configure() {        
+        from(CamelRestletUris.getPeerRecommendationRequest(peerId))
         .process(this.peerRecommendationRequestProcessor);
         
-        from(routedFrom + PEER_RECOMMENDATION + method)
+        from(CamelRestletUris.getPeerRecommendation(peerId))
         .process(this.peerRecommendationProcessor);
         
-        from(routedFrom + PEER_RETRIEVE_CONTENT_REQUEST + method)
+        from(CamelRestletUris.getPeerRetrieveContentRequest(peerId))
         .process(this.peerRetrieveContentRequestProcessor);
         
-        from(routedFrom + RETRIEVED_CONTENT + method)
+        from(CamelRestletUris.getRetrievedContent(peerId))
         .process(this.retrievedContentProcessor);
         
-        from(routedFrom + PEER_WEIGHT_UPDATE_REQUEST + method)
+        from(CamelRestletUris.getPeerWeightUpdateRequest(peerId))
         .process(this.peerWeightUpdateRequestProcessor);
     }
 }

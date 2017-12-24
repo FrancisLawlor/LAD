@@ -1,8 +1,8 @@
 package content.view;
 
 import content.recommend.PeerRecommendationRequest;
-import core.ActorMessage;
-import core.ActorMessageType;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
 
 public class ViewHistoryRequest extends ActorMessage {
     private PeerRecommendationRequest originalRequest;

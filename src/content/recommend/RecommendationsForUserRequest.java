@@ -1,8 +1,8 @@
 package content.recommend;
 
-import core.ActorMessage;
-import core.ActorMessageType;
-import core.UniversalId;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
+import peer.core.UniversalId;
 
 /**
  * Requests Recommendations from a Recommender for a Viewer

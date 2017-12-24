@@ -2,8 +2,8 @@ package peer.communicate;
 
 import org.apache.camel.CamelContext;
 
-import core.ActorMessage;
-import core.ActorMessageType;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
 
 /**
  * Initialises the OutBound Communicator

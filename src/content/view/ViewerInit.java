@@ -1,22 +1,31 @@
 package content.view;
 
-import core.ActorMessage;
-import core.ActorMessageType;
-import statemachine.core.StateMachine;
+import java.util.concurrent.BlockingQueue;
+
+import content.recommend.RecommendationsForUser;
+import content.retrieve.RetrievedContent;
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
 
 /**
  * Actor Message that initialises viewer
  *
  */
 public class ViewerInit extends ActorMessage {
-    private StateMachine stateMachine;
+    private BlockingQueue<RecommendationsForUser> recommendationsQueue;
+    private BlockingQueue<RetrievedContent> retrievedContentQueue;
     
-    public ViewerInit(StateMachine stateMachine) {
+    public ViewerInit(BlockingQueue<RecommendationsForUser> recommendationsQueue, BlockingQueue<RetrievedContent> retrievedContentQueue) {
         super(ActorMessageType.ViewerInit);
-        this.stateMachine = stateMachine;
+        this.recommendationsQueue = recommendationsQueue;
+        this.retrievedContentQueue = retrievedContentQueue;
     }
     
-    public StateMachine getStateMachine() {
-        return this.stateMachine;
+    public BlockingQueue<RecommendationsForUser> getRecommendationsQueue() {
+        return this.recommendationsQueue;
+    }
+    
+    public BlockingQueue<RetrievedContent> getRetrievedContentQueue() {
+        return this.retrievedContentQueue;
     }
 }

@@ -1,6 +1,6 @@
 package gui.scenes;
 
-import content.impl.Content;
+import content.recommend.Recommendation;
 import gui.panes.DashBoardPane;
 import gui.utilities.GUIDimensions;
 import javafx.scene.Scene;
@@ -27,7 +27,7 @@ public class DashBoardScene extends Scene {
 		return this.dashBoardPane.getRefreshButton();
 	}
 	
-	public ListView<Content> getListView() {
+	public ListView<Recommendation> getListView() {
 		return this.dashBoardPane.getListView();
 	}
 }

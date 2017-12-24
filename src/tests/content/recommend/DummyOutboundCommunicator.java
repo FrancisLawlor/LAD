@@ -4,15 +4,19 @@ import java.util.LinkedList;
 import java.util.List;
 
 import akka.actor.ActorSelection;
-import content.impl.Content;
+import content.core.Content;
 import content.recommend.PeerRecommendation;
 import content.recommend.PeerRecommendationRequest;
-import core.ActorPaths;
-import core.PeerToPeerActorInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import content.recommend.Recommendation;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActorInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
 public class DummyOutboundCommunicator extends DummyActor {
+    private static final String PEER_TWO = "Peer2";
+    private static final String PEER_THREE = "Peer3";
+    private static final String PEER_FOUR = "Peer4";
     private List<Content> contentListPeerTwo;
     private List<Content> contentListPeerThree;
     private List<Content> contentListPeerFour;
@@ -54,28 +58,56 @@ public class DummyOutboundCommunicator extends DummyActor {
         ActorSelection aggregator = getContext().actorSelection(ActorPaths.getPathToAggregator());
         PeerRecommendation recommendation;
         
-        if (request.getOriginalTarget().toString().equals("Peer2")) {
-            super.logger.logMessage("Sending back fake recommendation from Peer2");
+        if (request.getOriginalTarget().toString().equals(PEER_TWO)) {
+            super.logger.logMessage("Sending back fake recommendation from " + PEER_TWO);
+            for (Content content : contentListPeerTwo) {
+                super.logger.logMessage("Content Id: " + content.getId());
+                super.logger.logMessage("Content Name: " + content.getFileName());
+                super.logger.logMessage("Content Type: " + content.getFileFormat());
+                super.logger.logMessage("Content Length: " + content.getViewLength());
+                super.logger.logMessage("");
+            }
             recommendation = new PeerRecommendation(contentListPeerTwo, request.getOriginalRequester(), request.getOriginalTarget());
             aggregator.tell(recommendation, getSelf());
         }
-        else if (request.getOriginalTarget().toString().equals("Peer3")) {
-            super.logger.logMessage("Sending back fake recommendation from Peer3");
+        else if (request.getOriginalTarget().toString().equals(PEER_THREE)) {
+            super.logger.logMessage("Sending back fake recommendation from " + PEER_THREE);
+            for (Content content : contentListPeerThree) {
+                super.logger.logMessage("Content Id: " + content.getId());
+                super.logger.logMessage("Content Name: " + content.getFileName());
+                super.logger.logMessage("Content Type: " + content.getFileFormat());
+                super.logger.logMessage("Content Length: " + content.getViewLength());
+                super.logger.logMessage("");
+            }
             recommendation = new PeerRecommendation(contentListPeerThree, request.getOriginalRequester(), request.getOriginalTarget());
             aggregator.tell(recommendation, getSelf());
         }
-        else if (request.getOriginalTarget().toString().equals("Peer4")) {
-            super.logger.logMessage("Sending back fake recommendation from Peer4");
+        else if (request.getOriginalTarget().toString().equals(PEER_FOUR)) {
+            super.logger.logMessage("Sending back fake recommendation from " + PEER_FOUR);
+            for (Content content : contentListPeerFour) {
+                super.logger.logMessage("Content Id: " + content.getId());
+                super.logger.logMessage("Content Name: " + content.getFileName());
+                super.logger.logMessage("Content Type: " + content.getFileFormat());
+                super.logger.logMessage("Content Length: " + content.getViewLength());
+                super.logger.logMessage("");
+            }
             recommendation = new PeerRecommendation(contentListPeerFour, request.getOriginalRequester(), request.getOriginalTarget());
             aggregator.tell(recommendation, getSelf());
         }
     }
     
-    protected void processPeerRecommendation(PeerRecommendation recommendation) {
+    protected void processPeerRecommendation(PeerRecommendation peerRecommendation) {
         super.logger.logMessage("Received PeerRecommendation in OutBoundCommunicator");
+        super.logger.logMessage("Message type: " + peerRecommendation.getType().toString());
         int i = 1;
-        for (Content content : recommendation) {
-            super.logger.logMessage("Recommendation no. " + i++ + " :" + content.getFileName());
+        for (Recommendation recommendation : peerRecommendation) {
+            super.logger.logMessage("Recommendation no. " + i++ + " received in OutboundCommunicator");
+            super.logger.logMessage("Content ID: " + recommendation.getContentId());
+            super.logger.logMessage("Content Name: " + recommendation.getContentName());
+            super.logger.logMessage("Content Type: " + recommendation.getContentType());
+            super.logger.logMessage("Content Length: " + recommendation.getContentLength());
+            super.logger.logMessage("");
         }
+        super.logger.logMessage("\n");
     }
 }

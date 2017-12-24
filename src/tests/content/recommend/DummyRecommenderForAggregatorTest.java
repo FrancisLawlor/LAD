@@ -6,11 +6,12 @@ import content.recommend.PeerRecommendationAggregator;
 import content.recommend.PeerRecommendationAggregatorInit;
 import content.recommend.RecommendationsForUserRequest;
 import content.recommend.heuristic.DeterministicAggregationHeuristic;
-import core.ActorNames;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import peer.core.ActorNames;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
+import tests.core.StartTest;
 
 public class DummyRecommenderForAggregatorTest extends DummyActor {
     

@@ -2,17 +2,21 @@ package tests.content.recommend;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import core.ActorNames;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
+import peer.core.ActorNames;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
 import peer.graph.link.PeerLinkResponse;
 import peer.graph.link.PeerLinksRequest;
 import peer.graph.weight.Weight;
 import peer.graph.weight.WeighterInit;
-import tests.actors.DummyActor;
-import tests.actors.DummyInit;
+import tests.core.DummyActor;
+import tests.core.DummyInit;
 
-public class DummyPeerLinker extends DummyActor {    
+public class DummyPeerLinker extends DummyActor {
+    private static final String PEER_TWO = "Peer2";
+    private static final String PEER_THREE = "Peer3";
+    private static final String PEER_FOUR = "Peer4";
+    
     @Override
     public void onReceive(Object message) {
         if (message instanceof PeerToPeerActorInit) {
@@ -34,20 +38,22 @@ public class DummyPeerLinker extends DummyActor {
         super.logger.logMessage("PeerLinksRequest received");
         ActorRef sender = getSender();
 
-        super.logger.logMessage("Sending \"Peer2\" as Linked Peer ID");
-        UniversalId peerLinksId = new UniversalId("Peer2");
+        super.logger.logMessage("Sending " + PEER_TWO + " as Linked Peer ID");
+        UniversalId peerLinksId = new UniversalId(PEER_TWO);
         PeerLinkResponse response = new PeerLinkResponse(peerLinksId);
         sender.tell(response, getSelf());
 
-        super.logger.logMessage("Sending \"Peer3\" as Linked Peer ID");
-        peerLinksId = new UniversalId("Peer3");
+        super.logger.logMessage("Sending " + PEER_THREE + " as Linked Peer ID");
+        peerLinksId = new UniversalId(PEER_THREE);
         response = new PeerLinkResponse(peerLinksId);
         sender.tell(response, getSelf());
 
-        super.logger.logMessage("Sending \"Peer4\" as Linked Peer ID");
-        peerLinksId = new UniversalId("Peer4");
+        super.logger.logMessage("Sending " + PEER_FOUR + " as Linked Peer ID");
+        peerLinksId = new UniversalId(PEER_FOUR);
         response = new PeerLinkResponse(peerLinksId);
         sender.tell(response, getSelf());
+        
+        super.logger.logMessage("\n");
     }
     
     private void initialiseWeights() {

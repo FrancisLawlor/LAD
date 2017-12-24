@@ -6,11 +6,11 @@ import java.util.Set;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import core.ActorNames;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import core.xcept.UnknownMessageException;
+import peer.core.ActorNames;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import peer.core.xcept.UnknownMessageException;
 import peer.graph.weight.Weighter;
 import peer.graph.weight.WeighterInit;
 
@@ -45,6 +45,10 @@ public class PeerLinker extends PeerToPeerActor {
                     (PeerLinkAddition) message;
             this.processPeerLinkAddition(addition);
         }
+        else if (message instanceof PeerLinkExistenceRequest) {
+            PeerLinkExistenceRequest request = (PeerLinkExistenceRequest) message;
+            this.processPeerLinkExistenceRequest(request);
+        }
         else if (message instanceof PeerLinksRequest) {
             PeerLinksRequest peerLinksRequest =
                     (PeerLinksRequest) message;
@@ -60,15 +64,30 @@ public class PeerLinker extends PeerToPeerActor {
      * @param addition
      */
     protected void processPeerLinkAddition(PeerLinkAddition addition) {
-        UniversalId peerId = addition.getPeerId();
+        UniversalId linkedPeerId = addition.getPeerId();
         
-        if (!this.peerLinksIds.contains(peerId)) {
-            this.peerLinksIds.add(peerId);
+        if (!this.peerLinksIds.contains(linkedPeerId)) {
+            this.peerLinksIds.add(linkedPeerId);
             
-            ActorRef weighter = getContext().actorOf(Props.create(Weighter.class), ActorNames.getWeighterName(peerId));
-            WeighterInit init = new WeighterInit(peerId, addition.getStartingWeight());
-            weighter.tell(init, getSelf());
+            ActorRef weighter = getContext().actorOf(Props.create(Weighter.class), ActorNames.getWeighterName(linkedPeerId));
+            PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.getWeighterName(linkedPeerId));
+            weighter.tell(peerIdInit, getSelf());
+            
+            WeighterInit weightInit = new WeighterInit(linkedPeerId, addition.getStartingWeight());
+            weighter.tell(weightInit, getSelf());
         }
+    }
+    
+    /**
+     * Checks for the existence of a stored link between this peer and another specified peer
+     * @param request
+     */
+    protected void processPeerLinkExistenceRequest(PeerLinkExistenceRequest request) {
+        UniversalId linkToCheck = request.getLinkToCheckPeerId();
+        boolean exists = this.peerLinksIds.contains(linkToCheck);
+        PeerLinkExistenceResponse response = new PeerLinkExistenceResponse(linkToCheck, exists);
+        ActorRef sender = getSender();
+        sender.tell(response, sender);
     }
     
     /**

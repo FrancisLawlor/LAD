@@ -6,6 +6,7 @@ import gui.utilities.GUIText;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
+@SuppressWarnings("unused")
 public class RatingState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;

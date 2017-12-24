@@ -5,13 +5,13 @@ import content.recommend.PeerRecommendation;
 import content.recommend.PeerRecommendationRequest;
 import content.retrieve.PeerRetrieveContentRequest;
 import content.retrieve.RetrievedContent;
-import core.ActorPaths;
-import core.PeerToPeerActor;
-import core.PeerToPeerActorInit;
-import core.UniversalId;
-import core.xcept.RequestCommunicationOriginPeerIdMismatchException;
-import core.xcept.RequestCommunicationTargetPeerIdMismatchException;
-import core.xcept.UnknownMessageException;
+import peer.core.ActorPaths;
+import peer.core.PeerToPeerActor;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import peer.core.xcept.RequestCommunicationOriginPeerIdMismatchException;
+import peer.core.xcept.RequestCommunicationTargetPeerIdMismatchException;
+import peer.core.xcept.UnknownMessageException;
 import peer.graph.weight.PeerWeightUpdateRequest;
 
 /**
@@ -63,7 +63,7 @@ public class InboundCommunicator extends PeerToPeerActor {
      */
     protected void processPeerRecommendationRequest(PeerRecommendationRequest request) {
         if (!request.getOriginalTarget().equals(super.peerId))
-            throw new RequestCommunicationTargetPeerIdMismatchException();
+            throw new RequestCommunicationTargetPeerIdMismatchException(request.getOriginalTarget(), super.peerId);
         
         ActorSelection recommender = getContext().actorSelection(ActorPaths.getPathToRecommender());
         recommender.tell(request, getSelf());
@@ -75,7 +75,7 @@ public class InboundCommunicator extends PeerToPeerActor {
      */
     protected void processPeerRecommendation(PeerRecommendation recommendation) {
         if (!recommendation.getOriginalRequester().equals(super.peerId)) 
-            throw new RequestCommunicationOriginPeerIdMismatchException();
+            throw new RequestCommunicationOriginPeerIdMismatchException(recommendation.getOriginalRequester(), super.peerId);
         
         ActorSelection aggregator = getContext().actorSelection(ActorPaths.getPathToAggregator());
         aggregator.tell(recommendation, getSelf());
@@ -86,8 +86,8 @@ public class InboundCommunicator extends PeerToPeerActor {
      * @param contentRequest
      */
     protected void processPeerRetrieveContentRequest(PeerRetrieveContentRequest contentRequest) {
-        if (contentRequest.getOriginalTarget().equals(super.peerId)) 
-            throw new RequestCommunicationTargetPeerIdMismatchException();
+        if (!contentRequest.getOriginalTarget().equals(super.peerId)) 
+            throw new RequestCommunicationTargetPeerIdMismatchException(contentRequest.getOriginalTarget(), super.peerId);
         
         ActorSelection retriever = getContext().actorSelection(ActorPaths.getPathToRetriever());
         retriever.tell(contentRequest, getSelf());
@@ -99,7 +99,7 @@ public class InboundCommunicator extends PeerToPeerActor {
      */
     protected void processRetrievedContent(RetrievedContent retrievedContent) {
         if (!retrievedContent.getOriginalRequester().equals(super.peerId)) 
-            throw new RequestCommunicationOriginPeerIdMismatchException();
+            throw new RequestCommunicationOriginPeerIdMismatchException(retrievedContent.getOriginalRequester(), super.peerId);
         
         ActorSelection aggregator = getContext().actorSelection(ActorPaths.getPathToRetriever());
         aggregator.tell(retrievedContent, getSelf());
@@ -110,8 +110,8 @@ public class InboundCommunicator extends PeerToPeerActor {
      * @param request
      */
     protected void processPeerWeightUpdateRequest(PeerWeightUpdateRequest updateWeightRequest) {
-        if (updateWeightRequest.getOriginalTarget().equals(super.peerId)) 
-            throw new RequestCommunicationTargetPeerIdMismatchException();
+        if (!updateWeightRequest.getOriginalTarget().equals(super.peerId)) 
+            throw new RequestCommunicationTargetPeerIdMismatchException(updateWeightRequest.getOriginalTarget(), super.peerId);
         
         UniversalId linkedPeerId = updateWeightRequest.getOriginalRequester();
         ActorSelection weighter = getContext().actorSelection(ActorPaths.getPathToWeighter(linkedPeerId));
