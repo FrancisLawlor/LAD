@@ -1,11 +1,14 @@
 package statemachine.states;
 
+import content.recommend.Recommendation;
+import content.recommend.RecommendationsForUser;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
 import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
+import javafx.scene.control.ListView;
 import peer.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
@@ -46,6 +49,9 @@ public class RetrieveRecommendationsState extends State {
 		sceneContainerStage.changeScene(gui.getRetrieveRecommendationsScene());
 		sceneContainerStage.setTitle(GUIText.SETUP);
 		
+        ListView<Recommendation> viewList = this.gui.getDashBoardScene().getListView();
+        viewList.getItems().clear();
+		
 		Task<Void> sleeper = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
@@ -54,10 +60,9 @@ public class RetrieveRecommendationsState extends State {
                     while (!viewer.hasRecommendations()) {
                         Thread.sleep(1000);
                     }
-                } catch (InterruptedException e) {
-                	
-                }
-                return null;
+                } catch (InterruptedException e) { }
+                retrieveRecommendations(viewList);
+            return null;
             }
         };
         sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
@@ -67,5 +72,17 @@ public class RetrieveRecommendationsState extends State {
             }
         });
         new Thread(sleeper).start();
+	}
+	
+	private void retrieveRecommendations(ListView<Recommendation> viewList) {
+        try {
+            RecommendationsForUser recommendations = this.viewer.getRecommendations();
+            for (Recommendation recommendation : recommendations) {
+                viewList.getItems().add(recommendation);
+            }
+        }
+        catch (Exception e) {
+            throw new RuntimeException(e.getCause() + e.getMessage());
+        }
 	}
 }

@@ -1,12 +1,8 @@
 package statemachine.states;
 
-import content.recommend.Recommendation;
-import content.recommend.RecommendationsForUser;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
-import javafx.scene.control.ListView;
-import peer.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
@@ -14,13 +10,11 @@ public class DashboardState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
-	private ViewerToUIChannel viewer;
 	
-	public DashboardState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, ViewerToUIChannel viewer) {
+	public DashboardState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
-		this.viewer = viewer;
 	}
 
 	public void execute(StateName param) {
@@ -61,17 +55,8 @@ public class DashboardState extends State {
 	}
 	
 	private void refresh() {
-	    ListView<Recommendation> viewList = this.gui.getDashBoardScene().getListView();
-	    viewList.getItems().clear();
-        try {
-            RecommendationsForUser recommendations = this.viewer.getRecommendations();
-            for (Recommendation recommendation : recommendations) {
-                viewList.getItems().add(recommendation);
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e.getCause() + e.getMessage());
-        }
+	    stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
+	    stateMachine.execute(StateName.INIT);
 	}
 
 }

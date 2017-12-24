@@ -12,9 +12,12 @@ import content.recommend.RecommendationsForUserRequest;
 import peer.core.UniversalId;
 
 public class DummyRecommender extends UntypedActor {
+    private int requestCount = -1;
+    
     @Override
     public void onReceive(Object message) {
         if (message instanceof RecommendationsForUserRequest) {
+            this.requestCount++;
             ActorRef sender = getSender();
             sender.tell(new RecommendationsForUser(getRecommendations()), getSelf());
         }
@@ -22,8 +25,8 @@ public class DummyRecommender extends UntypedActor {
     
     private List<Recommendation> getRecommendations() {
         List<Recommendation> recommendationList = new LinkedList<Recommendation>();
-        for (int i = 1; i <= 10; i++) {
-            recommendationList.add(new Recommendation(new UniversalId("localhost:10002"), new Content(""+i, ""+i, ""+i, ""+i, i)));
+        for (int i = (requestCount * 10) + 1; i < ((requestCount + 1) * 10) + 1; i++) {
+            recommendationList.add(new Recommendation(new UniversalId("localhost:10002"), new Content("ID_"+i, "FileName_"+i, "FileFormat_"+i, "FileLocation_"+i, i)));
         }
         return recommendationList;
     }
