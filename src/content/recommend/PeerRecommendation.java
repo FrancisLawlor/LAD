@@ -12,7 +12,7 @@ import peer.core.UniversalId;
  * Curated List of Content a peer is recommending back to the requesting peer
  *
  */
-public class PeerRecommendation extends PeerToPeerRequest implements Iterable<Content> {
+public class PeerRecommendation extends PeerToPeerRequest implements Iterable<Recommendation> {
     private List<Content> contentList;
     
     public PeerRecommendation(List<Content> contentList, UniversalId origin, UniversalId target) {
@@ -24,12 +24,23 @@ public class PeerRecommendation extends PeerToPeerRequest implements Iterable<Co
         return super.getOriginalTarget();
     }
     
-    public Content getContentAtRank(int rank) {
-        return contentList.get(rank);
+    public Recommendation getRecommendationAtRank(int rank) {
+        return new Recommendation(super.getOriginalTarget(), contentList.get(rank));
     }
     
-    public Iterator<Content> iterator() {
-        return contentList.iterator();
+    public Iterator<Recommendation> iterator() {
+        return new Iterator<Recommendation> () {
+            private Iterator<Content> contentIter = contentList.iterator();
+            
+            public boolean hasNext() {
+                return contentIter.hasNext();
+            }
+            
+            public Recommendation next() {
+                Content content = contentIter.next();
+                return new Recommendation(getOriginalTarget(), content);
+            }
+        };
     }
     
     public int size() {

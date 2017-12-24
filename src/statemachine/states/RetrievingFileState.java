@@ -2,12 +2,9 @@ package statemachine.states;
 
 import java.awt.Desktop;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
-import java.util.Properties;
 
 import filemanagement.core.FileConstants;
-import filemanagement.fileretrieval.FileRetriever;
 import filemanagement.fileretrieval.RetrievedFile;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
@@ -63,15 +60,15 @@ public class RetrievingFileState extends State {
 	}
 	
 	private File retrieveFile() {
-		String remoteFileLocation = gui.getDashBoardScene().getListView().getSelectionModel().getSelectedItem().getFileLocation();
+		//String remoteFileLocation = gui.getDashBoardScene().getListView().getSelectionModel().getSelectedItem().getFileLocation();
 		
 		File retrievedFile = null;
-		try {
+		/*try {
 			//TODO get local storage directory from config file.
 			retrievedFile = FileRetriever.downloadFile(remoteFileLocation, getLocalFileStorageDirectoryPath());
 		} catch (IOException e1) {
 			e1.printStackTrace();
-		}
+		}*/
 		
 		return retrievedFile;
 	}
@@ -93,7 +90,7 @@ public class RetrievingFileState extends State {
 		stateMachine.execute(StateName.INIT);
 	}
 	
-	private String getLocalFileStorageDirectoryPath() throws IOException {
+	/*private String getLocalFileStorageDirectoryPath() throws IOException {
 		FileReader configFile = new FileReader(FileConstants.CONFIG_FILE_NAME);
 		
 		Properties props = new Properties();
@@ -103,5 +100,5 @@ public class RetrievingFileState extends State {
 		configFile.close();
 		
 		return localFilesDirectory;
-	}
+	}*/
 }

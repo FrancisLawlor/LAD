@@ -1,6 +1,6 @@
 package statemachine.states;
 
-import content.core.Content;
+import content.recommend.Recommendation;
 import content.recommend.RecommendationsForUser;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
@@ -61,12 +61,12 @@ public class DashboardState extends State {
 	}
 	
 	private void refresh() {
-	    ListView<Content> viewList = this.gui.getDashBoardScene().getListView();
+	    ListView<Recommendation> viewList = this.gui.getDashBoardScene().getListView();
 	    viewList.getItems().clear();
         try {
             RecommendationsForUser recommendations = this.viewer.getRecommendations();
-            for (Content content : recommendations) {
-                viewList.getItems().add(content);
+            for (Recommendation recommendation : recommendations) {
+                viewList.getItems().add(recommendation);
             }
         }
         catch (Exception e) {

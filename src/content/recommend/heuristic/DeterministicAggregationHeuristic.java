@@ -3,8 +3,8 @@ package content.recommend.heuristic;
 import java.util.LinkedList;
 import java.util.List;
 
-import content.core.Content;
 import content.recommend.PeerRecommendation;
+import content.recommend.Recommendation;
 import content.recommend.RecommendationsForUser;
 import content.recommend.WeightedPeerRecommendation;
 
@@ -25,18 +25,18 @@ public class DeterministicAggregationHeuristic implements AggregationHeuristic {
     public RecommendationsForUser getRecommendationsForUser(List<WeightedPeerRecommendation> peerRecommends) {
         peerRecommends.sort(new WeightedPeerRecommendationComparator());
         
-        List<Content> contentList = new LinkedList<Content>();
-        for (int rank = 0; rank < HistoryHeuristic.TOP_N && contentList.size() <= LIMIT; rank++){
-            for (int i = 0; i < peerRecommends.size() && contentList.size() <= LIMIT; i++) {
-                PeerRecommendation recommendation = peerRecommends.get(i).getPeerRecommendation();
-                if (rank < recommendation.size()) {
-                    Content content = recommendation.getContentAtRank(rank);
-                    contentList.add(content);
+        List<Recommendation> recommendationList = new LinkedList<Recommendation>();
+        for (int rank = 0; rank < HistoryHeuristic.TOP_N && recommendationList.size() <= LIMIT; rank++){
+            for (int i = 0; i < peerRecommends.size() && recommendationList.size() <= LIMIT; i++) {
+                PeerRecommendation peerRecommendation = peerRecommends.get(i).getPeerRecommendation();
+                if (rank < peerRecommendation.size()) {
+                    Recommendation recommendation = peerRecommendation.getRecommendationAtRank(rank);
+                    recommendationList.add(recommendation);
                 }
             }
         }
         
-        RecommendationsForUser recommendationsForUser = new RecommendationsForUser(contentList);
+        RecommendationsForUser recommendationsForUser = new RecommendationsForUser(recommendationList);
         return recommendationsForUser;
     }
 }

@@ -38,7 +38,7 @@ public class DummyWeighter extends DummyActor {
         super.logger.logMessage("WeightRequest received at weighter representing link from " + super.peerId.toString() + " to " + this.linkedPeerId.toString());
         
         WeightResponse response = new WeightResponse(linkedPeerId, linkWeight);
-        super.logger.logMessage("Sending WeightResponse of weight: "+ linkWeight.getWeight() + " representing weight of link between " + super.peerId.toString() + " and " + this.linkedPeerId.toString());
+        super.logger.logMessage("Sending WeightResponse of weight: "+ linkWeight.getWeight() + " representing weight of link between " + super.peerId.toString() + " and " + this.linkedPeerId.toString() + "\n");
         ActorRef sender = getSender();
         sender.tell(response, getSelf());
     }

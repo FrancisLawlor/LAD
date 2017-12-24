@@ -2,11 +2,11 @@ package tests.content.recommend;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import content.core.Content;
 import content.recommend.HistoryRecommendationGenerator;
 import content.recommend.HistoryRecommendationGeneratorInit;
 import content.recommend.PeerRecommendation;
 import content.recommend.PeerRecommendationRequest;
+import content.recommend.Recommendation;
 import content.recommend.heuristic.WeightedProbabilityHistoryHeuristic;
 import peer.core.ActorNames;
 import peer.core.PeerToPeerActorInit;
@@ -49,11 +49,18 @@ public class DummyRecommenderForGeneratorTest extends DummyActor {
         generatorToTest.tell(new PeerRecommendationRequest(peerOneId, peerTwoId), null);
     }
     
-    protected void processPeerRecommendation(PeerRecommendation recommendation) {
-        super.logger.logMessage("Received PeerRecommendation in OutBoundCommunicator");
+    protected void processPeerRecommendation(PeerRecommendation peerRecommendation) {
+        super.logger.logMessage("Received PeerRecommendation in Recommender back from HistoryRecommendationGenerator");
+        super.logger.logMessage("Message type: " + peerRecommendation.getType().toString());
         int i = 1;
-        for (Content content : recommendation) {
-            super.logger.logMessage("Recommendation no. " + i++ + " :" + content.getFileName());
+        for (Recommendation recommendation : peerRecommendation) {
+            super.logger.logMessage("Recommendation no. " + i++ + ":");
+            super.logger.logMessage("Content ID: " + recommendation.getContentId());
+            super.logger.logMessage("Content Name: " + recommendation.getContentName());
+            super.logger.logMessage("Content Type: " + recommendation.getContentType());
+            super.logger.logMessage("Content Length: " + recommendation.getContentLength());
+            super.logger.logMessage("\n");
         }
+        super.logger.logMessage("\n");
     }
 }

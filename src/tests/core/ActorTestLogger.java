@@ -10,7 +10,7 @@ public class ActorTestLogger implements Iterable<String> {
         this.loggedMessages = new ArrayList<String>();
     }
     
-    public void logMessage(String message) {
+    synchronized public void logMessage(String message) {
         this.loggedMessages.add(message);
     }
     

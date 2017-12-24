@@ -39,7 +39,7 @@ public class TestJson {
 
     @Test
     public void testPeerRecommendationToJson() {
-        String expected = "{\"contentList\":[{\"uniqueId\":\"abc\",\"fileName\":\"abc\",\"fileFormat\":\"file\"},{\"uniqueId\":\"def\",\"fileName\":\"def\",\"fileFormat\":\"file\"},{\"uniqueId\":\"ghi\",\"fileName\":\"ghi\",\"fileFormat\":\"file\"}],\"origin\":{\"ipAndPort\":\"origin\"},\"target\":{\"ipAndPort\":\"target\"},\"type\":\"PeerRecommendation\"}";
+        String expected = "{\"contentList\":[{\"uniqueId\":\"abc\",\"fileName\":\"abc\",\"fileFormat\":\"file\",\"viewLength\":1},{\"uniqueId\":\"def\",\"fileName\":\"def\",\"fileFormat\":\"file\",\"viewLength\":2},{\"uniqueId\":\"ghi\",\"fileName\":\"ghi\",\"fileFormat\":\"file\",\"viewLength\":3}],\"origin\":{\"ipAndPort\":\"origin\"},\"target\":{\"ipAndPort\":\"target\"},\"type\":\"PeerRecommendation\"}";
         PeerRecommendation peerRecommendation = getTestPeerRecommendation();
         
         String jsonString = gson.toJson(peerRecommendation);
@@ -57,15 +57,15 @@ public class TestJson {
         
         assertEquals(a.getOriginalRequester().toString(), b.getOriginalRequester().toString());
         assertEquals(a.getOriginalTarget().toString(), b.getOriginalTarget().toString());
-        assertEquals(a.getContentAtRank(0).getId(), b.getContentAtRank(0).getId());
-        assertEquals(a.getContentAtRank(0).getFileName(), b.getContentAtRank(0).getFileName());
-        assertEquals(a.getContentAtRank(0).getFileFormat(), b.getContentAtRank(0).getFileFormat());
-        assertEquals(a.getContentAtRank(1).getId(), b.getContentAtRank(1).getId());
-        assertEquals(a.getContentAtRank(1).getFileName(), b.getContentAtRank(1).getFileName());
-        assertEquals(a.getContentAtRank(1).getFileFormat(), b.getContentAtRank(1).getFileFormat());
-        assertEquals(a.getContentAtRank(2).getId(), b.getContentAtRank(2).getId());
-        assertEquals(a.getContentAtRank(2).getFileName(), b.getContentAtRank(2).getFileName());
-        assertEquals(a.getContentAtRank(2).getFileFormat(), b.getContentAtRank(2).getFileFormat());
+        assertEquals(a.getRecommendationAtRank(0).getContentId(), b.getRecommendationAtRank(0).getContentId());
+        assertEquals(a.getRecommendationAtRank(0).getContentName(), b.getRecommendationAtRank(0).getContentName());
+        assertEquals(a.getRecommendationAtRank(0).getContentType(), b.getRecommendationAtRank(0).getContentType());
+        assertEquals(a.getRecommendationAtRank(1).getContentId(), b.getRecommendationAtRank(1).getContentId());
+        assertEquals(a.getRecommendationAtRank(1).getContentName(), b.getRecommendationAtRank(1).getContentName());
+        assertEquals(a.getRecommendationAtRank(1).getContentType(), b.getRecommendationAtRank(1).getContentType());
+        assertEquals(a.getRecommendationAtRank(2).getContentId(), b.getRecommendationAtRank(2).getContentId());
+        assertEquals(a.getRecommendationAtRank(2).getContentName(), b.getRecommendationAtRank(2).getContentName());
+        assertEquals(a.getRecommendationAtRank(2).getContentType(), b.getRecommendationAtRank(2).getContentType());
     }
     
     

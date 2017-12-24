@@ -1,6 +1,6 @@
 package gui.panes;
 
-import content.core.Content;
+import content.recommend.Recommendation;
 import gui.utilities.GUIText;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
@@ -18,14 +18,15 @@ public class DashBoardPane extends BorderPane {
 	private Button myFilesButton;
 	private Button addFileButton;
 	private Button refreshButton;
-	private ListView<Content> listView;
+	private ListView<Recommendation> listView;
 	
-	public DashBoardPane(ObservableList<Content> data) {
+	public DashBoardPane(ObservableList<Recommendation> data) {
 		VBox leftBar = configureLeftBar();
 		this.setLeft(leftBar);
 		
-		ListView<Content> listView = configureListView(data);
+		ListView<Recommendation> listView = configureListView(data);
 		this.setCenter(listView);
+        this.listView = listView;
 		
 		BorderPane rightBar = configureRightBar(data);
 		this.setRight(rightBar);
@@ -48,21 +49,20 @@ public class DashBoardPane extends BorderPane {
 	    return content;
 	}
 	
-	private ListView<Content> configureListView(ObservableList<Content> data) {
-		final ListView<Content> listView = new ListView<Content>(data);
-		this.listView = listView;
+	private ListView<Recommendation> configureListView(ObservableList<Recommendation> data) {
+		final ListView<Recommendation> listView = new ListView<Recommendation>(data);
 		
-        listView.setCellFactory(new Callback<ListView<Content>, ListCell<Content>>() {
+        listView.setCellFactory(new Callback<ListView<Recommendation>, ListCell<Recommendation>>() {
 
             @Override
-            public ListCell<Content> call(ListView<Content> arg) {
-                return new ListCell<Content>() {
+            public ListCell<Recommendation> call(ListView<Recommendation> arg) {
+                return new ListCell<Recommendation>() {
 
                     @Override
-                    protected void updateItem(Content item, boolean bln) {
+                    protected void updateItem(Recommendation item, boolean bln) {
                         super.updateItem(item, bln);
                         if (item != null) {
-                            VBox vBox = new VBox(new Text(item.getFileName()), new Text(item.getFileFormat()));
+                            VBox vBox = new VBox(new Text(item.getContentName()), new Text(item.getContentType()));
                             HBox hBox = new HBox(new Label("[Graphic]"), vBox);
                             hBox.setSpacing(10);
                             setGraphic(hBox);
@@ -77,7 +77,7 @@ public class DashBoardPane extends BorderPane {
         return listView;
 	}
 	
-	private BorderPane configureRightBar(ObservableList<Content> data) {
+	private BorderPane configureRightBar(ObservableList<Recommendation> data) {
 		BorderPane content = new BorderPane();
 		content.setPadding(new Insets(10));
 	    
@@ -100,7 +100,7 @@ public class DashBoardPane extends BorderPane {
 		return refreshButton;
 	}
 
-	public ListView<Content> getListView() {
+	public ListView<Recommendation> getListView() {
 		return listView;
 	}
 }

@@ -1,6 +1,6 @@
 package gui.core;
 
-import content.core.Content;
+import content.recommend.Recommendation;
 import gui.panes.AddFilePane;
 import gui.panes.DashBoardPane;
 import gui.panes.FileRetrievalQueryPane;
@@ -39,11 +39,12 @@ public class GUI {
 	private AddFilePane addFilePane;
 	
 	public GUI(SceneContainerStage containerStage) {
-		ObservableList<Content> data = FXCollections.observableArrayList();
+	    ObservableList<Recommendation> data = FXCollections.observableArrayList();
+	    /*
 		data.addAll(new Content("234134", "Akira", ".mp4", "https://speed.hetzner.de/100MB.bin", 0), 
 				new Content("234134as", "Shakira - Shewolf", ".mp4", "http://francislawlor.com/modules.html", 0), 
 				new Content("31234da", "My Chemical Romance - I am Sad", ".mp3", "http://francislawlor.com/modules.html", 0));
-
+		*/
 		this.dashBoardPane = new DashBoardPane(data);
 		this.fileRetrievalQueryPane = new FileRetrievalQueryPane();
 		this.fileRetrievalPane = new WaitingPane(GUIText.RETRIEVING_FILE);
