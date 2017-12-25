@@ -36,8 +36,11 @@ public enum ActorMessageType {
     WeighterInit("WeighterInit"),
     WeightRequest("WeightRequest"),
     WeightResponse("WeightResponse"),
-    PeerSimilarViewAlert("PeerSimilarViewAlert");
-    
+    PeerSimilarViewAlert("PeerSimilarViewAlert"),
+    ContentFileExistenceRequest("ContentFileExistenceRequest"),
+    ContentFileExistenceResponse("ContentFileExistenceResponse"),
+    ContentFileRequest("ContentFileRequest"),
+    ContentFileResponse("ContentFileResponse");
     
     private String typeName;
     
