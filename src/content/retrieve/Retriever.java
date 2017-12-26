@@ -47,7 +47,7 @@ public class Retriever extends PeerToPeerActor {
             LocalRetrieveContentRequest retrievedContentRequest = (LocalRetrieveContentRequest) message;
             this.processLocalRetrieveContentRequest(retrievedContentRequest);
         }
-        else if (message instanceof LocalRetrieveContentRequest) {
+        else if (message instanceof PeerRetrieveContentRequest) {
             PeerRetrieveContentRequest retrievedContentRequest = (PeerRetrieveContentRequest) message;
             this.processPeerRetrieveContentRequest(retrievedContentRequest);
         }

@@ -7,7 +7,9 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
+import akka.actor.PoisonPill;
 import content.core.Content;
 import content.core.ContentFile;
 import peer.core.ActorPaths;
@@ -58,6 +60,7 @@ public class Transferer extends PeerToPeerActor {
         stream.write(contentFile.getBytes());
         sendSocket.close();
         serverSocket.close();
+        getSelf().tell(PoisonPill.getInstance(), ActorRef.noSender());
     }
     
     /**
@@ -74,7 +77,7 @@ public class Transferer extends PeerToPeerActor {
         ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         byte[] buffer = new byte[1024];
         int k = -1;
-        while (stream.read(buffer, 0, buffer.length) > 0) {
+        while ((k = stream.read(buffer, 0, buffer.length)) > 0) {
             bytes.write(buffer, 0, k);
         }
         RetrievedContent retrievedContent = receiveStart.getRetrievedContent();
@@ -85,5 +88,6 @@ public class Transferer extends PeerToPeerActor {
         retriever.tell(retrievedContentFile, getSelf());
         
         receiveSocket.close();
+        getSelf().tell(PoisonPill.getInstance(), ActorRef.noSender());
     }
 }

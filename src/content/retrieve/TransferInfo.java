@@ -13,7 +13,7 @@ public class TransferInfo {
     
     public TransferInfo(UniversalId peerId, String transferPort) {
         this.transferHostIp = UniversalIdResolver.getIdIp(peerId);
-        this.transferPort = Integer.getInteger(transferPort);
+        this.transferPort = Integer.parseInt(transferPort);
     }
     
     public String getTransferHostIp() {
