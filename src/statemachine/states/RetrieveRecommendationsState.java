@@ -55,13 +55,14 @@ public class RetrieveRecommendationsState extends State {
 		Task<Void> sleeper = new Task<Void>() {
             @Override
             protected Void call() throws Exception {
+                RecommendationsForUser recommendations;
                 try {
                     viewer.requestRecommendations();
-                    while (!viewer.hasRecommendations()) {
-                        Thread.sleep(1000);
-                    }
-                } catch (InterruptedException e) { }
-                retrieveRecommendations(viewList);
+                    recommendations = viewer.getRecommendations();
+                    retrieveRecommendations(recommendations, viewList);
+                    Thread.sleep(300);
+                }
+                catch (InterruptedException e) { }
             return null;
             }
         };
@@ -74,15 +75,9 @@ public class RetrieveRecommendationsState extends State {
         new Thread(sleeper).start();
 	}
 	
-	private void retrieveRecommendations(ListView<Recommendation> viewList) {
-        try {
-            RecommendationsForUser recommendations = this.viewer.getRecommendations();
-            for (Recommendation recommendation : recommendations) {
-                viewList.getItems().add(recommendation);
-            }
-        }
-        catch (Exception e) {
-            throw new RuntimeException(e.getCause() + e.getMessage());
+	private void retrieveRecommendations(RecommendationsForUser recommendations, ListView<Recommendation> viewList) {
+        for (Recommendation recommendation : recommendations) {
+            viewList.getItems().add(recommendation);
         }
 	}
 }

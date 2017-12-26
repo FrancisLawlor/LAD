@@ -1,8 +1,13 @@
 package peer.data;
 
+import java.io.IOException;
+
 import content.core.Content;
+import content.core.ContentFile;
 import content.core.ContentFileExistenceRequest;
 import content.core.ContentFileRequest;
+import content.retrieve.RetrievedContentFile;
+import filemanagement.fileretrieval.FileManager;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
 import peer.core.xcept.UnknownMessageException;
@@ -11,6 +16,7 @@ import peer.core.xcept.UnknownMessageException;
  * Actor that handles the database
  *
  */
+@SuppressWarnings("unused")
 public class Databaser extends PeerToPeerActor {
     private Database db;
     
@@ -18,7 +24,7 @@ public class Databaser extends PeerToPeerActor {
      * Actor message processing
      */
     @Override
-    public void onReceive(Object message) {
+    public void onReceive(Object message) throws Throwable {
         if (message instanceof PeerToPeerActorInit) {
             PeerToPeerActorInit init = (PeerToPeerActorInit) message;
             this.initialisePeerToPeerActor(init);
@@ -34,6 +40,10 @@ public class Databaser extends PeerToPeerActor {
         else if (message instanceof ContentFileRequest) {
             ContentFileRequest request = (ContentFileRequest) message;
             this.processContentFileRequest(request);
+        }
+        else if (message instanceof RetrievedContentFile) {
+            RetrievedContentFile retrievedContentFile = (RetrievedContentFile) message;
+            this.processRetrievedContentFile(retrievedContentFile);
         }
         else {
             throw new UnknownMessageException();
@@ -66,5 +76,14 @@ public class Databaser extends PeerToPeerActor {
         Content content = request.getContent();
         
         // To do
+    }
+    
+    /**
+     * Writes a retrieved content file to the database
+     */
+    protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) throws IOException {
+        // We rely on a simple file manager for now until the database is implemented
+        ContentFile contentFile = retrievedContentFile.getContentFile();
+        FileManager.writeContentFile(contentFile);
     }
 }

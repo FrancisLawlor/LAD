@@ -1,5 +1,6 @@
 package peer.gossip;
 
+import content.core.GossipContentRequest;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
 import peer.core.xcept.UnknownMessageException;
@@ -38,6 +39,10 @@ public class Gossiper extends PeerToPeerActor {
         else if (message instanceof ResolvePeerAddressRequest) {
             ResolvePeerAddressRequest resolveRequest = (ResolvePeerAddressRequest) message;
             this.processResolvePeerAddressRequest(resolveRequest);
+        }
+        else if (message instanceof GossipContentRequest) {
+            GossipContentRequest contentRequest = (GossipContentRequest) message;
+            this.processGossipContentRequest(contentRequest);
         }
         else {
             throw new UnknownMessageException();
@@ -81,6 +86,14 @@ public class Gossiper extends PeerToPeerActor {
      * @param resolveRequest
      */
     protected void processResolvePeerAddressRequest(ResolvePeerAddressRequest resolveRequest) {
+        
+    }
+    
+    /**
+     * 
+     * @param request
+     */
+    protected void processGossipContentRequest(GossipContentRequest contentRequest) {
         
     }
 }

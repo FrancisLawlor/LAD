@@ -40,7 +40,10 @@ public enum ActorMessageType {
     ContentFileExistenceRequest("ContentFileExistenceRequest"),
     ContentFileExistenceResponse("ContentFileExistenceResponse"),
     ContentFileRequest("ContentFileRequest"),
-    ContentFileResponse("ContentFileResponse");
+    ContentFileResponse("ContentFileResponse"),
+    GossipContentRequest("GossipContentRequest"),
+    GossipContentResponse("GossipContentResponse"),
+    RetrievedContentFile("RetrievedContentFile");
     
     private String typeName;
     
