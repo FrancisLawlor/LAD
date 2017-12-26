@@ -36,7 +36,7 @@ public class ViewingFilesState extends State {
 	
 	private void clicksBack() {
 		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
-		stateMachine.execute(null);
+		stateMachine.execute(StateName.INIT);
 	}
 	
 	private void clicksFile() {

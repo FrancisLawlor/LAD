@@ -38,14 +38,6 @@ public class ViewerToUIChannel {
         this.viewer.tell(request, null);
     }
     
-    synchronized public boolean hasRecommendations() {
-        return !this.recommendationsQueue.isEmpty();
-    }
-    
-    synchronized public boolean hasRetrievedContent() {
-        return !this.retrievedContentQueue.isEmpty();
-    }
-    
     synchronized public RecommendationsForUser getRecommendations() throws InterruptedException {
         return this.recommendationsQueue.take();
     }

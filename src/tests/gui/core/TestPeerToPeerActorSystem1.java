@@ -1,24 +1,12 @@
 package tests.gui.core;
 
-import java.util.concurrent.ArrayBlockingQueue;
-import java.util.concurrent.BlockingQueue;
-
-import org.apache.camel.CamelContext;
-
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
 import akka.actor.Props;
-import content.recommend.RecommendationsForUser;
-import content.retrieve.RetrievedContent;
-import content.view.Viewer;
-import content.view.ViewerInit;
 import peer.core.ActorNames;
 import peer.core.PeerToPeerActorInit;
 import peer.core.PeerToPeerActorSystem;
 import peer.core.UniversalId;
-import peer.core.ViewerToUIChannel;
 
-@SuppressWarnings("unused")
 public class TestPeerToPeerActorSystem1 extends PeerToPeerActorSystem {    
     public TestPeerToPeerActorSystem1(UniversalId peerId) {
         super(peerId);
@@ -27,5 +15,14 @@ public class TestPeerToPeerActorSystem1 extends PeerToPeerActorSystem {
     @Override
     protected void initialiseRecommendingSystem() throws Exception {
         final ActorRef recommender = this.actorSystem.actorOf(Props.create(DummyRecommender.class), ActorNames.RECOMMENDER);
+        PeerToPeerActorInit init = new PeerToPeerActorInit(super.peerId, ActorNames.RECOMMENDER);
+        recommender.tell(init, null);
+    }
+    
+    @Override
+    protected void initialiseRetrievingSystem() throws Exception {
+        final ActorRef retriever = this.actorSystem.actorOf(Props.create(DummyRetriever.class), ActorNames.RETRIEVER);
+        PeerToPeerActorInit init = new PeerToPeerActorInit(super.peerId, ActorNames.RETRIEVER);
+        retriever.tell(init, null);
     }
 }

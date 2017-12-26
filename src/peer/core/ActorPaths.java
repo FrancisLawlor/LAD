@@ -42,4 +42,12 @@ public class ActorPaths {
     public static final String getPathToRetriever() {
         return absolutePath + ActorNames.RETRIEVER;
     }
+    
+    public static final String getPathToDatabaser() {
+        return absolutePath + ActorNames.DATABASER;
+    }
+    
+    public static final String getPathToGossiper() {
+        return absolutePath + ActorNames.GOSSIPER;
+    }
 }

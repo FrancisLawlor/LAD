@@ -108,7 +108,7 @@ public class TestCommunicatorsSideSend {
     }
     
     private static RetrievedContent getRetrievedContent() {
-        return new RetrievedContent(peerTwoId, peerOneId, toRetrieve);
+        return new RetrievedContent(peerTwoId, peerOneId, toRetrieve, null);
     }
     
     private static PeerWeightUpdateRequest getPeerWeightUpdateRequest() {

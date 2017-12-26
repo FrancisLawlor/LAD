@@ -1,7 +1,7 @@
 package peer.core;
 
-import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -69,8 +69,8 @@ public class PeerToPeerActorSystem {
         PeerToPeerActorInit viewerActorInit = new PeerToPeerActorInit(peerId, ActorNames.VIEWER);
         viewer.tell(viewerActorInit, null);
         
-        BlockingQueue<RecommendationsForUser> recommendationsQueue = new ArrayBlockingQueue<RecommendationsForUser>(10);
-        BlockingQueue<RetrievedContent> retrievedContentQueue = new ArrayBlockingQueue<RetrievedContent>(10);
+        BlockingQueue<RecommendationsForUser> recommendationsQueue = new LinkedBlockingQueue<RecommendationsForUser>();
+        BlockingQueue<RetrievedContent> retrievedContentQueue = new LinkedBlockingQueue<RetrievedContent>();
         this.channel = new ViewerToUIChannel(this.peerId, viewer, recommendationsQueue, retrievedContentQueue);
         
         ViewerInit viewerInit = new ViewerInit(recommendationsQueue, retrievedContentQueue);

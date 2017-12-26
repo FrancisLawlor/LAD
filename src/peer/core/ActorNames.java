@@ -10,6 +10,9 @@ public class ActorNames {
     public static final String HISTORY_GENERATOR = "historyGenerator";
     public static final String AGGREGATOR = "peerAggregator";
     public static final String RETRIEVER = "retriever";
+    public static final String DATABASER = "databaser";
+    public static final String GOSSIPER = "gossiper";
+    public static final String TRANSFERER = "transferer";
     
     private static final String WEIGHTER = "weighter_";
     
