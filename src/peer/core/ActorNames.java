@@ -13,6 +13,7 @@ public class ActorNames {
     public static final String DATABASER = "databaser";
     public static final String GOSSIPER = "gossiper";
     public static final String TRANSFERER = "transferer";
+    public static final String SIMILARITOR = "Similaritor";
     
     private static final String WEIGHTER = "weighter_";
     

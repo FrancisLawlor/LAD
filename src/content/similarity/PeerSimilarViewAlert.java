@@ -1,5 +1,6 @@
 package content.similarity;
 
+import content.view.ContentView;
 import peer.core.ActorMessage;
 import peer.core.ActorMessageType;
 import peer.core.UniversalId;
@@ -10,20 +11,19 @@ import peer.graph.weight.Weight;
  *
  */
 public class PeerSimilarViewAlert extends ActorMessage {
-    private UniversalId similarViewPeerId;
-    private Weight weightToGive;
+    ContentView similarContentView;
     
-    public PeerSimilarViewAlert(UniversalId similarViewPeerId, Weight weightToGive) {
+    public PeerSimilarViewAlert(ContentView similarContentView) {
         super(ActorMessageType.PeerSimilarViewAlert);
-        this.similarViewPeerId = similarViewPeerId;
-        this.weightToGive = weightToGive;
+        this.similarContentView = similarContentView;
     }
     
     public UniversalId getSimilarViewPeerId() {
-        return this.similarViewPeerId;
+        return this.similarContentView.getViewingPeerId();
     }
     
     public Weight getWeightToGive() {
-        return this.weightToGive;
+        double compositeScore = this.similarContentView.getScore();
+        return new Weight(compositeScore);
     }
 }

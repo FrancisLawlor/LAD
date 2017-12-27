@@ -1,6 +1,7 @@
 package content.view;
 
 import content.core.Content;
+import peer.core.UniversalId;
 
 /**
  * Information on a viewable piece of Content
@@ -10,18 +11,28 @@ public class ContentView {
     private static final double MIN_RATING = 0;
     private static final double MAX_RATING = 5;
     
+    private UniversalId viewingPeerId;
     private Content content;
     private int contentLength;
     private double rating;
     private int numberOfViews;
     private double averageViewingTime;
     
-    public ContentView(Content content) {
+    public ContentView(Content content, UniversalId viewingPeerId) {
         this.content = content;
+        this.viewingPeerId = viewingPeerId;
         this.contentLength = content.getViewLength();
         this.rating = -1;
         this.numberOfViews = 0;
         this.averageViewingTime = 0;
+    }
+    
+    /**
+     * Get Peer ID of the peer who generated this Content View
+     * @return
+     */
+    public UniversalId getViewingPeerId() {
+        return this.viewingPeerId;
     }
     
     /**

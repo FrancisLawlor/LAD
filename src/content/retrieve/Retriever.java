@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.google.gson.Gson;
+
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.Props;
@@ -15,6 +17,9 @@ import content.core.ContentFileRequest;
 import content.core.ContentFileResponse;
 import content.core.GossipContentRequest;
 import content.core.GossipContentResponse;
+import content.similarity.PeerSimilarViewAlert;
+import content.view.ContentView;
+import content.view.ContentViews;
 import filemanagement.fileretrieval.FileManager;
 import filemanagement.filewrapper.FileUnwrapper;
 import peer.core.ActorNames;
@@ -190,6 +195,7 @@ public class Retriever extends PeerToPeerActor {
     protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) throws IOException {
         ContentFile contentFile = retrievedContentFile.getContentFile();
         this.saveMediaFileForView(contentFile);
+        this.sendPeerSimilarContentViews(contentFile);
         
         RetrievedContent retrievedContent = retrievedContentFile.getRetrievedContent();
         ActorSelection viewer = getContext().actorSelection(ActorPaths.getPathToViewer());
@@ -209,5 +215,21 @@ public class Retriever extends PeerToPeerActor {
         String fileFormat = contentFile.getContent().getFileFormat();
         byte[] media = FileUnwrapper.extractFileArray(contentFile.getBytes());
         FileManager.writeMediaFile(fileName, fileFormat, media);
+    }
+    
+    /**
+     * Send Content Views from Content File that will help Similaritor determine similar peers
+     * @param contentFile
+     */
+    private void sendPeerSimilarContentViews(ContentFile contentFile) {
+        byte[] headerArray = FileUnwrapper.extractHeaderArray(contentFile.getBytes());
+        String json = new String(headerArray);
+        Gson gson = new Gson();
+        ContentViews contentViews = gson.fromJson(json, ContentViews.class);
+        ActorSelection similaritor = getContext().actorSelection(ActorPaths.getPathToSimilaritor());
+        for (ContentView contentView : contentViews) {
+            PeerSimilarViewAlert similarPeerAlert = new PeerSimilarViewAlert(contentView);
+            similaritor.tell(similarPeerAlert, getSelf());
+        }
     }
 }

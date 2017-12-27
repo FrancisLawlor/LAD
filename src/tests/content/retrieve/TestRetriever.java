@@ -45,6 +45,10 @@ public class TestRetriever {
         peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.VIEWER);
         dummyViewer.tell(peerIdInit, null);
         
+        final ActorRef dummySimilaritor = actorSystem.actorOf(Props.create(DummySimilaritor.class), ActorNames.SIMILARITOR);
+        peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.SIMILARITOR);
+        dummySimilaritor.tell(peerIdInit, null);
+        
         // Logger
         ActorTestLogger logger = new ActorTestLogger();
         DummyInit loggerInit = new DummyInit(logger);
@@ -52,6 +56,7 @@ public class TestRetriever {
         dummyGossiper.tell(loggerInit, null);
         dummyOutComm.tell(loggerInit, null);
         dummyViewer.tell(loggerInit, null);
+        dummySimilaritor.tell(loggerInit, null);
         
         logger.logMessage("Test Begins: ");
         
@@ -97,7 +102,7 @@ public class TestRetriever {
         TransferInfo transferInfo = new TransferInfo(peerOneId, "10001");
         RetrievedContent retrievedContent = new RetrievedContent(peerOneId, peerTwoId, content, transferInfo);
         retrieverToTest.tell(retrievedContent, null);
-        logger.logMessage("Setting up a transfer from an imaginary Transferer for the RetrievedContent Test");
+        logger.logMessage("Setting up a transfer from an imaginary Transferer for the RetrievedContent Test\n");
         {
             ServerSocket serverSocket = new ServerSocket(10001);
             Socket sendSocket = serverSocket.accept();

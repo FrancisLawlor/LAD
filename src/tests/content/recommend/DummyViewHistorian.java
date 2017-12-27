@@ -11,6 +11,7 @@ import content.view.ViewHistoryRequest;
 import content.view.ViewHistoryResponse;
 import peer.core.ActorPaths;
 import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 
@@ -55,7 +56,7 @@ public class DummyViewHistorian extends DummyActor {
     private List<ContentView> getContentViews(List<Content> contentList) {
         List<ContentView> contentViews = new LinkedList<ContentView>();
         for (int i = 1; i <= contentList.size(); i++) {
-            ContentView contentView = new ContentView(contentList.get(i - 1));
+            ContentView contentView = new ContentView(contentList.get(i - 1), new UniversalId("Peer" + (i + 10)));
             if (i % 2 == 0) {
                 super.logger.logMessage("Recording full view for content " + i);
                 contentView.recordView(20);

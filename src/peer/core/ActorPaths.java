@@ -50,4 +50,8 @@ public class ActorPaths {
     public static final String getPathToGossiper() {
         return absolutePath + ActorNames.GOSSIPER;
     }
+    
+    public static final String getPathToSimilaritor() {
+        return absolutePath + ActorNames.SIMILARITOR;
+    }
 }

@@ -7,7 +7,7 @@ import peer.core.PeerToPeerActorInit;
 import peer.core.PeerToPeerActorSystem;
 import peer.core.UniversalId;
 
-public class TestPeerToPeerActorSystem1 extends PeerToPeerActorSystem {    
+public class TestPeerToPeerActorSystem1 extends PeerToPeerActorSystem {
     public TestPeerToPeerActorSystem1(UniversalId peerId) {
         super(peerId);
     }
