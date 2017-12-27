@@ -1,6 +1,5 @@
 package peer.core;
 
-import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 import akka.actor.ActorRef;
@@ -46,7 +45,7 @@ public class ViewerToUIChannel {
         return this.retrievedContentQueue.take();
     }
     
-    public void recordView(Content content, List<UniversalId> similarPeers) {
+    synchronized public void recordView(Content content) {
         
     }
 }

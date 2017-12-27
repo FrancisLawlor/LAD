@@ -7,7 +7,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-
+/**
+ * Deprecated File Retrieval System
+ *
+ */
 public class FileRetriever {
 	public static File downloadFile(String remoteFileURL, String localSaveDirectory) throws IOException {
 		URL remoteLocationURL = new URL(remoteFileURL);

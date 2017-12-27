@@ -1,5 +1,6 @@
 package content.retrieve;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -14,6 +15,8 @@ import content.core.ContentFileRequest;
 import content.core.ContentFileResponse;
 import content.core.GossipContentRequest;
 import content.core.GossipContentResponse;
+import filemanagement.core.FileManager;
+import filemanagement.filewrapper.FileUnwrapper;
 import peer.core.ActorNames;
 import peer.core.ActorPaths;
 import peer.core.PeerToPeerActor;
@@ -38,7 +41,7 @@ public class Retriever extends PeerToPeerActor {
      * Actor Message processing
      */
     @Override
-    public void onReceive(Object message) {
+    public void onReceive(Object message) throws Throwable {
         if (message instanceof PeerToPeerActorInit) {
             PeerToPeerActorInit init = (PeerToPeerActorInit) message;
             super.initialisePeerToPeerActor(init);
@@ -179,16 +182,32 @@ public class Retriever extends PeerToPeerActor {
     
     /**
      * A content file retrieved from the Transferer child actor will be passed to the Databaser for local peer storage
-     * The RetrievedContent message will be passed back to the viewer to signal success
-     * The Content object in it will contain the unique ID of the content file so the viewer/GUI can find it in local peer storage
+     * The media segment of this contentFile will be written to a temporary directory for viewing by the GUI
+     * The RetrievedContent message will be passed back to the viewer to signal the media file is available in the temporary directory to view
+     * 
      * @param retrievedContentFile
      */
-    protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) {
+    protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) throws IOException {
+        ContentFile contentFile = retrievedContentFile.getContentFile();
+        this.saveMediaFileForView(contentFile);
+        
         RetrievedContent retrievedContent = retrievedContentFile.getRetrievedContent();
         ActorSelection viewer = getContext().actorSelection(ActorPaths.getPathToViewer());
         viewer.tell(retrievedContent, getSelf());
         
         ActorSelection databaser = getContext().actorSelection(ActorPaths.getPathToDatabaser());
         databaser.tell(retrievedContentFile, getSelf());
+    }
+    
+    /**
+     * Save Media segment of ContentFile bytes to temporary viewing directory
+     * @param contentFile
+     * @throws IOException
+     */
+    private void saveMediaFileForView(ContentFile contentFile) throws IOException {
+        String fileName = contentFile.getContent().getFileName();
+        String fileFormat = contentFile.getContent().getFileFormat();
+        byte[] media = FileUnwrapper.extractFileArray(contentFile.getBytes());
+        FileManager.writeMediaFile(fileName, fileFormat, media);
     }
 }

@@ -26,7 +26,7 @@ public class DummyRecommender extends UntypedActor {
     private List<Recommendation> getRecommendations() {
         List<Recommendation> recommendationList = new LinkedList<Recommendation>();
         for (int i = (requestCount * 10) + 1; i < ((requestCount + 1) * 10) + 1; i++) {
-            recommendationList.add(new Recommendation(new UniversalId("localhost:10002"), new Content("ID_"+i, "FileName_"+i, "FileFormat_"+i, "FileLocation_"+i, i)));
+            recommendationList.add(new Recommendation(new UniversalId("localhost:10002"), new Content("ID_"+i, "FileName_"+i, "FileFormat_"+i, i)));
         }
         return recommendationList;
     }

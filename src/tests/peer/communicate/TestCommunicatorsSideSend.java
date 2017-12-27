@@ -36,7 +36,7 @@ public class TestCommunicatorsSideSend {
     private static final UniversalId peerOneId = new UniversalId(IP + ":" + PORT);
     private static final UniversalId peerTwoId = new UniversalId(TestCommunicatorsSideReceive.IP + ":" + TestCommunicatorsSideReceive.PORT);
     
-    private static final Content toRetrieve = new Content("UIDA", "filenameA", "filetypeA", "filelocationA", 10);
+    private static final Content toRetrieve = new Content("UIDA", "filenameA", "filetypeA", 10);
     
     public static void main(String[] args) throws Exception {
         
@@ -118,7 +118,7 @@ public class TestCommunicatorsSideSend {
     private static List<Content> getContent() {
         List<Content> contentList = new LinkedList<Content>();
         for (int i = 1; i < 11; i++) {
-            contentList.add(new Content("UID_" + i, "filename_" + i, "filetype_" + i, "filelocation_" + i, i));
+            contentList.add(new Content("UID_" + i, "filename_" + i, "filetype_" + i, i));
         }
         return contentList;
     }

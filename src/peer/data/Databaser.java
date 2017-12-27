@@ -7,7 +7,7 @@ import content.core.ContentFile;
 import content.core.ContentFileExistenceRequest;
 import content.core.ContentFileRequest;
 import content.retrieve.RetrievedContentFile;
-import filemanagement.fileretrieval.FileManager;
+import filemanagement.core.FileManager;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
 import peer.core.xcept.UnknownMessageException;
