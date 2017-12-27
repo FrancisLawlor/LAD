@@ -15,7 +15,7 @@ import content.core.ContentFileRequest;
 import content.core.ContentFileResponse;
 import content.core.GossipContentRequest;
 import content.core.GossipContentResponse;
-import filemanagement.core.FileManager;
+import filemanagement.fileretrieval.FileManager;
 import filemanagement.filewrapper.FileUnwrapper;
 import peer.core.ActorNames;
 import peer.core.ActorPaths;

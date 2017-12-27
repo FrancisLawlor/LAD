@@ -7,6 +7,7 @@ import java.io.IOException;
 import content.recommend.Recommendation;
 import content.retrieve.RetrievedContent;
 import filemanagement.core.FileConstants;
+import filemanagement.fileretrieval.FileManager;
 import filemanagement.fileretrieval.RetrievedFile;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
@@ -53,10 +54,9 @@ public class RetrievingFileState extends State {
 			    Recommendation recommendation = gui.getDashBoardScene().getListView().getSelectionModel().getSelectedItem();
 			    viewer.requestContent(recommendation);
 			    retrievedContent = viewer.getRetrievedContent();
-			    String filename = retrievedContent.getContent().getFileName();
+			    String fileName = retrievedContent.getContent().getFileName();
 			    String fileFormat = retrievedContent.getContent().getFileFormat();
-			    filename += "." + fileFormat;
-			    File file = new File(filename);
+			    File file = FileManager.getFile(fileName, fileFormat);
 			    retrievedFile.setFile(file);
 				return null;
 			}
@@ -73,14 +73,20 @@ public class RetrievingFileState extends State {
 	}
 	
 	private void openFile(RetrievedFile retrievedFile) throws IOException {
-		if (!Desktop.isDesktopSupported()) {
+	    if (Desktop.isDesktopSupported()) {
+            if (retrievedFile.getFile().exists()) {
+                new Thread(() -> {
+                    try {
+                        Desktop desktop = Desktop.getDesktop();
+                        desktop.open(retrievedFile.getFile()); 
+                    }
+                    catch (IOException e) { }
+                }).start();
+            }
+	    }
+	    else {
 			System.err.println(FileConstants.DESKTOP_NOT_SUPPORTED);
 			return;
-		}
-		
-		Desktop desktop = Desktop.getDesktop();
-		if (retrievedFile.getFile().exists()) {
-			desktop.open(retrievedFile.getFile());
 		}
 	}
 	

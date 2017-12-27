@@ -1,4 +1,4 @@
-package filemanagement.core;
+package filemanagement.fileretrieval;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -8,6 +8,7 @@ import java.io.OutputStream;
 import java.util.Properties;
 
 import content.core.ContentFile;
+import filemanagement.core.FileConstants;
 
 /**
  * Writes files to disk
@@ -17,14 +18,37 @@ public class FileManager {
     private static final String BACKUP_DIR = "./files/";
     
     /**
+     * Get File from File Name and File Format
+     * @param fileName
+     * @param fileFormat
+     * @return
+     * @throws IOException
+     */
+    public static final File getFile(String fileName, String fileFormat) throws IOException {
+        return new File(FileManager.getFilePath(fileName, fileFormat));
+    }
+    
+    /**
+     * Get FilePath from File Name and File Format
+     * @param fileName
+     * @param fileFormat
+     * @return
+     * @throws IOException
+     */
+    private static final String getFilePath(String fileName, String fileFormat) throws IOException {
+        String filePath = FileManager.getLocalFileStorageDirectoryPath() + fileName + "." + fileFormat;
+        return filePath;
+    }
+    
+    /**
      * Writes a media file to the temporary viewing directory
      * @param fileName
      * @param fileFormat
      * @param media
      */
     public static void writeMediaFile(String fileName, String fileFormat, byte[] media) throws IOException {
-        String filepath = FileManager.getLocalFileStorageDirectoryPath() + fileName + "." + fileFormat;
-        FileManager.writeFile(filepath, media);
+        String filePath = FileManager.getFilePath(fileName, fileFormat);
+        FileManager.writeFile(filePath, media);
     }
     
     /**
@@ -52,7 +76,7 @@ public class FileManager {
             Properties props = new Properties();
             props.load(configFile);
             
-            String localFilesDirectory = props.getProperty(FileConstants.DIRECTORY_KEY);
+            String localFilesDirectory = props.getProperty(FileConstants.DIRECTORY_KEY) + "/";
             configFile.close();
             return localFilesDirectory;
         }
@@ -69,7 +93,7 @@ public class FileManager {
      */
     public static void writeContentFile(ContentFile contentFile) throws IOException {
         String key = contentFile.getContent().getId();
-        String filepath = FileManager.getLocalFileStorageDirectoryPath() + key;
+        String filepath = FileManager.getFilePath(key, ".lad");
         FileManager.writeFile(filepath, contentFile.getBytes());
     }
 }
