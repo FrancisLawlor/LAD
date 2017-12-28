@@ -3,7 +3,6 @@ package content.recommend.heuristic;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
 import content.recommend.Recommendation;
@@ -26,12 +25,12 @@ public class WeightedProbabilityAggregationHeuristic implements AggregationHeuri
      * @return recommendationsForUser generated from contentList
      */
     public RecommendationsForUser getRecommendationsForUser(List<WeightedPeerRecommendation> peerRecommends) {
-        double maxWeight = this.getMaxWeight(peerRecommends.iterator());
+        double totalWeight = this.getTotalWeight(peerRecommends.iterator());
         List<Recommendation> recommendationList = new LinkedList<Recommendation>();
         for (WeightedPeerRecommendation weightedPeerRecommendations : peerRecommends) {
             if (recommendationList.size() < LIMIT) {
                 double weight = weightedPeerRecommendations.getWeight();
-                double weightedChanceOfEntry = weight / maxWeight;
+                double weightedChanceOfEntry = weight / totalWeight;
                 for (Recommendation recommendation : weightedPeerRecommendations.getPeerRecommendation()) {
                     double threshold = ThreadLocalRandom.current().nextDouble(1.0);
                     if (weightedChanceOfEntry > threshold) {
@@ -46,26 +45,16 @@ public class WeightedProbabilityAggregationHeuristic implements AggregationHeuri
     }
     
     /**
-     * Helper to get max weight of peer recommendations
-     * Helps express peer recommendations in relative terms to the max
-     * Used to generate probability between 0 and 1 for peer recommendations
-     * @param weightedRecommends
+     * Get Total Weight for normalisation of a weight
+     * @param weightedPeerRecommendations
      * @return
      */
-    private double getMaxWeight(Iterator<WeightedPeerRecommendation> weightedRecommends) {
-        double maxScore;
-        Stack<WeightedPeerRecommendation> maxFinder = new Stack<WeightedPeerRecommendation>();
-        while (weightedRecommends.hasNext()) {
-            WeightedPeerRecommendation weightedRecommendation = weightedRecommends.next();
-            if (maxFinder.isEmpty()) {
-                maxFinder.push(weightedRecommendation);
-            }
-            else if (weightedRecommendation.getWeight() > maxFinder.peek().getWeight()){
-                maxFinder.pop();
-                maxFinder.push(weightedRecommendation);
-            }
+    private double getTotalWeight(Iterator<WeightedPeerRecommendation> weightedPeerRecommendations) {
+        double totalWeight = 0.0;
+        while (weightedPeerRecommendations.hasNext()) {
+            WeightedPeerRecommendation weightedPeerRecommendation = weightedPeerRecommendations.next();
+            totalWeight += weightedPeerRecommendation.getWeight();
         }
-        maxScore = maxFinder.pop().getWeight();
-        return maxScore;
+        return totalWeight;
     }
 }

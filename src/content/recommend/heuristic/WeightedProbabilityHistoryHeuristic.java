@@ -3,7 +3,6 @@ package content.recommend.heuristic;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
 import content.core.Content;
@@ -26,13 +25,13 @@ public class WeightedProbabilityHistoryHeuristic implements HistoryHeuristic {
         
         ViewHistory viewHistory = viewHistoryResponse.getViewHistory();
         
-        double maxScore = this.getMaxScore(viewHistory.iterator());
+        double totalScore = this.getTotalScore(viewHistory.iterator());
         Iterator<ContentView> views = viewHistory.iterator();
         while (views.hasNext()) {
             ContentView view = views.next();
             if (contentList.size() < TOP_N) {
                 double myScore = view.getScore();
-                double weightedChanceOfEntry = myScore / maxScore;
+                double weightedChanceOfEntry = myScore / totalScore;
                 double threshold = ThreadLocalRandom.current().nextDouble(1.0);
                 if (weightedChanceOfEntry > threshold) {
                     contentList.add(view.getContent());
@@ -43,26 +42,16 @@ public class WeightedProbabilityHistoryHeuristic implements HistoryHeuristic {
     }
     
     /**
-     * Helper to get max score of top scored content
-     * Helps express scores in relative terms to the max
-     * Used to generate probability between 0 and 1 for content to enter list
-     * @param views
+     * Get Total Score for normalisation of a score
+     * @param contentViews
      * @return
      */
-    private double getMaxScore(Iterator<ContentView> views) {
-        double maxScore;
-        Stack<ContentView> maxFinder = new Stack<ContentView>();
-        while (views.hasNext()) {
-            ContentView view = views.next();
-            if (maxFinder.isEmpty()) {
-                maxFinder.push(view);
-            }
-            else if (view.getScore() > maxFinder.peek().getScore()){
-                maxFinder.pop();
-                maxFinder.push(view);
-            }
+    private double getTotalScore(Iterator<ContentView> contentViews) {
+        double totalScore = 0.0;
+        while (contentViews.hasNext()) {
+            ContentView contentView = contentViews.next();
+            totalScore += contentView.getScore();
         }
-        maxScore = maxFinder.pop().getScore();
-        return maxScore;
+        return totalScore;
     }
 }
