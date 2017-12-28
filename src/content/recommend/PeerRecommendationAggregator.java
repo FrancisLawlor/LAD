@@ -11,7 +11,6 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import akka.actor.PoisonPill;
 import content.recommend.heuristic.AggregationHeuristic;
-import content.recommend.heuristic.WeightedPeerRecommendationComparator;
 import peer.core.ActorPaths;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
@@ -206,7 +205,6 @@ public class PeerRecommendationAggregator extends PeerToPeerActor {
                 weightedPeerRecommendations.add(weightedRecommendation);
             }
         }
-        weightedPeerRecommendations.sort(new WeightedPeerRecommendationComparator());
         RecommendationsForUser forUser = this.heuristic.getRecommendationsForUser(weightedPeerRecommendations);
         
         ActorSelection viewer = getContext().actorSelection(ActorPaths.getPathToViewer());

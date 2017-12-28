@@ -24,17 +24,23 @@ public class WeightedProbabilityHistoryHeuristic implements HistoryHeuristic {
         List<Content> contentList = new LinkedList<Content>();
         
         ViewHistory viewHistory = viewHistoryResponse.getViewHistory();
+        double totalScore = getTotalScore(viewHistory.iterator());
         
-        double totalScore = this.getTotalScore(viewHistory.iterator());
-        Iterator<ContentView> views = viewHistory.iterator();
-        while (views.hasNext()) {
-            ContentView view = views.next();
-            if (contentList.size() < TOP_N) {
+        List<ContentView> temp = getDepletableList(viewHistory.iterator());
+        
+        for (int i = 0; i < TOP_N && contentList.size() < TOP_N && temp.size() > 0; i++) {
+            int j = 0;
+            while (j < temp.size() && contentList.size() < TOP_N) {
+                ContentView view = temp.get(j);
                 double myScore = view.getScore();
                 double weightedChanceOfEntry = myScore / totalScore;
                 double threshold = ThreadLocalRandom.current().nextDouble(1.0);
                 if (weightedChanceOfEntry > threshold) {
                     contentList.add(view.getContent());
+                    temp.remove(j);
+                }
+                else {
+                    j++;
                 }
             }
         }
@@ -42,11 +48,25 @@ public class WeightedProbabilityHistoryHeuristic implements HistoryHeuristic {
     }
     
     /**
+     * Gets a List of Content Views which is depletable
+     * Content Views will be removed from it without replacement
+     * @param contentViews
+     * @return
+     */
+    private static List<ContentView> getDepletableList(Iterator<ContentView> contentViews) {
+        List<ContentView> depletableList = new LinkedList<ContentView>();
+        while (contentViews.hasNext()) {
+            depletableList.add(contentViews.next());
+        }
+        return depletableList;
+    }
+    
+    /**
      * Get Total Score for normalisation of a score
      * @param contentViews
      * @return
      */
-    private double getTotalScore(Iterator<ContentView> contentViews) {
+    private static double getTotalScore(Iterator<ContentView> contentViews) {
         double totalScore = 0.0;
         while (contentViews.hasNext()) {
             ContentView contentView = contentViews.next();

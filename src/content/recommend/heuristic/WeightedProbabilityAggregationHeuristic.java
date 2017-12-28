@@ -14,28 +14,48 @@ import content.recommend.WeightedPeerRecommendation;
  * returns weighted content from peer recommendations in a probablistic fashion
  *
  */
-public class WeightedProbabilityAggregationHeuristic implements AggregationHeuristic {
+public class WeightedProbabilityAggregationHeuristic extends AggregationHeuristic {
+    /**
+     * Temporary inner class for storing each individual peer recommendation with peer weight
+     *
+     */
+    private class WeightedRecommendation {
+        private Recommendation recommendation;
+        private double weight;
+        
+        public WeightedRecommendation(Recommendation recommendation, double weight) {
+            this.recommendation = recommendation;
+            this.weight = weight;
+        }
+    }
     /**
      * Sorts Peer Recommendations by Weight
      * Adds Content from Peer Recommendations to Content List probabilistically based on weight
-     * Uses weight to weigh each Peer Recommendation relative to the max weight overall
-     * Uses this relative weight as a chance of entry into the list for content in the peer recommendation
+     * Uses weight to weigh each Peer Recommendation relative to the total weight of all weighted peer recommendations
+     * Uses this normalised weight as a chance of entry into the list for content in the peer recommendation
      * Cycles through the content in each peer recommendation and then...
      * ...Checks if the chance of entry exceeds a random threshold
      * @return recommendationsForUser generated from contentList
      */
     public RecommendationsForUser getRecommendationsForUser(List<WeightedPeerRecommendation> peerRecommends) {
-        double totalWeight = this.getTotalWeight(peerRecommends.iterator());
         List<Recommendation> recommendationList = new LinkedList<Recommendation>();
-        for (WeightedPeerRecommendation weightedPeerRecommendations : peerRecommends) {
-            if (recommendationList.size() < LIMIT) {
-                double weight = weightedPeerRecommendations.getWeight();
+        
+        List<WeightedRecommendation> temp = this.getDepletableListOfWeightedRecommendations(peerRecommends.iterator());
+        
+        double totalWeight = this.getTotalWeight(peerRecommends.iterator());
+        for (int i = 0; i < LIMIT && recommendationList.size() < LIMIT && temp.size() > 0; i++) {
+            int j = 0;
+            while (j < temp.size() && recommendationList.size() < LIMIT) {
+                WeightedRecommendation weightedRecommendation = temp.get(j);
+                double weight = weightedRecommendation.weight;
                 double weightedChanceOfEntry = weight / totalWeight;
-                for (Recommendation recommendation : weightedPeerRecommendations.getPeerRecommendation()) {
-                    double threshold = ThreadLocalRandom.current().nextDouble(1.0);
-                    if (weightedChanceOfEntry > threshold) {
-                        recommendationList.add(recommendation);
-                    }
+                double threshold = ThreadLocalRandom.current().nextDouble(1.0);
+                if (weightedChanceOfEntry > threshold) {
+                    recommendationList.add(weightedRecommendation.recommendation);
+                    temp.remove(j);
+                }
+                else {
+                    j++;
                 }
             }
         }
@@ -45,16 +65,20 @@ public class WeightedProbabilityAggregationHeuristic implements AggregationHeuri
     }
     
     /**
-     * Get Total Weight for normalisation of a weight
+     * Gets a list of each recommendation individually weighted
+     * List is depletable and weighted recommendations are removed without replacement
      * @param weightedPeerRecommendations
      * @return
      */
-    private double getTotalWeight(Iterator<WeightedPeerRecommendation> weightedPeerRecommendations) {
-        double totalWeight = 0.0;
+    private List<WeightedRecommendation> getDepletableListOfWeightedRecommendations(Iterator<WeightedPeerRecommendation> weightedPeerRecommendations) {
+        List<WeightedRecommendation> depletableList = new LinkedList<WeightedRecommendation>();
         while (weightedPeerRecommendations.hasNext()) {
             WeightedPeerRecommendation weightedPeerRecommendation = weightedPeerRecommendations.next();
-            totalWeight += weightedPeerRecommendation.getWeight();
+            double weight = weightedPeerRecommendation.getWeight();
+            for (Recommendation recommendation : weightedPeerRecommendation.getPeerRecommendation()) {
+                depletableList.add(new WeightedRecommendation(recommendation, weight));
+            }
         }
-        return totalWeight;
+        return depletableList;
     }
 }
