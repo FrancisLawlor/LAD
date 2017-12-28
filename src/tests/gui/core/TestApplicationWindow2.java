@@ -9,7 +9,7 @@ import statemachine.utils.StateName;
 
 public class TestApplicationWindow2 extends Application {
     private static UniversalId id;
-    private static TestPeerToPeerActorSystem1 actorSystem;
+    private static TestPeerToPeerActorSystem2 actorSystem;
     private static ViewerToUIChannel viewerChannel;
     
     public void start(Stage stage) {
@@ -22,9 +22,10 @@ public class TestApplicationWindow2 extends Application {
     
     public static void main(String[] args) throws Exception {
         id = new UniversalId("localhost:10001");
-        actorSystem = new TestPeerToPeerActorSystem1(id);
+        actorSystem = new TestPeerToPeerActorSystem2(id);
         actorSystem.createActors();
         viewerChannel = actorSystem.getViewerChannel();
+        actorSystem.addAFakePeer();
         
         launch(args);
     }

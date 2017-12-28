@@ -47,15 +47,15 @@ public class ContentView {
      * Allows peer to set rating for this viewable Content
      * @param rating
      */
-    public void setRating(double rating) {
-        if (rating > MAX_RATING) {
+    public void setRating(Rating rating) {
+        if (rating.getRating() > MAX_RATING) {
             this.rating = MAX_RATING;
         }
-        else if (rating < MIN_RATING) {
+        else if (rating.getRating() < MIN_RATING) {
             this.rating = MIN_RATING;
         }
         else {
-            this.rating = rating;
+            this.rating = rating.getRating();
         }
     }
     
@@ -63,20 +63,18 @@ public class ContentView {
      * Record another view of the Content
      * @param viewingTime
      */
-    public void recordView(int viewingTime) {
+    public void recordView(ViewingTime viewingTime) {
         int viewTime;
-        if (viewingTime < 0) {
+        if (viewingTime.getViewingTime() < 0) {
             viewTime = 0;
         }
-        else if (viewingTime > contentLength) {
+        else if (viewingTime.getViewingTime() > contentLength) {
             viewTime = contentLength;
         }
         else {
-            viewTime = viewingTime;
+            viewTime = viewingTime.getViewingTime();
         }
-        this.averageViewingTime = 
-                (this.averageViewingTime * this.numberOfViews + viewTime) 
-                / (this.numberOfViews + 1);
+        this.averageViewingTime = ((this.averageViewingTime * this.numberOfViews) + viewTime) / (double)(this.numberOfViews + 1);
         this.numberOfViews++;
     }
     

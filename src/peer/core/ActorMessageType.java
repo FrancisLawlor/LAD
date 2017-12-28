@@ -44,7 +44,8 @@ public enum ActorMessageType {
     GossipContentRequest("GossipContentRequest"),
     GossipContentResponse("GossipContentResponse"),
     RetrievedContentFile("RetrievedContentFile"),
-    ContentViewAddition("ContentViewAddition");
+    ContentViewAddition("ContentViewAddition"),
+    RecordContentView("RecordContentView");
     
     private String typeName;
     

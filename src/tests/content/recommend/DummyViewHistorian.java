@@ -3,13 +3,13 @@ package tests.content.recommend;
 import java.util.LinkedList;
 import java.util.List;
 
-import akka.actor.ActorSelection;
+import akka.actor.ActorRef;
 import content.core.Content;
 import content.view.ContentView;
 import content.view.ViewHistory;
 import content.view.ViewHistoryRequest;
 import content.view.ViewHistoryResponse;
-import peer.core.ActorPaths;
+import content.view.ViewingTime;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
 import tests.core.DummyActor;
@@ -40,7 +40,7 @@ public class DummyViewHistorian extends DummyActor {
         ViewHistoryResponse response = new ViewHistoryResponse(viewHistory, viewHistoryRequest);
         
         super.logger.logMessage("Sending fake viewHistory");
-        ActorSelection generator = getContext().actorSelection(ActorPaths.getPathToGenerator());
+        ActorRef generator = getSender();
         generator.tell(response, getSelf());
     }
     
@@ -59,11 +59,11 @@ public class DummyViewHistorian extends DummyActor {
             ContentView contentView = new ContentView(contentList.get(i - 1), new UniversalId("Peer" + (i + 10)));
             if (i % 2 == 0) {
                 super.logger.logMessage("Recording full view for content " + i);
-                contentView.recordView(20);
+                contentView.recordView(new ViewingTime(20));
             }
             else {
                 super.logger.logMessage("Recording zero view for content " + i);
-                contentView.recordView(0);
+                contentView.recordView(new ViewingTime(0));
                 
             }
             contentViews.add(contentView);

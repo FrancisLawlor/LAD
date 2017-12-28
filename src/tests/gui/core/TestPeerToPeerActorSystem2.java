@@ -1,17 +1,28 @@
 package tests.gui.core;
 
 import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
 import akka.actor.Props;
 import peer.communicate.InboundCommunicator;
 import peer.communicate.OutboundCommInit;
 import peer.core.ActorNames;
+import peer.core.ActorPaths;
 import peer.core.PeerToPeerActorInit;
 import peer.core.PeerToPeerActorSystem;
 import peer.core.UniversalId;
+import peer.graph.link.PeerLinkAddition;
+import peer.graph.weight.Weight;
 
 public class TestPeerToPeerActorSystem2 extends PeerToPeerActorSystem {
     public TestPeerToPeerActorSystem2(UniversalId peerId) {
         super(peerId);
+    }
+    
+    @Override
+    protected void initialiseHistorySystem() {
+        final ActorRef viewHistorian = this.actorSystem.actorOf(Props.create(DummyViewHistorian.class), ActorNames.VIEW_HISTORIAN);
+        PeerToPeerActorInit viewHistorianInit = new PeerToPeerActorInit(peerId, ActorNames.VIEW_HISTORIAN);
+        viewHistorian.tell(viewHistorianInit, ActorRef.noSender());
     }
     
     @Override
@@ -29,5 +40,11 @@ public class TestPeerToPeerActorSystem2 extends PeerToPeerActorSystem {
         outboundCommunicator.tell(outboundCommInit, null);
         
         this.camelContext.start();
+    }
+    
+    protected void addAFakePeer() {
+        ActorSelection peerLinker = this.actorSystem.actorSelection(ActorPaths.getPathToPeerLinker());
+        PeerLinkAddition link = new PeerLinkAddition(new UniversalId("localhost:10003"), new Weight(20));
+        peerLinker.tell(link, ActorRef.noSender());
     }
 }

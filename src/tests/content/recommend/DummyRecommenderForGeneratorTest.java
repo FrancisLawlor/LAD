@@ -39,8 +39,8 @@ public class DummyRecommenderForGeneratorTest extends DummyActor {
     protected void startGeneratorTest() {
         UniversalId peerOneId = new UniversalId("Peer1");
         UniversalId peerTwoId = new UniversalId("Peer2");
-        final ActorRef generatorToTest = getContext().actorOf(Props.create(HistoryRecommendationGenerator.class), ActorNames.HISTORY_GENERATOR);
-        PeerToPeerActorInit init = new PeerToPeerActorInit(peerTwoId, ActorNames.HISTORY_GENERATOR);
+        final ActorRef generatorToTest = getContext().actorOf(Props.create(HistoryRecommendationGenerator.class), ActorNames.getHistoryGeneratorName(peerOneId));
+        PeerToPeerActorInit init = new PeerToPeerActorInit(peerTwoId, ActorNames.getHistoryGeneratorName(peerOneId));
         HistoryRecommendationGeneratorInit generatorInit = new HistoryRecommendationGeneratorInit(peerOneId, new WeightedProbabilityHistoryHeuristic());
         generatorToTest.tell(init, null);
         generatorToTest.tell(generatorInit, null);

@@ -16,6 +16,7 @@ import filemanagement.core.FileConstants;
  */
 public class FileManager {
     private static final String BACKUP_DIR = "./files/";
+    private static final String CONTENT_FILE_EXTENSION = "lad";
     
     /**
      * Get File from File Name and File Format
@@ -93,7 +94,7 @@ public class FileManager {
      */
     public static void writeContentFile(ContentFile contentFile) throws IOException {
         String key = contentFile.getContent().getId();
-        String filepath = FileManager.getFilePath(key, ".lad");
+        String filepath = FileManager.getFilePath(key, CONTENT_FILE_EXTENSION);
         FileManager.writeFile(filepath, contentFile.getBytes());
     }
 }

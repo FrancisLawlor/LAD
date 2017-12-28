@@ -53,6 +53,10 @@ public class Viewer extends PeerToPeerActor {
             RetrievedContent content = (RetrievedContent) message;
             this.processRetrievedContent(content);
         }
+        else if (message instanceof RecordContentView) {
+            RecordContentView recordContentView = (RecordContentView) message;
+            this.processRecordContentView(recordContentView);
+        }
         else {
             throw new UnknownMessageException();
         }
@@ -92,4 +96,12 @@ public class Viewer extends PeerToPeerActor {
         this.retrievedContentQueue.add(retrievedContent);
     }
     
+    /**
+     * Viewer must record a content view with the view historian
+     * @param recordContentView
+     */
+    protected void processRecordContentView(RecordContentView recordContentView) {
+        ActorSelection viewHistorian = getContext().actorSelection(ActorPaths.getPathToViewHistorian());
+        viewHistorian.tell(recordContentView, getSelf());
+    }
 }

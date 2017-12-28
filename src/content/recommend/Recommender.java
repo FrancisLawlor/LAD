@@ -87,15 +87,12 @@ public class Recommender extends PeerToPeerActor {
      * @param recommendation
      */
     protected void processPeerRecommendationRequest(PeerRecommendationRequest peerRecommendationRequest) {
-        final ActorRef generator = getContext().actorOf(Props.create(HistoryRecommendationGenerator.class), ActorNames.HISTORY_GENERATOR);
-        
-        PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.HISTORY_GENERATOR);
-        generator.tell(peerIdInit, getSelf());
-        
         UniversalId requestingPeerId = peerRecommendationRequest.getOriginalRequester();
+        final ActorRef generator = getContext().actorOf(Props.create(HistoryRecommendationGenerator.class), ActorNames.getHistoryGeneratorName(requestingPeerId));
+        PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.getHistoryGeneratorName(requestingPeerId));
+        generator.tell(peerIdInit, getSelf());
         HistoryRecommendationGeneratorInit init = new HistoryRecommendationGeneratorInit(requestingPeerId, new WeightedProbabilityHistoryHeuristic());
         generator.tell(init, getSelf());
-        
         generator.tell(peerRecommendationRequest, getSelf());
     }
     

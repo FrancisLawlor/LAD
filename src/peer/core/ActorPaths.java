@@ -23,8 +23,8 @@ public class ActorPaths {
         return getPathToPeerLinker() + "/" + ActorNames.getWeighterName(peerId);
     }
     
-    public static final String getPathToGenerator() {
-        return getPathToRecommender() + "/" + ActorNames.HISTORY_GENERATOR;
+    public static final String getPathToGenerator(UniversalId generateForPeerId) {
+        return getPathToRecommender() + "/" + ActorNames.getHistoryGeneratorName(generateForPeerId);
     }
     
     public static final String getPathToViewHistorian() {

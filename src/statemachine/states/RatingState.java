@@ -1,5 +1,7 @@
 package statemachine.states;
 
+import content.view.Rating;
+import content.view.ViewingTime;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
@@ -7,12 +9,12 @@ import peer.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
-@SuppressWarnings("unused")
 public class RatingState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
 	private ViewerToUIChannel viewer;
+	private long viewingTimeStart;
 	
 	public RatingState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, ViewerToUIChannel viewer) {
 		this.stateMachine = stateMachine;
@@ -23,10 +25,10 @@ public class RatingState extends State {
 
 	@Override
 	public void execute(StateName param) {
-		sceneContainerStage.changeScene(gui.getRatingScene());
-		sceneContainerStage.setTitle(GUIText.RATING);
-
 		switch (param) {
+		    case INIT:
+		        this.init();
+		        break;
 			case CLICK_SUBMIT:
 				clicksSubmit();
 				break;
@@ -38,15 +40,27 @@ public class RatingState extends State {
 		}
 	}
 	
+	private void init() {
+	    this.viewingTimeStart = System.currentTimeMillis();
+        sceneContainerStage.changeScene(gui.getRatingScene());
+        sceneContainerStage.setTitle(GUIText.RATING);
+	}
+	
 	private void clicksBack() {
+        int timedView = (int)((System.currentTimeMillis() - this.viewingTimeStart) / 1000);
+        ViewingTime viewingTime = new ViewingTime(timedView);
+        this.viewer.recordContentViewInfo(viewingTime, null);
+	    
 		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
 		stateMachine.execute(StateName.INIT);
 	}
 
 	private void clicksSubmit() {
 		Double score = gui.getRatingScene().getRating().getRating();
-		
-		// TODO Write this score to file
+		Rating rating = new Rating(score);
+		int timedView = (int)((System.currentTimeMillis() - this.viewingTimeStart) / 1000);
+		ViewingTime viewingTime = new ViewingTime(timedView);
+		this.viewer.recordContentViewInfo(viewingTime, rating);
 		
 		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
 		stateMachine.execute(StateName.INIT);

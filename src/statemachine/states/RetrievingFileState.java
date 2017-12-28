@@ -54,6 +54,7 @@ public class RetrievingFileState extends State {
 			    Recommendation recommendation = gui.getDashBoardScene().getListView().getSelectionModel().getSelectedItem();
 			    viewer.requestContent(recommendation);
 			    retrievedContent = viewer.getRetrievedContent();
+			    viewer.createNewContentView(retrievedContent.getContent());
 			    String fileName = retrievedContent.getContent().getFileName();
 			    String fileFormat = retrievedContent.getContent().getFileFormat();
 			    File file = FileManager.getFile(fileName, fileFormat);
