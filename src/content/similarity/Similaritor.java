@@ -123,12 +123,14 @@ public class Similaritor extends PeerToPeerActor {
      * @param request
      */
     protected void processSimilarContentViewPeerRequest(SimilarContentViewPeerRequest request) {
-        Set<UniversalId> similarViewPeers = this.similarViewsPeers.get(request.getContent());
-        Iterator<UniversalId> peers = similarViewPeers.iterator();
-        while (peers.hasNext()) {
-            UniversalId peerId = peers.next();
-            SimilarContentViewPeerResponse response = new SimilarContentViewPeerResponse(request.getContent(), peerId);
-            getSender().tell(response, getSelf());
+        if (this.similarViewsPeers.containsKey(request.getContent())) {
+            Set<UniversalId> similarViewPeers = this.similarViewsPeers.get(request.getContent());
+            Iterator<UniversalId> peers = similarViewPeers.iterator();
+            while (peers.hasNext()) {
+                UniversalId peerId = peers.next();
+                SimilarContentViewPeerResponse response = new SimilarContentViewPeerResponse(request.getContent(), peerId);
+                getSender().tell(response, getSelf());
+            }
         }
     }
 }

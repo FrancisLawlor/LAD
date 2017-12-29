@@ -2,10 +2,12 @@ package adt.frame;
 
 public interface DistributedMap<K, V> {
     
-    void add(K k, V v);
+    void requestAdd(K k, V v);
     
-    boolean contains(K k);
+    void requestContains(K k);
     
-    V remove(K k);
+    void requestGet(K k);
+    
+    void requestRemove(K k);
     
 }
