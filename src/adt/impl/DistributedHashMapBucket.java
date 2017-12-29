@@ -2,15 +2,18 @@ package adt.impl;
 
 import java.lang.reflect.Array;
 
+import akka.actor.ActorRef;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
 
 public class DistributedHashMapBucket extends PeerToPeerActor {
+    private ActorRef owner;
     private Class<?> kClass;
     private Class<?> vClass;
     private int bucketNum;
     private int bucketSize;
     private Object[] bucketArray;
+    private int entryCount;
     
     /**
      * Actor message processing
@@ -26,8 +29,8 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
             this.initialise(init);
         }
         else if (message instanceof DistributedMapAdditionRequest) {
-            DistributedMapAdditionRequest addition = (DistributedMapAdditionRequest) message;
-            this.processAddition(addition);
+            DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) message;
+            this.processAdditionRequest(additionRequest);
         }
     }
     
@@ -41,9 +44,54 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
         this.bucketNum = init.getBucketNum();
         this.bucketSize = init.getBucketSize();
         this.bucketArray = (Object[]) Array.newInstance(Object.class, this.bucketSize);
+        this.entryCount = 0;
     }
     
-    protected void processAddition(DistributedMapAdditionRequest addition) {
+    /**
+     * 
+     * @param additionRequest
+     */
+    protected void processAdditionRequest(DistributedMapAdditionRequest additionRequest) {
+        
+    }
+    
+    /**
+     * 
+     * @param containsRequest
+     */
+    protected void processContainsRequest(DistributedMapContainsRequest containsRequest) {
+        
+    }
+    
+    /**
+     * 
+     * @param getRequest
+     */
+    protected void processGetRequest(DistributedMapGetRequest getRequest) {
+        
+    }
+    
+    /**
+     * 
+     * @param removeRequest
+     */
+    protected void processRemoveRequest(DistributedMapRemoveRequest removeRequest) {
+        
+    }
+    
+    /**
+     * Checks for equality between two keys
+     * Handles conversion of Object to the appropriate key class
+     * @param keyA
+     * @param keyB
+     * @return
+     */
+    private boolean equals(Object keyA, Object keyB) {
+        boolean equals = (this.kClass.getClass().cast(keyA)).equals(this.kClass.getClass().cast(keyB));
+        return equals;
+    }
+    
+    private void refactor() {
         
     }
 }

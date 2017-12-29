@@ -94,4 +94,8 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
         DistributedMapRemoveRequest removeRequest = new DistributedMapRemoveRequest(index, k);
         bucketActor.tell(removeRequest, owner);
     }
+    
+    public void refactor() {
+        
+    }
 }
