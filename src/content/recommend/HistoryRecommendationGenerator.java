@@ -3,7 +3,9 @@ package content.recommend;
 
 import java.util.List;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
+import akka.actor.PoisonPill;
 import content.core.Content;
 import content.recommend.heuristic.HistoryHeuristic;
 import content.view.ViewHistoryRequest;
@@ -79,6 +81,8 @@ public class HistoryRecommendationGenerator extends PeerToPeerActor {
         
         ActorSelection recommender = getContext().actorSelection(ActorPaths.getPathToRecommender());
         recommender.tell(peerRecommendation, getSelf());
+        
+        getSelf().tell(PoisonPill.getInstance(), ActorRef.noSender());
     }
     
     /**

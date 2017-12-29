@@ -31,8 +31,8 @@ public class StateMachine {
 		stateMap.put(StateName.DASHBOARD.toString(), new DashboardState(this, containerStage, gui));
 		stateMap.put(StateName.ADD_FILE.toString(), new AddFileState(this, containerStage, gui));
 		stateMap.put(StateName.RETRIEVE_FILE_QUERY.toString(), new RetrieveFileQueryState(this, containerStage, gui));
-		stateMap.put(StateName.RETRIEVING_FILE.toString(), new RetrievingFileState(this, containerStage, gui));
-		stateMap.put(StateName.RATING.toString(), new RatingState(this, containerStage, gui));
+		stateMap.put(StateName.RETRIEVING_FILE.toString(), new RetrievingFileState(this, containerStage, gui, viewer));
+		stateMap.put(StateName.RATING.toString(), new RatingState(this, containerStage, gui, viewer));
 		stateMap.put(StateName.VIEWING_FILES.toString(), new ViewingFilesState(this, containerStage, gui));
 	}
 	

@@ -1,7 +1,10 @@
 package content.retrieve;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.google.gson.Gson;
 
 import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
@@ -12,8 +15,13 @@ import content.core.ContentFileExistenceRequest;
 import content.core.ContentFileExistenceResponse;
 import content.core.ContentFileRequest;
 import content.core.ContentFileResponse;
-import content.core.GossipContentRequest;
-import content.core.GossipContentResponse;
+import content.similarity.SimilarContentViewPeerRequest;
+import content.similarity.SimilarContentViewPeerResponse;
+import content.similarity.SimilarContentViewPeerAlert;
+import content.view.ContentView;
+import content.view.ContentViews;
+import filemanagement.fileretrieval.FileManager;
+import filemanagement.filewrapper.FileUnwrapper;
 import peer.core.ActorNames;
 import peer.core.ActorPaths;
 import peer.core.PeerToPeerActor;
@@ -38,7 +46,7 @@ public class Retriever extends PeerToPeerActor {
      * Actor Message processing
      */
     @Override
-    public void onReceive(Object message) {
+    public void onReceive(Object message) throws Throwable {
         if (message instanceof PeerToPeerActorInit) {
             PeerToPeerActorInit init = (PeerToPeerActorInit) message;
             super.initialisePeerToPeerActor(init);
@@ -59,9 +67,9 @@ public class Retriever extends PeerToPeerActor {
             ContentFileResponse response = (ContentFileResponse) message;
             this.processContentFileResponse(response);
         }
-        else if (message instanceof GossipContentResponse) {
-            GossipContentResponse response = (GossipContentResponse) message;
-            this.processGossipContentResponse(response);
+        else if (message instanceof SimilarContentViewPeerResponse) {
+            SimilarContentViewPeerResponse response = (SimilarContentViewPeerResponse) message;
+            this.processSimilarContentViewPeerResponse(response);
         }
         else if (message instanceof RetrievedContent) {
             RetrievedContent retrievedContent = (RetrievedContent) message;
@@ -120,9 +128,9 @@ public class Retriever extends PeerToPeerActor {
             databaser.tell(request, getSelf());
         }
         else {
-            GossipContentRequest request = new GossipContentRequest(content);
-            ActorSelection gossiper = getContext().actorSelection(ActorPaths.getPathToGossiper());
-            gossiper.tell(request, getSelf());
+            SimilarContentViewPeerRequest request = new SimilarContentViewPeerRequest(content);
+            ActorSelection similaritor = getContext().actorSelection(ActorPaths.getPathToSimilaritor());
+            similaritor.tell(request, getSelf());
         }
     }
     
@@ -151,10 +159,10 @@ public class Retriever extends PeerToPeerActor {
     
     /**
      * Ask another peer to fulfil the retrieve content request this peer couldn't fulfil
-     * Other peer is suspected by the gossiper of having the content file
+     * Other peer is suspected by the similaritor of having the content from previous similar content views
      * @param response
      */
-    protected void processGossipContentResponse(GossipContentResponse response) {
+    protected void processSimilarContentViewPeerResponse(SimilarContentViewPeerResponse response) {
         Content content = response.getContent();
         UniversalId requesterId = this.contentRequestedBy.remove(content);
         UniversalId newTargetPeerId = response.getPeerId();
@@ -179,16 +187,52 @@ public class Retriever extends PeerToPeerActor {
     
     /**
      * A content file retrieved from the Transferer child actor will be passed to the Databaser for local peer storage
-     * The RetrievedContent message will be passed back to the viewer to signal success
-     * The Content object in it will contain the unique ID of the content file so the viewer/GUI can find it in local peer storage
+     * The media segment of this contentFile will be written to a temporary directory for viewing by the GUI
+     * The RetrievedContent message will be passed back to the viewer to signal the media file is available in the temporary directory to view
+     * 
      * @param retrievedContentFile
      */
-    protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) {
+    protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) throws IOException {
+        ContentFile contentFile = retrievedContentFile.getContentFile();
+        this.saveMediaFileForView(contentFile);
+        this.sendPeerSimilarContentViews(contentFile);
+        
         RetrievedContent retrievedContent = retrievedContentFile.getRetrievedContent();
         ActorSelection viewer = getContext().actorSelection(ActorPaths.getPathToViewer());
         viewer.tell(retrievedContent, getSelf());
         
         ActorSelection databaser = getContext().actorSelection(ActorPaths.getPathToDatabaser());
         databaser.tell(retrievedContentFile, getSelf());
+    }
+    
+    /**
+     * Save Media segment of ContentFile bytes to temporary viewing directory
+     * @param contentFile
+     * @throws IOException
+     */
+    private void saveMediaFileForView(ContentFile contentFile) throws IOException {
+        String fileName = contentFile.getContent().getFileName();
+        String fileFormat = contentFile.getContent().getFileFormat();
+        byte[] media = FileUnwrapper.extractFileArray(contentFile.getBytes());
+        FileManager.writeMediaFile(fileName, fileFormat, media);
+    }
+    
+    /**
+     * Send Content Views from Content File that will help Similaritor determine similar peers
+     * Similaritor will reweight the similarity of peers in the weighted links of the peer graph to influence future recommendations
+     * Similaritor also remembers what peers have viewed similar content...
+     * ...this helps Retriever in the future retrieve content from similar peers if this peer has deleted it
+     * @param contentFile
+     */
+    private void sendPeerSimilarContentViews(ContentFile contentFile) {
+        byte[] headerArray = FileUnwrapper.extractHeaderArray(contentFile.getBytes());
+        String json = new String(headerArray);
+        Gson gson = new Gson();
+        ContentViews contentViews = gson.fromJson(json, ContentViews.class);
+        ActorSelection similaritor = getContext().actorSelection(ActorPaths.getPathToSimilaritor());
+        for (ContentView contentView : contentViews) {
+            SimilarContentViewPeerAlert similarPeerAlert = new SimilarContentViewPeerAlert(contentView);
+            similaritor.tell(similarPeerAlert, getSelf());
+        }
     }
 }

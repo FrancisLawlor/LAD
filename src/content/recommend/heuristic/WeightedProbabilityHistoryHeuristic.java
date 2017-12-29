@@ -3,7 +3,6 @@ package content.recommend.heuristic;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Stack;
 import java.util.concurrent.ThreadLocalRandom;
 
 import content.core.Content;
@@ -25,17 +24,23 @@ public class WeightedProbabilityHistoryHeuristic implements HistoryHeuristic {
         List<Content> contentList = new LinkedList<Content>();
         
         ViewHistory viewHistory = viewHistoryResponse.getViewHistory();
+        double totalScore = getTotalScore(viewHistory.iterator());
         
-        double maxScore = this.getMaxScore(viewHistory.iterator());
-        Iterator<ContentView> views = viewHistory.iterator();
-        while (views.hasNext()) {
-            ContentView view = views.next();
-            if (contentList.size() < TOP_N) {
+        List<ContentView> temp = getDepletableList(viewHistory.iterator());
+        
+        for (int i = 0; i < TOP_N && contentList.size() < TOP_N && temp.size() > 0; i++) {
+            int j = 0;
+            while (j < temp.size() && contentList.size() < TOP_N) {
+                ContentView view = temp.get(j);
                 double myScore = view.getScore();
-                double weightedChanceOfEntry = myScore / maxScore;
+                double weightedChanceOfEntry = myScore / totalScore;
                 double threshold = ThreadLocalRandom.current().nextDouble(1.0);
                 if (weightedChanceOfEntry > threshold) {
                     contentList.add(view.getContent());
+                    temp.remove(j);
+                }
+                else {
+                    j++;
                 }
             }
         }
@@ -43,26 +48,30 @@ public class WeightedProbabilityHistoryHeuristic implements HistoryHeuristic {
     }
     
     /**
-     * Helper to get max score of top scored content
-     * Helps express scores in relative terms to the max
-     * Used to generate probability between 0 and 1 for content to enter list
-     * @param views
+     * Gets a List of Content Views which is depletable
+     * Content Views will be removed from it without replacement
+     * @param contentViews
      * @return
      */
-    private double getMaxScore(Iterator<ContentView> views) {
-        double maxScore;
-        Stack<ContentView> maxFinder = new Stack<ContentView>();
-        while (views.hasNext()) {
-            ContentView view = views.next();
-            if (maxFinder.isEmpty()) {
-                maxFinder.push(view);
-            }
-            else if (view.getScore() > maxFinder.peek().getScore()){
-                maxFinder.pop();
-                maxFinder.push(view);
-            }
+    private static List<ContentView> getDepletableList(Iterator<ContentView> contentViews) {
+        List<ContentView> depletableList = new LinkedList<ContentView>();
+        while (contentViews.hasNext()) {
+            depletableList.add(contentViews.next());
         }
-        maxScore = maxFinder.pop().getScore();
-        return maxScore;
+        return depletableList;
+    }
+    
+    /**
+     * Get Total Score for normalisation of a score
+     * @param contentViews
+     * @return
+     */
+    private static double getTotalScore(Iterator<ContentView> contentViews) {
+        double totalScore = 0.0;
+        while (contentViews.hasNext()) {
+            ContentView contentView = contentViews.next();
+            totalScore += contentView.getScore();
+        }
+        return totalScore;
     }
 }

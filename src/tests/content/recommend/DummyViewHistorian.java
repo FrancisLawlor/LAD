@@ -3,14 +3,15 @@ package tests.content.recommend;
 import java.util.LinkedList;
 import java.util.List;
 
-import akka.actor.ActorSelection;
+import akka.actor.ActorRef;
 import content.core.Content;
 import content.view.ContentView;
 import content.view.ViewHistory;
 import content.view.ViewHistoryRequest;
 import content.view.ViewHistoryResponse;
-import peer.core.ActorPaths;
+import content.view.ViewingTime;
 import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 
@@ -39,14 +40,14 @@ public class DummyViewHistorian extends DummyActor {
         ViewHistoryResponse response = new ViewHistoryResponse(viewHistory, viewHistoryRequest);
         
         super.logger.logMessage("Sending fake viewHistory");
-        ActorSelection generator = getContext().actorSelection(ActorPaths.getPathToGenerator());
+        ActorRef generator = getSender();
         generator.tell(response, getSelf());
     }
     
     private List<Content> getContent() {
         List<Content> contentList = new LinkedList<Content>();
         for (int i = 1; i <= 20; i++) {
-            contentList.add(new Content(""+i, ""+i, ""+i, null, 20));
+            contentList.add(new Content(""+i, ""+i, ""+i, 20));
             super.logger.logMessage("Creating fake Content with id and name: " + i + " and view length 20");
         }
         return contentList;
@@ -55,14 +56,14 @@ public class DummyViewHistorian extends DummyActor {
     private List<ContentView> getContentViews(List<Content> contentList) {
         List<ContentView> contentViews = new LinkedList<ContentView>();
         for (int i = 1; i <= contentList.size(); i++) {
-            ContentView contentView = new ContentView(contentList.get(i - 1));
+            ContentView contentView = new ContentView(contentList.get(i - 1), new UniversalId("Peer" + (i + 10)));
             if (i % 2 == 0) {
                 super.logger.logMessage("Recording full view for content " + i);
-                contentView.recordView(20);
+                contentView.recordView(new ViewingTime(20));
             }
             else {
                 super.logger.logMessage("Recording zero view for content " + i);
-                contentView.recordView(0);
+                contentView.recordView(new ViewingTime(0));
                 
             }
             contentViews.add(contentView);

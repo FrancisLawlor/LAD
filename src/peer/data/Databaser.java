@@ -7,6 +7,7 @@ import content.core.ContentFile;
 import content.core.ContentFileExistenceRequest;
 import content.core.ContentFileRequest;
 import content.retrieve.RetrievedContentFile;
+import content.view.ContentViewAddition;
 import filemanagement.fileretrieval.FileManager;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
@@ -44,6 +45,10 @@ public class Databaser extends PeerToPeerActor {
         else if (message instanceof RetrievedContentFile) {
             RetrievedContentFile retrievedContentFile = (RetrievedContentFile) message;
             this.processRetrievedContentFile(retrievedContentFile);
+        }
+        else if (message instanceof ContentViewAddition) {
+            ContentViewAddition addition = (ContentViewAddition) message;
+            this.processContentViewAddition(addition);
         }
         else {
             throw new UnknownMessageException();
@@ -85,5 +90,14 @@ public class Databaser extends PeerToPeerActor {
         // We rely on a simple file manager for now until the database is implemented
         ContentFile contentFile = retrievedContentFile.getContentFile();
         FileManager.writeContentFile(contentFile);
+    }
+    
+    /**
+     * Adds a Content View to the ContentViews header in the relevant Content File stored in the database
+     * @param contentViewAddition
+     */
+    protected void processContentViewAddition(ContentViewAddition contentViewAddition) {
+        
+        // To do
     }
 }

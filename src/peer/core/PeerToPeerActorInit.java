@@ -1,5 +1,9 @@
 package peer.core;
 
+/**
+ * Initialises a PeerToPeerActor with its Peer ID and Name in Peer Actor System
+ *
+ */
 public class PeerToPeerActorInit extends ActorMessage {
     private UniversalId peerId;
     private String nameOfActorInSystem;

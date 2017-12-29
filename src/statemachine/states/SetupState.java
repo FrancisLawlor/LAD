@@ -68,7 +68,7 @@ public class SetupState extends State {
 	
 	private void createConfigFile() throws IOException, URISyntaxException {
 		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME, true);
-		String filesPath = new File(".").getAbsolutePath();
+		String filesPath = new File("").getAbsolutePath();
 		
 		Properties props = new Properties();
 		props.setProperty(FileConstants.DIRECTORY_KEY, filesPath + "/" + FileConstants.FILES_DIRECTORY_NAME);

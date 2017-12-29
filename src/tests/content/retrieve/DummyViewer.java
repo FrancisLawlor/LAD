@@ -18,15 +18,15 @@ public class DummyViewer extends DummyActor {
         }
         else if (message instanceof RetrievedContent) {
             RetrievedContent content = (RetrievedContent) message;
-            super.logger.logMessage("RetrievedContent received in Viewer");
-            super.logger.logMessage("Type: " + content.getType().toString());
-            super.logger.logMessage("Content ID: " + content.getContent().getId());
-            super.logger.logMessage("Content Name: " + content.getContent().getFileName());
-            super.logger.logMessage("Content Type: " + content.getContent().getFileFormat());
-            super.logger.logMessage("Content Length: " + content.getContent().getViewLength());
-            super.logger.logMessage("OriginalRequester: " + content.getOriginalRequester().toString());
-            super.logger.logMessage("OriginalTarget: " + content.getOriginalTarget());
-            super.logger.logMessage("");
+            super.logger.logMessage("RetrievedContent received in Viewer" + "\n" +
+                                    "Type: " + content.getType().toString() + "\n" +
+                                    "Content ID: " + content.getContent().getId() + "\n" +
+                                    "Content Name: " + content.getContent().getFileName() + "\n" +
+                                    "Content Type: " + content.getContent().getFileFormat() + "\n" +
+                                    "Content Length: " + content.getContent().getViewLength() + "\n" +
+                                    "OriginalRequester: " + content.getOriginalRequester().toString() + "\n" +
+                                    "OriginalTarget: " + content.getOriginalTarget() + "\n"
+                                    );
         }
     }
 }

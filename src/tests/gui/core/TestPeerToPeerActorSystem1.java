@@ -7,7 +7,7 @@ import peer.core.PeerToPeerActorInit;
 import peer.core.PeerToPeerActorSystem;
 import peer.core.UniversalId;
 
-public class TestPeerToPeerActorSystem1 extends PeerToPeerActorSystem {    
+public class TestPeerToPeerActorSystem1 extends PeerToPeerActorSystem {
     public TestPeerToPeerActorSystem1(UniversalId peerId) {
         super(peerId);
     }
@@ -16,13 +16,13 @@ public class TestPeerToPeerActorSystem1 extends PeerToPeerActorSystem {
     protected void initialiseRecommendingSystem() throws Exception {
         final ActorRef recommender = this.actorSystem.actorOf(Props.create(DummyRecommender.class), ActorNames.RECOMMENDER);
         PeerToPeerActorInit init = new PeerToPeerActorInit(super.peerId, ActorNames.RECOMMENDER);
-        recommender.tell(init, null);
+        recommender.tell(init, ActorRef.noSender());
     }
     
     @Override
     protected void initialiseRetrievingSystem() throws Exception {
         final ActorRef retriever = this.actorSystem.actorOf(Props.create(DummyRetriever.class), ActorNames.RETRIEVER);
         PeerToPeerActorInit init = new PeerToPeerActorInit(super.peerId, ActorNames.RETRIEVER);
-        retriever.tell(init, null);
+        retriever.tell(init, ActorRef.noSender());
     }
 }
