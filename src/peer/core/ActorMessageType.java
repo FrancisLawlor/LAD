@@ -45,7 +45,17 @@ public enum ActorMessageType {
     SimilarContentViewPeerResponse("SimilarContentViewPeerResponse"),
     RetrievedContentFile("RetrievedContentFile"),
     ContentViewAddition("ContentViewAddition"),
-    RecordContentView("RecordContentView");
+    RecordContentView("RecordContentView"),
+    BucketFullRefactorRequest("BucketFullRefactorRequest"),
+    DistributedHashMapBucketInit("DistributedHashMapBucketInit"),
+    DistributedMapAdditionRequest("DistributedMapAdditionRequest"),
+    DistributedMapAdditionResponse("DistributedMapAdditionResponse"),
+    DistributedMapContainsRequest("DistributedMapContainsRequest"),
+    DistributedMapContainsResponse("DistributedMapContainsResponse"),
+    DistributedMapGetRequest("DistributedMapGetRequest"),
+    DistributedMapGetResponse("DistributedMapGetResponse"),
+    DistributedMapRemoveRequest("DistributedMapRemoveRequest"),
+    DistributedMapRemoveResponse("DistributedMapRemoveResponse");
     
     private String typeName;
     

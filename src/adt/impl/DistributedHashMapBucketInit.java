@@ -1,16 +1,20 @@
 package adt.impl;
 
+import peer.core.ActorMessage;
+import peer.core.ActorMessageType;
+
 /**
  * Initialises the Distributed Hash Map Bucket
  *
  */
-public class DistributedHashMapBucketInit {
+public class DistributedHashMapBucketInit extends ActorMessage {
     private int bucketNum;
     private int bucketSize;
     private Class<?> kClass;
     private Class<?> vClass;
     
     public DistributedHashMapBucketInit(int bucketNum, int bucketSize, Class<?> kClass, Class<?> vClass) {
+        super(ActorMessageType.DistributedHashMapBucketInit);
         this.bucketNum = bucketNum;
         this.bucketSize = bucketSize;
         this.kClass = kClass;

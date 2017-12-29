@@ -9,9 +9,15 @@ import akka.actor.Props;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
 
+/**
+ * Distributed Hash Map that splits the array into Distributed Hash Map Bucket Actors
+ *
+ * @param <K>
+ * @param <V>
+ */
 public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
-    private static final int BUCKET_SIZE = 100;
-    private static final int INIT_BUCKET_NUM = 5;
+    private static final int BUCKET_SIZE = 128;
+    private static final int INIT_BUCKET_NUM = 8;
     private static final String NAME_PREFIX = "DistributedHashMapBucket";
     
     private Class<K> kClass;
@@ -20,8 +26,10 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
     private ActorRef owner;
     private ArrayList<ActorRef> buckets;
     private int arrayLength;
+    private int entryCount;
     
     public DistributedHashMap(ActorSystem actorSystem, ActorRef owner, UniversalId peerId, Class<K> kClass, Class<V> vClass) {
+        this.entryCount = 0;
         this.arrayLength = INIT_BUCKET_NUM * BUCKET_SIZE;
         this.kClass = kClass;
         this.vClass = vClass;
@@ -57,16 +65,29 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
         return k.hashCode() % arrayLength;
     }
     
-    private int findBucket(int index) {
+    /**
+     * Get the bucket number;
+     * @param index
+     * @return
+     */
+    private int getBucketNum(int index) {
         return index / BUCKET_SIZE;
     }
     
+    /**
+     * Find the index in the array
+     * @param index
+     * @return
+     */
     private ActorRef find(int index) {
-        int bucketNum = findBucket(index);
+        int bucketNum = getBucketNum(index);
         ActorRef bucketActor = this.buckets.get(bucketNum);
         return bucketActor;
     }
     
+    /**
+     * Request an addition of a key value pair at the hash index
+     */
     public void requestAdd(K k, V v) {
         int index = hashFunction(k);
         ActorRef bucketActor = find(index);
@@ -74,6 +95,9 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
         bucketActor.tell(addRequest, owner);
     }
     
+    /**
+     * Ask whether the hash map contains a key at this index
+     */
     public void requestContains(K k) {
         int index = hashFunction(k);
         ActorRef bucketActor = find(index);
@@ -81,6 +105,9 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
         bucketActor.tell(containsRequest, owner);
     }
     
+    /**
+     * Try to get the value that has this key in the hash map
+     */
     public void requestGet(K k) {
         int index = hashFunction(k);
         ActorRef bucketActor = find(index);
@@ -88,6 +115,9 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
         bucketActor.tell(getRequest, owner);
     }
     
+    /**
+     * Request removal of this key and its value in the map
+     */
     public void requestRemove(K k) {
         int index = hashFunction(k);
         ActorRef bucketActor = find(index);
@@ -95,7 +125,46 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
         bucketActor.tell(removeRequest, owner);
     }
     
+    /**
+     * Refactor if a bucket gets too full
+     */
     public void refactor() {
         
+    }
+    
+    public int size() {
+        return this.entryCount;
+    }
+    
+    public int capacity() {
+        return this.arrayLength;
+    }
+    
+    public K getAddKey(DistributedMapAdditionResponse response) {
+        return kClass.cast(response.getKey());
+    }
+    
+    public V getAddValue(DistributedMapAdditionResponse response) {
+        return vClass.cast(response.getValue());
+    }
+    
+    public K getContainsKey(DistributedMapContainsResponse response) {
+        return kClass.cast(response.getKey());
+    }
+    
+    public K getGetKey(DistributedMapGetResponse response) {
+        return kClass.cast(response.getKey());
+    }
+    
+    public V getGetValue(DistributedMapGetResponse response) {
+        return vClass.cast(response.getValue());
+    }
+    
+    public K getRemoveKey(DistributedMapGetResponse response) {
+        return kClass.cast(response.getKey());
+    }
+    
+    public V getRemoveValue(DistributedMapGetResponse response) {
+        return vClass.cast(response.getValue());
     }
 }
