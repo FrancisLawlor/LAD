@@ -1,5 +1,6 @@
-package content.core;
+package content.similarity;
 
+import content.core.Content;
 import peer.core.ActorMessage;
 import peer.core.ActorMessageType;
 import peer.core.UniversalId;
@@ -8,12 +9,12 @@ import peer.core.UniversalId;
  * Suggests this peer might have the file for this content
  *
  */
-public class GossipContentResponse extends ActorMessage {
+public class SimilarContentViewPeerResponse extends ActorMessage {
     private Content content;
     private UniversalId peerId;
     
-    public GossipContentResponse(Content content, UniversalId peerId) {
-        super(ActorMessageType.GossipContentResponse);
+    public SimilarContentViewPeerResponse(Content content, UniversalId peerId) {
+        super(ActorMessageType.SimilarContentViewPeerResponse);
         this.content = content;
         this.peerId = peerId;
     }

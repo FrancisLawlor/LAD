@@ -33,9 +33,9 @@ public class TestRetriever {
         PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.DATABASER);
         dummyDatabaser.tell(peerIdInit, null);
         
-        final ActorRef dummyGossiper = actorSystem.actorOf(Props.create(DummyGossiper.class), ActorNames.GOSSIPER);
-        peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.GOSSIPER);
-        dummyGossiper.tell(peerIdInit, null);
+        final ActorRef dummySimilaritor = actorSystem.actorOf(Props.create(DummySimilaritor.class), ActorNames.SIMILARITOR);
+        peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.SIMILARITOR);
+        dummySimilaritor.tell(peerIdInit, null);
         
         final ActorRef dummyOutComm = actorSystem.actorOf(Props.create(DummyOutboundCommunicator.class), ActorNames.OUTBOUND_COMM);
         peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.OUTBOUND_COMM);
@@ -45,18 +45,13 @@ public class TestRetriever {
         peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.VIEWER);
         dummyViewer.tell(peerIdInit, null);
         
-        final ActorRef dummySimilaritor = actorSystem.actorOf(Props.create(DummySimilaritor.class), ActorNames.SIMILARITOR);
-        peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.SIMILARITOR);
-        dummySimilaritor.tell(peerIdInit, null);
-        
         // Logger
         ActorTestLogger logger = new ActorTestLogger();
         DummyInit loggerInit = new DummyInit(logger);
         dummyDatabaser.tell(loggerInit, null);
-        dummyGossiper.tell(loggerInit, null);
+        dummySimilaritor.tell(loggerInit, null);
         dummyOutComm.tell(loggerInit, null);
         dummyViewer.tell(loggerInit, null);
-        dummySimilaritor.tell(loggerInit, null);
         
         logger.logMessage("Test Begins: ");
         
@@ -71,7 +66,7 @@ public class TestRetriever {
         retrieverToTest.tell(localRequest, null);
         
         Thread.sleep(1000);
-        logger.logMessage("Testing PeerRetrieveContentRequest where Gossip will be required because the file is not locally held: \n");
+        logger.logMessage("Testing PeerRetrieveContentRequest where Similaritor will be required because the file is not locally held: \n");
         PeerRetrieveContentRequest peerRequest = new PeerRetrieveContentRequest(peerTwoId, peerOneId, content);
         retrieverToTest.tell(peerRequest, null);
         

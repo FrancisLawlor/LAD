@@ -1,5 +1,6 @@
 package content.similarity;
 
+import content.core.Content;
 import content.view.ContentView;
 import peer.core.ActorMessage;
 import peer.core.ActorMessageType;
@@ -10,12 +11,16 @@ import peer.graph.weight.Weight;
  * Alerts Contenter that a peer has viewed similar content
  *
  */
-public class PeerSimilarViewAlert extends ActorMessage {
+public class SimilarContentViewPeerAlert extends ActorMessage {
     ContentView similarContentView;
     
-    public PeerSimilarViewAlert(ContentView similarContentView) {
+    public SimilarContentViewPeerAlert(ContentView similarContentView) {
         super(ActorMessageType.PeerSimilarViewAlert);
         this.similarContentView = similarContentView;
+    }
+    
+    public Content getSimilarViewContent() {
+        return this.similarContentView.getContent();
     }
     
     public UniversalId getSimilarViewPeerId() {

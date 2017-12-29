@@ -68,21 +68,21 @@ public class DummyDatabaser extends DummyActor {
         }
         else if (message instanceof RetrievedContentFile) {
             RetrievedContentFile contentFile = (RetrievedContentFile) message;
-            super.logger.logMessage("RetrievedContentFile received in Databaser");
-            super.logger.logMessage("Type: " + contentFile.getType().toString());
-            super.logger.logMessage("Content ID: " + contentFile.getContentFile().getContent().getId());
-            super.logger.logMessage("Content Name: " + contentFile.getContentFile().getContent().getFileName());
-            super.logger.logMessage("Content Type: " + contentFile.getContentFile().getContent().getFileFormat());
-            super.logger.logMessage("Content Length: " + contentFile.getContentFile().getContent().getViewLength());
-            super.logger.logMessage("Content ID: " + contentFile.getRetrievedContent().getContent().getId());
-            super.logger.logMessage("Content Name: " + contentFile.getRetrievedContent().getContent().getFileName());
-            super.logger.logMessage("Content Type: " + contentFile.getRetrievedContent().getContent().getFileFormat());
-            super.logger.logMessage("Content Length: " + contentFile.getRetrievedContent().getContent().getViewLength());
-            super.logger.logMessage("OriginalRequester: " + contentFile.getRetrievedContent().getOriginalRequester());
-            super.logger.logMessage("OriginalTarget: " + contentFile.getRetrievedContent().getOriginalTarget());
-            super.logger.logMessage("Test Bytes in ContentFile: " + TestHeaderMediaFile.getContentFileBytesAsString(contentFile.getContentFile().getBytes()));
-            super.logger.logMessage("Test Media String in ContentFile: " + new String(FileUnwrapper.extractFileArray(contentFile.getContentFile().getBytes())));
-            super.logger.logMessage("");
+            super.logger.logMessage("RetrievedContentFile received in Databaser" + "\n" +
+                                    "Type: " + contentFile.getType().toString() + "\n" +
+                                    "Content ID: " + contentFile.getContentFile().getContent().getId() + "\n" +
+                                    "Content Name: " + contentFile.getContentFile().getContent().getFileName() + "\n" +
+                                    "Content Type: " + contentFile.getContentFile().getContent().getFileFormat() + "\n" +
+                                    "Content Length: " + contentFile.getContentFile().getContent().getViewLength() + "\n" +
+                                    "Content ID: " + contentFile.getRetrievedContent().getContent().getId() + "\n" +
+                                    "Content Name: " + contentFile.getRetrievedContent().getContent().getFileName() + "\n" +
+                                    "Content Type: " + contentFile.getRetrievedContent().getContent().getFileFormat() + "\n" +
+                                    "Content Length: " + contentFile.getRetrievedContent().getContent().getViewLength() + "\n" +
+                                    "OriginalRequester: " + contentFile.getRetrievedContent().getOriginalRequester() + "\n" +
+                                    "OriginalTarget: " + contentFile.getRetrievedContent().getOriginalTarget() + "\n" +
+                                    "Test Bytes in ContentFile: " + TestHeaderMediaFile.getContentFileBytesAsString(contentFile.getContentFile().getBytes()) + "\n" +
+                                    "Test Media String in ContentFile: " + new String(FileUnwrapper.extractFileArray(contentFile.getContentFile().getBytes())) + "\n"
+                                    );
         }
     }
 }
