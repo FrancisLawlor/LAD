@@ -26,7 +26,10 @@ import peer.communicate.PeerRecommendationRequestProcessor;
 import peer.communicate.PeerRetrieveContentRequestProcessor;
 import peer.communicate.PeerWeightUpdateRequestProcessor;
 import peer.communicate.RetrievedContentProcessor;
+import peer.data.Database;
 import peer.data.Databaser;
+import peer.data.DatabaserInit;
+import peer.data.SqlLiteDatabase;
 import peer.graph.link.PeerLinker;
 
 /**
@@ -58,6 +61,7 @@ public class PeerToPeerActorSystem {
         initialisePeerGraph();
         initialiseRecommendingSystem();
         initialiseRetrievingSystem();
+//        initialiseDatabaseSystem();
     }
     
     public ViewerToUIChannel getViewerChannel() {
@@ -158,4 +162,14 @@ public class PeerToPeerActorSystem {
         PeerToPeerActorInit retrieverInit = new PeerToPeerActorInit(peerId, ActorNames.RETRIEVER);
         retriever.tell(retrieverInit, ActorRef.noSender());
     }
+
+//    protected void initialiseDatabaseSystem() throws Exception {
+//        final ActorRef databaser = this.actorSystem.actorOf(Props.create(Databaser.class), ActorNames.DATABASER);
+//        PeerToPeerActorInit databaserPeerInit = new PeerToPeerActorInit(peerId, ActorNames.DATABASER);
+//        databaser.tell(databaserPeerInit, null);
+//
+//        Database db = new SqlLiteDatabase();
+//        DatabaserInit databaserInit = new DatabaserInit(db);
+//        databaser.tell(databaserInit, null);
+//    }
 }

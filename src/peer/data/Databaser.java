@@ -2,13 +2,12 @@ package peer.data;
 
 import java.io.IOException;
 
-import content.core.Content;
-import content.core.ContentFile;
-import content.core.ContentFileExistenceRequest;
-import content.core.ContentFileRequest;
+import akka.actor.ActorSelection;
+import content.core.*;
 import content.retrieve.RetrievedContentFile;
 import content.view.ContentViewAddition;
 import filemanagement.fileretrieval.FileManager;
+import peer.core.ActorPaths;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
 import peer.core.xcept.UnknownMessageException;
@@ -62,34 +61,38 @@ public class Databaser extends PeerToPeerActor {
     protected void initialiseDatabaser(Database db) {
         this.db = db;
     }
-    
+
     /**
      * Checks database to see if there is a file stored matching this Content object's description
      * @param request
      */
     protected void processContentFileExistenceRequest(ContentFileExistenceRequest request) {
         Content content = request.getContent();
-        
-        // To do
+
+        boolean fileFound = db.checkIfFileExists(content);
+        ContentFileExistenceResponse response = new ContentFileExistenceResponse(content, fileFound);
+        ActorSelection retriever = getContext().actorSelection(ActorPaths.getPathToRetriever());
+        retriever.tell(response, getSelf());
     }
-    
+
     /**
      * Returns a content file to requesting actor if it exists in the database
      * @param request
      */
     protected void processContentFileRequest(ContentFileRequest request) {
         Content content = request.getContent();
-        
-        // To do
+
+        ContentFile file = db.getFile(content);
+        ContentFileResponse response = new ContentFileResponse(file);
+        ActorSelection retriever = getContext().actorSelection(ActorPaths.getPathToRetriever());
+        retriever.tell(response, getSelf());
     }
-    
+
     /**
      * Writes a retrieved content file to the database
      */
-    protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) throws IOException {
-        // We rely on a simple file manager for now until the database is implemented
-        ContentFile contentFile = retrievedContentFile.getContentFile();
-        FileManager.writeContentFile(contentFile);
+    protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) {
+        db.writeFile(retrievedContentFile.getContentFile());
     }
     
     /**
@@ -97,7 +100,6 @@ public class Databaser extends PeerToPeerActor {
      * @param contentViewAddition
      */
     protected void processContentViewAddition(ContentViewAddition contentViewAddition) {
-        
         // To do
     }
 }
