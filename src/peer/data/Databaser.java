@@ -1,7 +1,9 @@
 package peer.data;
 
+import java.awt.*;
 import java.io.IOException;
 
+import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import content.core.*;
 import content.retrieve.RetrievedContentFile;
@@ -71,8 +73,8 @@ public class Databaser extends PeerToPeerActor {
 
         boolean fileFound = db.checkIfFileExists(content);
         ContentFileExistenceResponse response = new ContentFileExistenceResponse(content, fileFound);
-        ActorSelection retriever = getContext().actorSelection(ActorPaths.getPathToRetriever());
-        retriever.tell(response, getSelf());
+        ActorRef sender = getSender();
+        sender.tell(response, getSelf());
     }
 
     /**
@@ -84,8 +86,9 @@ public class Databaser extends PeerToPeerActor {
 
         ContentFile file = db.getFile(content);
         ContentFileResponse response = new ContentFileResponse(file);
-        ActorSelection retriever = getContext().actorSelection(ActorPaths.getPathToRetriever());
-        retriever.tell(response, getSelf());
+        ActorRef sender = getSender();
+        sender.tell(response, getSelf());
+
     }
 
     /**
@@ -100,6 +103,6 @@ public class Databaser extends PeerToPeerActor {
      * @param contentViewAddition
      */
     protected void processContentViewAddition(ContentViewAddition contentViewAddition) {
-        // To do
+        db.appendToHeader(contentViewAddition);
     }
 }

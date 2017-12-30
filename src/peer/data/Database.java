@@ -2,6 +2,7 @@ package peer.data;
 
 import content.core.Content;
 import content.core.ContentFile;
+import content.view.ContentViewAddition;
 
 /**
  * Interface for database
@@ -10,6 +11,8 @@ import content.core.ContentFile;
 public interface Database {
 
     void writeFile(ContentFile file);
+
+    void appendToHeader(ContentViewAddition viewAddition);
 
     boolean checkIfFileExists(Content content);
 

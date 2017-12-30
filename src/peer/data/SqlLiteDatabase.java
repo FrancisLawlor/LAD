@@ -2,6 +2,12 @@ package peer.data;
 
 import content.core.Content;
 import content.core.ContentFile;
+import content.view.ContentView;
+import content.view.ContentViewAddition;
+import content.view.ContentViews;
+import filemanagement.filewrapper.FileUnwrapper;
+import com.google.gson.Gson;
+
 import java.sql.*;
 
 /**
@@ -26,7 +32,8 @@ public class SqlLiteDatabase implements Database {
                             "fileName TEXT," +
                             "fileFormat TEXT," +
                             "viewLength INTEGER," +
-                            "data BLOB" +
+                            "data BLOB," +
+                            "header BLOB" +
                             ")");
             connection.close();
         } catch (SQLException e) {
@@ -42,13 +49,15 @@ public class SqlLiteDatabase implements Database {
             Class.forName("org.sqlite.JDBC");
             connection = DriverManager.getConnection("jdbc:sqlite:" + dbLocation);
             PreparedStatement statement = connection.prepareStatement(
-                    "insert or ignore into files VALUES (?,?,?,?,?)");
+                    "insert or ignore into files VALUES (?,?,?,?,?,?)");
 
+            byte[] fileBytes = file.getBytes();
             statement.setString(1, metadata.getId());
             statement.setString(2, metadata.getFileName());
             statement.setString(3, metadata.getFileFormat());
             statement.setInt(4, metadata.getViewLength());
-            statement.setBytes(5, file.getBytes());
+            statement.setBytes(5, FileUnwrapper.extractFileArray(fileBytes));
+            statement.setBytes(6, FileUnwrapper.extractHeaderArray(fileBytes));
 
             statement.execute();
             connection.close();
@@ -58,6 +67,29 @@ public class SqlLiteDatabase implements Database {
             e.printStackTrace();
         }
 
+    }
+
+    @Override
+    public void appendToHeader(ContentViewAddition viewAddition) {
+        ContentFile file = getFile(viewAddition.getContentView().getContent());
+
+        byte[] headers = FileUnwrapper.extractHeaderArray(file.getBytes());
+        String json = new String(headers);
+        Gson gson = new Gson();
+        ContentViews views = gson.fromJson(json, ContentViews.class);
+        views.addContentView(viewAddition.getContentView());
+
+        json = gson.toJson(views);
+
+        try {
+
+            Statement stmt = connection.createStatement();
+            String sql = "UPDATE files SET header=" + json.getBytes() + " WHERE fileId=" + file.getContent().getId();
+            stmt.executeUpdate(sql);
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
