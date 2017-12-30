@@ -1,5 +1,6 @@
 package adt.impl;
 
+import akka.actor.ActorRef;
 import peer.core.ActorMessage;
 import peer.core.ActorMessageType;
 
@@ -8,17 +9,21 @@ import peer.core.ActorMessageType;
  *
  */
 public class DistributedHashMapBucketInit extends ActorMessage {
+    private ActorRef owner;
     private int bucketNum;
     private int bucketSize;
     private Class<?> kClass;
-    private Class<?> vClass;
     
-    public DistributedHashMapBucketInit(int bucketNum, int bucketSize, Class<?> kClass, Class<?> vClass) {
+    public DistributedHashMapBucketInit(ActorRef owner, int bucketNum, int bucketSize, Class<?> kClass) {
         super(ActorMessageType.DistributedHashMapBucketInit);
+        this.owner = owner;
         this.bucketNum = bucketNum;
         this.bucketSize = bucketSize;
         this.kClass = kClass;
-        this.vClass = vClass;
+    }
+    
+    public ActorRef getOwner() {
+        return this.owner;
     }
     
     public int getBucketNum() {
@@ -31,9 +36,5 @@ public class DistributedHashMapBucketInit extends ActorMessage {
     
     public Class<?> getKeyClass() {
         return this.kClass;
-    }
-    
-    public Class<?> getValueClass() {
-        return this.vClass;
     }
 }

@@ -7,7 +7,6 @@ import peer.core.PeerToPeerActorInit;
 public class DistributedHashMapBucket extends PeerToPeerActor {
     private ActorRef owner;
     private Class<?> kClass;
-    //private Class<?> vClass;
     private int bucketNum;
     private int bucketSize;
     private Object[] keyArray;
@@ -32,6 +31,18 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
             DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) message;
             this.processAdditionRequest(additionRequest);
         }
+        else if (message instanceof DistributedMapContainsRequest) {
+            DistributedMapContainsRequest containsRequest = (DistributedMapContainsRequest) message;
+            this.processContainsRequest(containsRequest);
+        }
+        else if (message instanceof DistributedMapGetRequest) {
+            DistributedMapGetRequest getRequest = (DistributedMapGetRequest) message;
+            this.processGetRequest(getRequest);
+        }
+        else if (message instanceof DistributedMapRemoveRequest) {
+            DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) message;
+            this.processRemoveRequest(removeRequest);
+        }
     }
     
     /**
@@ -39,8 +50,8 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
      * @param init
      */
     protected void initialise(DistributedHashMapBucketInit init) {
+        this.owner = init.getOwner();
         this.kClass = init.getKeyClass();
-        //this.vClass = init.getValueClass();
         this.bucketNum = init.getBucketNum();
         this.bucketSize = init.getBucketSize();
         this.keyArray = new Object[this.bucketSize];

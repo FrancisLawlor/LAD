@@ -4,8 +4,8 @@ import java.util.ArrayList;
 
 import adt.frame.DistributedMap;
 import akka.actor.ActorRef;
-import akka.actor.ActorSystem;
 import akka.actor.Props;
+import akka.actor.UntypedActorContext;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
 
@@ -28,7 +28,7 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
     private int arrayLength;
     private int entryCount;
     
-    public DistributedHashMap(ActorSystem actorSystem, ActorRef owner, UniversalId peerId, Class<K> kClass, Class<V> vClass) {
+    public DistributedHashMap(UntypedActorContext context, ActorRef owner, UniversalId peerId, Class<K> kClass, Class<V> vClass) {
         this.entryCount = 0;
         this.arrayLength = INIT_BUCKET_NUM * BUCKET_SIZE;
         this.kClass = kClass;
@@ -37,10 +37,10 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
         this.owner = owner;
         this.buckets = new ArrayList<ActorRef>();
         for (int i = 0; i < INIT_BUCKET_NUM; i++) {
-            ActorRef bucket = actorSystem.actorOf(Props.create(DistributedHashMapBucket.class), getBucketName(i));
+            ActorRef bucket = context.actorOf(Props.create(DistributedHashMapBucket.class), getBucketName(i));
             PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(this.peerId, getBucketName(i));
             bucket.tell(peerIdInit, owner);
-            DistributedHashMapBucketInit init = new DistributedHashMapBucketInit(i, BUCKET_SIZE, kClass, vClass); 
+            DistributedHashMapBucketInit init = new DistributedHashMapBucketInit(this.owner, i, BUCKET_SIZE, kClass); 
             bucket.tell(init, owner);
             this.buckets.add(bucket);
         }
@@ -62,7 +62,7 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
      */
     private int hashFunction(K k) {
         int arrayLength = BUCKET_SIZE * this.buckets.size();
-        return k.hashCode() % arrayLength;
+        return Math.abs(k.hashCode() % arrayLength);
     }
     
     /**
@@ -160,11 +160,11 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
         return vClass.cast(response.getValue());
     }
     
-    public K getRemoveKey(DistributedMapGetResponse response) {
+    public K getRemoveKey(DistributedMapRemoveResponse response) {
         return kClass.cast(response.getKey());
     }
     
-    public V getRemoveValue(DistributedMapGetResponse response) {
+    public V getRemoveValue(DistributedMapRemoveResponse response) {
         return vClass.cast(response.getValue());
     }
 }

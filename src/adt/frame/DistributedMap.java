@@ -3,6 +3,7 @@ package adt.frame;
 import adt.impl.DistributedMapAdditionResponse;
 import adt.impl.DistributedMapContainsResponse;
 import adt.impl.DistributedMapGetResponse;
+import adt.impl.DistributedMapRemoveResponse;
 
 public interface DistributedMap<K, V> {
     
@@ -30,7 +31,7 @@ public interface DistributedMap<K, V> {
     
     public V getGetValue(DistributedMapGetResponse response);
     
-    public K getRemoveKey(DistributedMapGetResponse response);
+    public K getRemoveKey(DistributedMapRemoveResponse response);
     
-    public V getRemoveValue(DistributedMapGetResponse response);
+    public V getRemoveValue(DistributedMapRemoveResponse response);
 }
