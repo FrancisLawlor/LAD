@@ -3,10 +3,14 @@ package adt.frame;
 import adt.impl.DistributedMapAdditionResponse;
 import adt.impl.DistributedMapContainsResponse;
 import adt.impl.DistributedMapGetResponse;
-import adt.impl.DistributedMapRefactorGetResponse;
 import adt.impl.DistributedMapRemoveResponse;
+import akka.actor.ActorRef;
+import akka.actor.UntypedActorContext;
+import peer.core.UniversalId;
 
 public interface DistributedMap<K, V> {
+    
+    void initialise(Class<K> kClass, Class<V> vClass, UntypedActorContext actorContext, ActorRef owner, UniversalId peerId);
     
     void requestAdd(K k, V v);
     
@@ -16,19 +20,9 @@ public interface DistributedMap<K, V> {
     
     void requestRemove(K k);
     
-    void requestRefactor();
-    
-    void setRefactorGetResponse(DistributedMapRefactorGetResponse response);
-    
-    int size();
-    
-    int capacity();
-    
     public K getAddKey(DistributedMapAdditionResponse response);
     
     public V getAddValue(DistributedMapAdditionResponse response);
-    
-    public boolean getAdditionSuccessful(DistributedMapAdditionResponse response);
     
     public K getContainsKey(DistributedMapContainsResponse response);
     

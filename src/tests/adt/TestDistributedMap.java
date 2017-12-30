@@ -18,16 +18,23 @@ public class TestDistributedMap {
         ActorTestLogger logger = new ActorTestLogger();
         DummyInit loggerInit = new DummyInit(logger);
         peerLinker.tell(loggerInit, ActorRef.noSender());
+        Thread.sleep(6000);
         peerLinker.tell(new StartTest(), ActorRef.noSender());
-        
-        Thread.sleep(10000);
-        
+        Thread.sleep(6000);
+        peerLinker.tell(new StartTest(), ActorRef.noSender());
+        Thread.sleep(6000);
+        peerLinker.tell(new StartTest(), ActorRef.noSender());
+        Thread.sleep(6000);
+        peerLinker.tell(new StartTest(), ActorRef.noSender());
+        Thread.sleep(6000);
+        peerLinker.tell(new StartTest(), ActorRef.noSender());
+        Thread.sleep(6000);
         peerLinker.tell(new EndTest(), ActorRef.noSender());
-        
-        Thread.sleep(4000);
+        Thread.sleep(6000);
         
         for (String message : logger) {
             System.out.println(message);
+            Thread.sleep(1);
         }
     }
 }

@@ -6,7 +6,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import adt.frame.DistributedMap;
-import adt.impl.BucketFullRefactorRequest;
 import adt.impl.DistributedHashMap;
 import adt.impl.DistributedMapAdditionResponse;
 import adt.impl.DistributedMapContainsResponse;
@@ -26,106 +25,182 @@ public class DummyPeerLinker extends DummyActor {
     private Map<UniversalId, Weight> containsTestMap;
     private Map<UniversalId, Weight> getTestMap;
     private Map<UniversalId, Weight> removeTestMap;
-    
-    public DummyPeerLinker() {
-        this.initialise();
-    }
+    private Map<UniversalId, Weight> containsTest2Map;
+    private boolean containsTest2 = false;
+    private int testNum = 1;
+    private int exceptionsCaught = 0;
     
     @Override
     public void onReceive(Object message) {
+        try {
         if (message instanceof PeerToPeerActorInit) {
             PeerToPeerActorInit init = (PeerToPeerActorInit) message;
             super.initialisePeerToPeerActor(init);
         }
         else if (message instanceof DummyInit) {
             super.logger = ((DummyInit)message).getLogger();
+            this.initialise();
         }
         else if (message instanceof StartTest) {
-            this.startTest();
+            switch (this.testNum) {
+            case 1:
+                this.startAdditionTest();
+                break;
+            case 2:
+                this.startContainsTest();
+                break;
+            case 3:
+                this.startGetTest();
+                break;
+            case 4:
+                this.startRemoveTest();
+                break;
+            case 5:
+                this.startContainsTest2();
+                break;
+            }
+            this.testNum++;
         }
         else if (message instanceof DistributedMapAdditionResponse) {
             DistributedMapAdditionResponse response = (DistributedMapAdditionResponse) message;
-            UniversalId key = this.distributedMap.getAddKey(response);
-            boolean success = response.isAdditionSuccessful();
-            Weight value = this.distributedMap.getAddValue(response);
-            this.additionTestMap.remove(key);
-            if (value != null || !success) throw new RuntimeException();
+            if (response.getSuccess()) {
+                UniversalId key = (UniversalId) response.getKey();
+                if (!this.additionTestMap.containsKey(key)) throw new RuntimeException();
+                Weight value = this.additionTestMap.remove(key);
+                if (value == null) throw new RuntimeException();
+                super.logger.logMessage("Addition Test Progress : " + this.additionTestMap.size() + " ; Key: " + key.toString());
+            }
         }
         else if (message instanceof DistributedMapContainsResponse) {
             DistributedMapContainsResponse response = (DistributedMapContainsResponse) message;
-            UniversalId key = this.distributedMap.getContainsKey(response);
-            boolean value = response.contains();
-            if (!value) throw new RuntimeException();
-            Weight valueCheck = this.containsTestMap.remove(key);
-            if (valueCheck == null) throw new RuntimeException();
+            if (response.getSuccess()) {
+                UniversalId key = (UniversalId) response.getKey();
+                if (!this.containsTest2) {
+                    boolean value = response.contains();
+                    if (!value) {
+                        throw new RuntimeException();
+                    }
+                    else {
+                        Weight valueCheck = this.containsTestMap.remove(key);
+                        if (valueCheck == null) throw new RuntimeException();
+                        super.logger.logMessage("Contains Test Progress: " + this.containsTestMap.size() + " ; Key: " + key.toString() + " ; Contains: " + value);
+                    }
+                }
+                else {
+                    boolean value = response.contains();
+                    if (value) {
+                        throw new RuntimeException();
+                    }
+                    else {
+                        Weight valueCheck = this.containsTest2Map.remove(key);
+                        if (valueCheck == null) throw new RuntimeException();
+                        super.logger.logMessage("Contains Test Progress: " + this.containsTest2Map.size() + " ; Key: " +  key.toString() + " ; Contains: " + value);
+                    }
+                    
+                }
+            }
         }
         else if (message instanceof DistributedMapGetResponse) {
             DistributedMapGetResponse response = (DistributedMapGetResponse) message;
-            UniversalId key = this.distributedMap.getGetKey(response);
-            Weight value = this.distributedMap.getGetValue(response);
-            Weight valueCheck = this.getTestMap.remove(key);
-            if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
+            if (response.getSuccess()) {
+                UniversalId key = (UniversalId) response.getKey();
+                Weight value = (Weight) response.getValue();
+                Weight valueCheck = this.getTestMap.remove(key);
+                if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
+                super.logger.logMessage("Get Test Progress: " + this.getTestMap.size() + " ; Key: " +  key.toString() + " ; Weight: "  + value.getWeight());
+            }
         }
         else if (message instanceof DistributedMapRemoveResponse) {
             DistributedMapRemoveResponse response = (DistributedMapRemoveResponse) message;
-            UniversalId key = this.distributedMap.getRemoveKey(response);
-            Weight value = this.distributedMap.getRemoveValue(response);
-            Weight valueCheck = this.removeTestMap.remove(key);
-            if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
+            if (response.getSuccess()) {
+                UniversalId key = (UniversalId) response.getKey();
+                Weight value = (Weight) response.getValue();
+                Weight valueCheck = this.removeTestMap.remove(key);
+                if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
+                super.logger.logMessage("Remove Test Progress: " + this.removeTestMap.size() + " ; Key: " + key.toString() + " ; Weight: "  + value.getWeight());
+            }
         }
         else if (message instanceof EndTest) {
-            if (this.additionTestMap.size() == 0 && this.containsTestMap.size() == 0 && this.getTestMap.size() == 0 && this.removeTestMap.size() == 0) {
-                super.logger.logMessage("SUCCESS");
+            if (this.additionTestMap.size() == 0 && this.containsTestMap.size() == 0 && 
+                    this.getTestMap.size() == 0 && this.removeTestMap.size() == 0 && this.containsTest2Map.size() == 0) {
+                super.logger.logMessage("SUCCESS ; All Tests have SUCCEEDED!");
             }
             else {
-                super.logger.logMessage("FAIL");
+                super.logger.logMessage("FAIL ; Some Tests have FAILED!");
                 super.logger.logMessage("AdditionTestMap Size: " + this.additionTestMap.size());
                 super.logger.logMessage("ContainsTestMap Size: " + this.containsTestMap.size());
                 super.logger.logMessage("GetTestMap Size: " + this.getTestMap.size());
                 super.logger.logMessage("RemoveTestMap Size: " + this.removeTestMap.size());
+                super.logger.logMessage("ContainsTest2Map Size: " + this.containsTest2Map.size());
             }
+            super.logger.logMessage("Exceptions Caught: " + this.exceptionsCaught);
         }
-        else if (message instanceof BucketFullRefactorRequest){
-            throw new RuntimeException("bucketfull");
-        }
+        } catch (Exception e) { this.exceptionsCaught++; }
     }
     
     protected void initialise() {
+        this.distributedMap = new DistributedHashMap<UniversalId, Weight>();
+        this.distributedMap.initialise(UniversalId.class, Weight.class, getContext(), getSelf(), new UniversalId("Peer2000"));
         this.additionTestMap = new HashMap<UniversalId, Weight>();
         this.containsTestMap = new HashMap<UniversalId, Weight>();
         this.getTestMap = new HashMap<UniversalId, Weight>();
         this.removeTestMap = new HashMap<UniversalId, Weight>();
-        for (int i = 0; i < 400; i++) {
+        this.containsTest2Map = new HashMap<UniversalId, Weight>();
+        for (int i = 0; i < 5000; i++) {
             UniversalId id = new UniversalId("Peer"+ i);
             Weight weight = new Weight(i);
             this.additionTestMap.put(id, weight);
             this.containsTestMap.put(id, weight);
             this.getTestMap.put(id, weight);
             this.removeTestMap.put(id, weight);
+            this.containsTest2Map.put(id, weight);
         }
-        this.distributedMap = new DistributedHashMap<UniversalId, Weight>(getContext(), getSelf(), super.peerId, UniversalId.class, Weight.class);
+        this.containsTest2 = false;
     }
     
-    protected void startTest() {
+    protected void startAdditionTest() {
         Iterator<Entry<UniversalId, Weight>> iterator = additionTestMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<UniversalId, Weight> entry = iterator.next();
             this.distributedMap.requestAdd(entry.getKey(), entry.getValue());
+            super.logger.logMessage("Addition Test ; Key: " + entry.getKey().toString() + " ; Weight: " + entry.getValue().getWeight());
         }
-        iterator = containsTestMap.entrySet().iterator();
+    }
+    
+    protected void startContainsTest() {
+        Iterator<Entry<UniversalId, Weight>>iterator = containsTestMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<UniversalId, Weight> entry = iterator.next();
             this.distributedMap.requestContains(entry.getKey());
+            super.logger.logMessage("Contains Test ; Key: " + entry.getKey().toString() + " ; Weight: " + entry.getValue().getWeight());
         }
-        iterator = getTestMap.entrySet().iterator();
+    }
+    
+    protected void startGetTest() {
+        Iterator<Entry<UniversalId, Weight>> iterator = getTestMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<UniversalId, Weight> entry = iterator.next();
             this.distributedMap.requestGet(entry.getKey());
+            super.logger.logMessage("Get Test ; Key: " + entry.getKey().toString() + " ; Weight: " + entry.getValue().getWeight());
         }
-        iterator = removeTestMap.entrySet().iterator();
+    }
+    
+    protected void startRemoveTest() {
+        Iterator<Entry<UniversalId, Weight>> iterator = removeTestMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<UniversalId, Weight> entry = iterator.next();
             this.distributedMap.requestRemove(entry.getKey());
+            super.logger.logMessage("Remove Test ; Key: " + entry.getKey().toString() + " ; Weight: " + entry.getValue().getWeight());
+        }
+    }
+    
+    protected void startContainsTest2() {
+        this.containsTest2 = true;
+        Iterator<Entry<UniversalId, Weight>> iterator = containsTest2Map.entrySet().iterator();
+        while (iterator.hasNext()) {
+            Entry<UniversalId, Weight> entry = iterator.next();
+            this.distributedMap.requestContains(entry.getKey());
+            super.logger.logMessage("Contains Test 2 ; Key: " + entry.getKey().toString() + " ; Weight: " + entry.getValue().getWeight());
         }
     }
 }

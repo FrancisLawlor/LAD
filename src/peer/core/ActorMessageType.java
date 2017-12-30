@@ -46,18 +46,22 @@ public enum ActorMessageType {
     RetrievedContentFile("RetrievedContentFile"),
     ContentViewAddition("ContentViewAddition"),
     RecordContentView("RecordContentView"),
-    BucketFullRefactorRequest("BucketFullRefactorRequest"),
+    DistributedHashMapporInit("DistributedHashMapporInit"),
     DistributedHashMapBucketInit("DistributedHashMapBucketInit"),
-    DistributedMapAdditionRequest("DistributedMapAdditionRequest"),
     DistributedMapAdditionResponse("DistributedMapAdditionResponse"),
-    DistributedMapContainsRequest("DistributedMapContainsRequest"),
     DistributedMapContainsResponse("DistributedMapContainsResponse"),
-    DistributedMapGetRequest("DistributedMapGetRequest"),
     DistributedMapGetResponse("DistributedMapGetResponse"),
-    DistributedMapRemoveRequest("DistributedMapRemoveRequest"),
     DistributedMapRemoveResponse("DistributedMapRemoveResponse"),
     DistributedMapRefactorGetRequest("DistributedMapRefactorGetRequest"),
-    DistributedMapRefactorGetResponse("DistributedMapRefactorGetResponse");
+    DistributedMapRefactorGetResponse("DistributedMapRefactorGetResponse"),
+    DistributedMapBucketAdditionRequest("DistributedMapBucketAdditionRequest"),
+    DistributedMapBucketContainsRequest("DistributedMapBucketContainsRequest"),
+    DistributedMapBucketGetRequest("DistributedMapBucketGetRequest"),
+    DistributedMapBucketRemoveRequest("DistributedMapBucketRemoveRequest"),
+    DistributedMapAdditionRequest("DistributedMapAdditionRequest"),
+    DistributedMapContainsRequest("DistributedMapContainsRequest"),
+    DistributedMapGetRequest("DistributedMapGetRequest"),
+    DistributedMapRemoveRequest("DistributedMapRemoveRequest");
     
     private String typeName;
     

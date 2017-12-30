@@ -3,15 +3,14 @@ package adt.impl;
 import peer.core.ActorMessageType;
 
 /**
- * Requests a bucket to add a key value pair at this index
+ * Request an addition to a DistributedHashMappor
  *
  */
 public class DistributedMapAdditionRequest extends DistributedMapRequest {
     private Object v;
     
-    
-    public DistributedMapAdditionRequest(int index, Object k, Object v) {
-        super(index, k, ActorMessageType.DistributedMapAdditionRequest);
+    public DistributedMapAdditionRequest(Object k, Object v) {
+        super(k, ActorMessageType.DistributedMapAdditionRequest);
         this.v = v;
     }
     

@@ -5,15 +5,15 @@ import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
 import peer.core.xcept.UnknownMessageException;
 
-public class DistributedHashMapBucket extends PeerToPeerActor {
+public class DistributedHashMapBucketor extends PeerToPeerActor {
     private ActorRef owner;
     private Class<?> kClass;
     private int bucketNum;
     private int bucketSize;
     private Object[] keyArray;
     private Object[] valueArray;
-    private int[] originalIndices;
     private int entryCount;
+    private Object availableSlot;
     
     /**
      * Actor message processing
@@ -28,20 +28,20 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
             DistributedHashMapBucketInit init = (DistributedHashMapBucketInit) message;
             this.initialise(init);
         }
-        else if (message instanceof DistributedMapAdditionRequest) {
-            DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) message;
+        else if (message instanceof DistributedMapBucketAdditionRequest) {
+            DistributedMapBucketAdditionRequest additionRequest = (DistributedMapBucketAdditionRequest) message;
             this.processAdditionRequest(additionRequest);
         }
-        else if (message instanceof DistributedMapContainsRequest) {
-            DistributedMapContainsRequest containsRequest = (DistributedMapContainsRequest) message;
+        else if (message instanceof DistributedMapBucketContainsRequest) {
+            DistributedMapBucketContainsRequest containsRequest = (DistributedMapBucketContainsRequest) message;
             this.processContainsRequest(containsRequest);
         }
-        else if (message instanceof DistributedMapGetRequest) {
-            DistributedMapGetRequest getRequest = (DistributedMapGetRequest) message;
+        else if (message instanceof DistributedMapBucketGetRequest) {
+            DistributedMapBucketGetRequest getRequest = (DistributedMapBucketGetRequest) message;
             this.processGetRequest(getRequest);
         }
-        else if (message instanceof DistributedMapRemoveRequest) {
-            DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) message;
+        else if (message instanceof DistributedMapBucketRemoveRequest) {
+            DistributedMapBucketRemoveRequest removeRequest = (DistributedMapBucketRemoveRequest) message;
             this.processRemoveRequest(removeRequest);
         }
         else if (message instanceof DistributedMapRefactorGetRequest) {
@@ -64,11 +64,8 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
         this.bucketSize = init.getBucketSize();
         this.keyArray = new Object[this.bucketSize];
         this.valueArray = new Object[this.bucketSize];
-        this.originalIndices = new int[this.bucketSize];
         this.entryCount = 0;
-        for (int i = 0; i < this.bucketSize; i++) {
-            this.originalIndices[i] = -1;
-        }
+        this.availableSlot = new Object();
     }
     
     /**
@@ -77,53 +74,49 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
      * If no empty space is available then it calls for a refactor and responses with an addition failure response
      * @param additionRequest
      */
-    protected void processAdditionRequest(DistributedMapAdditionRequest additionRequest) {
+    protected void processAdditionRequest(DistributedMapBucketAdditionRequest additionRequest) {
+        boolean success = false;
         Object value = null;
-        boolean additionSuccessful = false;
-        if (this.entryCount < this.bucketSize) {
+        if (this.bucketSize > this.entryCount) {
             int bucketIndex = additionRequest.getIndex() % this.bucketSize;
             Object key = this.keyArray[bucketIndex];
-            if (key == null) {
+            if (key == null || key == this.availableSlot) {
                 this.keyArray[bucketIndex] = additionRequest.getKey();
                 this.valueArray[bucketIndex] = additionRequest.getValue();
-                this.originalIndices[bucketIndex] = bucketIndex;
                 this.entryCount++;
+                success = true;
             }
             else if (equals(key, additionRequest.getKey())) {
                 value = this.valueArray[bucketIndex];
                 this.valueArray[bucketIndex] = additionRequest.getValue();
-                this.originalIndices[bucketIndex] = bucketIndex;
+                success = true;
             }
             else {
-                boolean continueProbe = true;
-                for (int i = 1; i < this.bucketSize && continueProbe; i++) {
+                for (int i = 1; i < this.bucketSize && !success; i++) {
                     int linearProbeIndex = (bucketIndex + i) % this.bucketSize;
                     key = this.keyArray[linearProbeIndex];
-                    if (key == null) {
+                    if (key == null || key == this.availableSlot) {
                         this.keyArray[linearProbeIndex] = additionRequest.getKey();
                         this.valueArray[linearProbeIndex] = additionRequest.getValue();
-                        this.originalIndices[linearProbeIndex] = bucketIndex;
                         this.entryCount++;
-                        continueProbe = false;
+                        success = true;
                     }
                     else if (equals(key, additionRequest.getKey())) {
                         value = this.valueArray[linearProbeIndex];
                         this.valueArray[linearProbeIndex] = additionRequest.getValue();
-                        this.originalIndices[linearProbeIndex] = bucketIndex;
-                        continueProbe = false;
+                        success = true;
                     }
                     else {
-                        continueProbe = true;
+                        success = false;
                     }
                 }
             }
-            additionSuccessful = true;
         }
         else {
-            additionSuccessful = false;
-            this.refactor();
+            success = false;
+            value = additionRequest.getValue();
         }
-        DistributedMapAdditionResponse response = new DistributedMapAdditionResponse(additionRequest.getKey(), value, additionSuccessful);
+        DistributedMapAdditionResponse response = new DistributedMapAdditionResponse(this.bucketNum, success, additionRequest.getKey(), value);
         this.owner.tell(response, getSelf());
     }
     
@@ -134,35 +127,37 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
      * Assumes no keys to check exist beyond this empty entry as linear probing in addition would have filled it first
      * @param containsRequest
      */
-    protected void processContainsRequest(DistributedMapContainsRequest containsRequest) {
+    protected void processContainsRequest(DistributedMapBucketContainsRequest containsRequest) {
+        boolean success = false;
         boolean contains = false;
         int bucketIndex = containsRequest.getIndex() % this.bucketSize;
         Object key = this.keyArray[bucketIndex];
         if (key == null) {
             contains = false;
+            success = true;
         }
-        else if (equals(key, containsRequest.getKey())) {
+        else if (key != this.availableSlot && equals(key, containsRequest.getKey())) {
             contains = true;
+            success = true;
         }
         else {
-            boolean continueProbe = true;
-            for (int i = 1; i < this.bucketSize && continueProbe; i++) {
+            for (int i = 1; i < this.bucketSize && !success; i++) {
                 int linearProbeIndex = (bucketIndex + i) % this.bucketSize;
                 key = this.keyArray[linearProbeIndex];
                 if (key == null) {
                     contains = false;
-                    continueProbe = false;
+                    success = true;
                 }
-                else if (equals(key, containsRequest.getKey())) {
+                else if (key != this.availableSlot && equals(key, containsRequest.getKey())) {
                     contains = true;
-                    continueProbe = false;
+                    success = true;
                 }
                 else {
-                    continueProbe = true;
+                    success = false;
                 }
             }
         }
-        DistributedMapContainsResponse response = new DistributedMapContainsResponse(containsRequest.getKey(), contains);
+        DistributedMapContainsResponse response = new DistributedMapContainsResponse(this.bucketNum, success, containsRequest.getKey(), contains);
         this.owner.tell(response, getSelf());
     }
     
@@ -173,34 +168,37 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
      * Assumes no key value pairs to get exist beyond this empty entry as linear probing in addition would have filled it first
      * @param getRequest
      */
-    protected void processGetRequest(DistributedMapGetRequest getRequest) {
+    protected void processGetRequest(DistributedMapBucketGetRequest getRequest) {
+        boolean success = false;
         Object value = null;
         int bucketIndex = getRequest.getIndex() % this.bucketSize;
         Object key = this.keyArray[bucketIndex];
         if (key == null) {
             value = null;
+            success = true;
         }
-        else if (equals(key, getRequest.getKey())) {
+        else if (key != this.availableSlot && equals(key, getRequest.getKey())) {
             value = this.valueArray[bucketIndex];
+            success = true;
         }
         else {
-            boolean continueProbe = true;
-            for (int i = 1; i < this.bucketSize && continueProbe; i++) {
+            for (int i = 1; i < this.bucketSize && !success; i++) {
                 int linearProbeIndex = (bucketIndex + i) % this.bucketSize;
                 key = this.keyArray[linearProbeIndex];
                 if (key == null) {
-                    continueProbe = false;
+                    value = null;
+                    success = true;
                 }
-                else if (equals(key, getRequest.getKey())) {
+                else if (key != this.availableSlot && equals(key, getRequest.getKey())) {
                     value = this.valueArray[linearProbeIndex];
-                    continueProbe = false;
+                    success = true;
                 }
                 else {
-                    continueProbe = true;
+                    success = false;
                 }
             }
         }
-        DistributedMapGetResponse response = new DistributedMapGetResponse(getRequest.getKey(), value);
+        DistributedMapGetResponse response = new DistributedMapGetResponse(this.bucketNum, success, getRequest.getKey(), value);
         this.owner.tell(response, getSelf());
     }
     
@@ -211,76 +209,42 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
      * Assumes no key value pairs to remove exist beyond this empty entry as linear probing in addition would have filled it first
      * @param removeRequest
      */
-    protected void processRemoveRequest(DistributedMapRemoveRequest removeRequest) {
+    protected void processRemoveRequest(DistributedMapBucketRemoveRequest removeRequest) {
+        boolean success = false;
         Object value = null;
         int bucketIndex = removeRequest.getIndex() % this.bucketSize;
         Object key = this.keyArray[bucketIndex];
         if (key == null) {
-            value = null;
+            success = true;
         }
-        else if (equals(key, removeRequest.getKey())) {
+        else if (key != this.availableSlot && equals(key, removeRequest.getKey())) {
             value = this.valueArray[bucketIndex];
-            this.keyArray[bucketIndex] = null;
-            this.valueArray[bucketIndex] = null;
-            this.originalIndices[bucketIndex] = -1;
+            this.keyArray[bucketIndex] = this.availableSlot;
+            this.valueArray[bucketIndex] = this.availableSlot;
             this.entryCount--;
-            this.shiftBack(bucketIndex);
+            success = true;
         }
         else {
-            boolean continueProbe = true;
-            for (int i = 1; i < this.bucketSize && continueProbe; i++) {
+            for (int i = 1; i < this.bucketSize && !success; i++) {
                 int linearProbeIndex = (bucketIndex + i) % this.bucketSize;
                 key = this.keyArray[linearProbeIndex];
                 if (key == null) {
-                    continueProbe = false;
+                    success = true;
                 }
-                else if (equals(key, removeRequest.getKey())) {
+                else if (key != this.availableSlot && equals(key, removeRequest.getKey())) {
                     value = this.valueArray[linearProbeIndex];
-                    this.keyArray[linearProbeIndex] = null;
-                    this.valueArray[linearProbeIndex] = null;
-                    this.originalIndices[linearProbeIndex] = -1;
+                    this.keyArray[linearProbeIndex] = this.availableSlot;
+                    this.valueArray[linearProbeIndex] = this.availableSlot;
                     this.entryCount--;
-                    this.shiftBack(linearProbeIndex);
-                    continueProbe = false;
+                    success = true;
                 }
                 else {
-                    continueProbe = true;
+                    success = false;
                 }
             }
         }
-        DistributedMapRemoveResponse response = new DistributedMapRemoveResponse(removeRequest.getKey(), value);
+        DistributedMapRemoveResponse response = new DistributedMapRemoveResponse(this.bucketNum, success, removeRequest.getKey(), value);
         this.owner.tell(response, getSelf());
-    }
-    
-    /**
-     * Shift back items placed after this now emptySpace
-     * These items will be checked to see if they were collisions and aren't in their proper place
-     * They will be re-added and put back into their proper place
-     * Linearly probes up until an empty entry missing a key value pair
-     * Assumes no collisions exist beyond this empty entry as linear probing in addition would have filled it first
-     * @param emptySpace
-     */
-    private void shiftBack(int emptySpace) {
-        boolean continueProbe = true;
-        for (int i = 1; i < this.bucketSize && continueProbe; i++) {
-            int linearProbeIndex = (emptySpace + i) % this.bucketSize;
-            Object key = this.keyArray[linearProbeIndex];
-            if (key == null) {
-                continueProbe = false;
-            }
-            else {
-                int originalIndex = this.originalIndices[linearProbeIndex];
-                if (originalIndex != linearProbeIndex) {
-                    Object value = this.valueArray[linearProbeIndex];
-                    this.keyArray[linearProbeIndex] = null;
-                    this.valueArray[linearProbeIndex] = null;
-                    this.originalIndices[linearProbeIndex] = -1;
-                    this.entryCount--;
-                    this.processAdditionRequest(new DistributedMapAdditionRequest(originalIndex, key, value));
-                }
-                continueProbe = true;
-            }
-        }
     }
     
     /**
@@ -296,14 +260,6 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
     }
     
     /**
-     * Request a refactor of the whole hash map
-     */
-    private void refactor() {
-        BucketFullRefactorRequest request = new BucketFullRefactorRequest(this.bucketNum);
-        this.owner.tell(request, getSelf());
-    }
-    
-    /**
      * Sends back the contents of this bucket to the owner for refactoring
      * @param request
      */
@@ -312,10 +268,6 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
             Object key = this.keyArray[i];
             if (key != null) {
                 Object value = this.valueArray[i];
-                this.keyArray[i] = null;
-                this.valueArray[i] = null;
-                this.originalIndices[i] = -1;
-                this.entryCount--;
                 DistributedMapRefactorGetResponse response = new DistributedMapRefactorGetResponse(key, value);
                 this.owner.tell(response, getSelf());
             }

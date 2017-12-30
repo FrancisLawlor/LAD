@@ -9,8 +9,8 @@ import peer.core.ActorMessageType;
 public class DistributedMapContainsResponse extends DistributedMapResponse {
     private boolean contains;
     
-    public DistributedMapContainsResponse(Object k, boolean contains) {
-        super(k, ActorMessageType.DistributedMapContainsResponse);
+    public DistributedMapContainsResponse(int bucketNum, boolean success, Object k, boolean contains) {
+        super(bucketNum, success, k, ActorMessageType.DistributedMapContainsResponse);
         this.contains = contains;
     }
     
