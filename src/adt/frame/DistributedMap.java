@@ -3,6 +3,7 @@ package adt.frame;
 import adt.impl.DistributedMapAdditionResponse;
 import adt.impl.DistributedMapContainsResponse;
 import adt.impl.DistributedMapGetResponse;
+import adt.impl.DistributedMapRefactorGetResponse;
 import adt.impl.DistributedMapRemoveResponse;
 
 public interface DistributedMap<K, V> {
@@ -15,7 +16,9 @@ public interface DistributedMap<K, V> {
     
     void requestRemove(K k);
     
-    void refactor();
+    void requestRefactor();
+    
+    void setRefactorGetResponse(DistributedMapRefactorGetResponse response);
     
     int size();
     
@@ -25,7 +28,11 @@ public interface DistributedMap<K, V> {
     
     public V getAddValue(DistributedMapAdditionResponse response);
     
+    public boolean getAdditionSuccessful(DistributedMapAdditionResponse response);
+    
     public K getContainsKey(DistributedMapContainsResponse response);
+    
+    public boolean getContains(DistributedMapContainsResponse response);
     
     public K getGetKey(DistributedMapGetResponse response);
     

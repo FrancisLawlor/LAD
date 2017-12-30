@@ -3,6 +3,7 @@ package adt.impl;
 import akka.actor.ActorRef;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
+import peer.core.xcept.UnknownMessageException;
 
 public class DistributedHashMapBucket extends PeerToPeerActor {
     private ActorRef owner;
@@ -42,6 +43,13 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
         else if (message instanceof DistributedMapRemoveRequest) {
             DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) message;
             this.processRemoveRequest(removeRequest);
+        }
+        else if (message instanceof DistributedMapRefactorGetRequest) {
+            DistributedMapRefactorGetRequest refactorGetRequest = (DistributedMapRefactorGetRequest) message;
+            this.processRefactorGetRequest(refactorGetRequest);
+        }
+        else {
+            throw new UnknownMessageException();
         }
     }
     
@@ -293,5 +301,24 @@ public class DistributedHashMapBucket extends PeerToPeerActor {
     private void refactor() {
         BucketFullRefactorRequest request = new BucketFullRefactorRequest(this.bucketNum);
         this.owner.tell(request, getSelf());
+    }
+    
+    /**
+     * Sends back the contents of this bucket to the owner for refactoring
+     * @param request
+     */
+    protected void processRefactorGetRequest(DistributedMapRefactorGetRequest request) {
+        for (int i = 0; i < this.bucketSize; i++) {
+            Object key = this.keyArray[i];
+            if (key != null) {
+                Object value = this.valueArray[i];
+                this.keyArray[i] = null;
+                this.valueArray[i] = null;
+                this.originalIndices[i] = -1;
+                this.entryCount--;
+                DistributedMapRefactorGetResponse response = new DistributedMapRefactorGetResponse(key, value);
+                this.owner.tell(response, getSelf());
+            }
+        }
     }
 }
