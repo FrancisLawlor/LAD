@@ -387,7 +387,6 @@ public class DistributedHashMappor extends PeerToPeerActor {
      * Refactor the Distributed HashMap if its total size exceeds a threshold
      */
     protected void refactor() {
-        System.out.println("Refactor");
         this.refactoring = true;
     }
     
@@ -396,7 +395,6 @@ public class DistributedHashMappor extends PeerToPeerActor {
      */
     private void allAdditionsCommittedCheck() {
         if (this.pendingAdditions < 1) {
-            System.out.println("All Additions Committed");
             this.refactorBuckets();
         }
     }
@@ -405,14 +403,12 @@ public class DistributedHashMappor extends PeerToPeerActor {
      * Calls for all buckets to send back their contents for refactoring into new buckets
      */
     private void refactorBuckets() {
-        System.out.println("Refactoring buckets");
         this.oldBuckets = this.buckets;
         this.bucketCount = ((this.bucketCount + 1) * 2) - 1;
         this.createBuckets();
         for (int i = 0; i< this.oldBuckets.size(); i++) {
             ActorRef oldBucket = this.oldBuckets.get(i);
             oldBucket.tell(new DistributedMapRefactorGetRequest(i), getSelf());
-            System.out.println("Telling bucket " + this.getBucketName(i) + " to refactor");
         }
     }
     
@@ -469,7 +465,6 @@ public class DistributedHashMappor extends PeerToPeerActor {
      */
     private void refactorOverCheck() {
         if (this.pendingReAdditions + this.pendingAdditions + this.pendingOtherRequests < 1) {
-            System.out.println("Ending refactoring: " + (this.pendingReAdditions + this.pendingAdditions + this.pendingOtherRequests));
             this.endRefactoring();
         }
     }

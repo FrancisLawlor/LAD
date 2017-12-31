@@ -28,8 +28,8 @@ public class DummyPeerLinker extends DummyActor {
     private Map<UniversalId, Weight> containsTest2Map;
     private boolean containsTest2 = false;
     private int testNum = 1;
-    private int addFails;
     private int containsFails;
+    private int contains2Fails;
     private int getFails;
     private int removeFails;
     
@@ -72,7 +72,6 @@ public class DummyPeerLinker extends DummyActor {
                 if (value == null) throw new RuntimeException();
                 super.logger.logMessage("Addition Test Progress : " + this.additionTestMap.size() + " ; Key: " + key.toString());
             }
-            else this.addFails++;
         }
         else if (message instanceof DistributedMapContainsResponse) {
             DistributedMapContainsResponse response = (DistributedMapContainsResponse) message;
@@ -84,6 +83,7 @@ public class DummyPeerLinker extends DummyActor {
                         Weight value = this.containsTestMap.remove(key);
                         super.logger.logMessage("Contains Test Progress: " + this.containsTestMap.size() + " ; Key: " + key.toString() + " ; Contains: " + value.getWeight());
                     }
+                    else this.containsFails++;
                 }
                 else {
                     boolean contains = response.contains();
@@ -91,10 +91,10 @@ public class DummyPeerLinker extends DummyActor {
                         Weight value = this.containsTest2Map.remove(key);
                         super.logger.logMessage("Contains Test Progress: " + this.containsTest2Map.size() + " ; Key: " +  key.toString() + " ; Contains: " + value.getWeight());
                     }
+                    else this.contains2Fails++;
                     
                 }
             }
-            else this.containsFails++;
         }
         else if (message instanceof DistributedMapGetResponse) {
             DistributedMapGetResponse response = (DistributedMapGetResponse) message;
@@ -106,8 +106,8 @@ public class DummyPeerLinker extends DummyActor {
                     if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
                     super.logger.logMessage("Get Test Progress: " + this.getTestMap.size() + " ; Key: " +  key.toString() + " ; Weight: "  + value.getWeight());
                 }
+                else this.getFails++;
             }
-            else this.getFails++;
         }
         else if (message instanceof DistributedMapRemoveResponse) {
             DistributedMapRemoveResponse response = (DistributedMapRemoveResponse) message;
@@ -119,8 +119,8 @@ public class DummyPeerLinker extends DummyActor {
                     if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
                     super.logger.logMessage("Remove Test Progress: " + this.removeTestMap.size() + " ; Key: " + key.toString() + " ; Weight: "  + value.getWeight());
                 }
+                else this.removeFails++;
             }
-            else this.removeFails++;
         }
         else if (message instanceof EndTest) {
             if (this.additionTestMap.size() == 0 && this.containsTestMap.size() == 0 && 
@@ -130,7 +130,6 @@ public class DummyPeerLinker extends DummyActor {
             else {
                 super.logger.logMessage("FAIL ; Some Tests have FAILED!");
                 super.logger.logMessage("AdditionTestMap Size: " + this.additionTestMap.size());
-                super.logger.logMessage("AdditionTest Fails: " + this.addFails);
                 super.logger.logMessage("ContainsTestMap Size: " + this.containsTestMap.size());
                 super.logger.logMessage("ContainsTest Fails: " + this.containsFails);
                 super.logger.logMessage("GetTestMap Size: " + this.getTestMap.size());
@@ -138,6 +137,7 @@ public class DummyPeerLinker extends DummyActor {
                 super.logger.logMessage("RemoveTestMap Size: " + this.removeTestMap.size());
                 super.logger.logMessage("RemoveTest Fails: " + this.removeFails);
                 super.logger.logMessage("ContainsTest2Map Size: " + this.containsTest2Map.size());
+                super.logger.logMessage("ContainsTest2 Fails: " + this.contains2Fails);
             }
         }
     }
@@ -160,8 +160,8 @@ public class DummyPeerLinker extends DummyActor {
             this.containsTest2Map.put(id, weight);
         }
         this.containsTest2 = false;
-        this.addFails = 0;
         this.containsFails = 0;
+        this.contains2Fails = 0;
         this.getFails = 0;
         this.removeFails = 0;
     }
