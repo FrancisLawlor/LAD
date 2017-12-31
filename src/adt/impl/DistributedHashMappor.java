@@ -249,118 +249,6 @@ public class DistributedHashMappor extends PeerToPeerActor {
     }
     
     /**
-     * Refactor the Distributed HashMap if its total size exceeds a threshold
-     */
-    protected void refactor() {
-        this.refactoring = true;
-        this.oldBuckets = this.buckets;
-        this.bucketCount = (this.bucketCount * 2) - 1;
-        this.createBuckets();
-        for (int i = 0; i< this.oldBuckets.size(); i++) {
-            ActorRef oldBucket = this.oldBuckets.get(i);
-            oldBucket.tell(new DistributedMapRefactorGetRequest(i), getSelf());
-        }
-    }
-    
-    /**
-     * Add old entries from the old buckets into the new buckets
-     */
-    protected void processRefactorGetResponse(DistributedMapRefactorGetResponse response) {
-        Object k = response.getKey();
-        Object v = response.getValue();
-        this.requestReAdd(k, v);
-        this.entryCount--;
-    }
-    
-    /**
-     * Readds entries into buckets during Refactoring of the Distributed Hash Map
-     * @param k
-     * @param v
-     */
-    private void requestReAdd(Object k, Object v) {
-        int index = hashFunction(k);
-        DistributedMapRefactorAddRequest readdRequest = new DistributedMapRefactorAddRequest(index, k, v);
-        int bucketNum = this.getBucketNum(index);
-        ActorRef bucketActor = this.buckets.get(bucketNum);
-        bucketActor.tell(readdRequest, getSelf());
-        this.pendingReAdditions++;
-    }
-    
-    /**
-     * End the refactoring of the Distributed Hash Map
-     * Wipes the old buckets clean
-     * Processes all the Queued Requests in the queue, checking their type first
-     */
-    private void endRefactoring() {
-        for (ActorRef oldBucket : this.oldBuckets) {
-            oldBucket.tell(PoisonPill.getInstance(), getSelf());
-        }
-        this.oldBuckets.clear();
-        this.oldBuckets = null;
-        this.refactoring = false;
-        while (!this.preRefactorRequestQueue.isEmpty()) {
-            DistributedMapRequest request = this.preRefactorRequestQueue.remove();
-            switch (request.getType()) {
-                case DistributedMapAdditionRequest:
-                    DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) request;
-                    this.requestAdd(additionRequest);
-                    break;
-                case DistributedMapContainsRequest:
-                    DistributedMapContainsRequest containsRequest = (DistributedMapContainsRequest) request;
-                    this.requestContains(containsRequest);
-                    break;
-                case DistributedMapGetRequest:
-                    DistributedMapGetRequest getRequest = (DistributedMapGetRequest) request;
-                    this.requestGet(getRequest);
-                    break;
-                case DistributedMapRemoveRequest:
-                    DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) request;
-                    this.requestRemove(removeRequest);
-                    break;
-                default:
-                    break;
-            }
-        }
-        while (!this.newRequestRefactorQueue.isEmpty()) {
-            DistributedMapRequest request = this.newRequestRefactorQueue.remove();
-            switch (request.getType()) {
-                case DistributedMapAdditionRequest:
-                    DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) request;
-                    this.requestAdd(additionRequest);
-                    break;
-                case DistributedMapContainsRequest:
-                    DistributedMapContainsRequest containsRequest = (DistributedMapContainsRequest) request;
-                    this.requestContains(containsRequest);
-                    break;
-                case DistributedMapGetRequest:
-                    DistributedMapGetRequest getRequest = (DistributedMapGetRequest) request;
-                    this.requestGet(getRequest);
-                    break;
-                case DistributedMapRemoveRequest:
-                    DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) request;
-                    this.requestRemove(removeRequest);
-                    break;
-                default:
-                    break;
-            }
-        }
-    }
-    
-    /**
-     * Returns the number of entries in the Distributed Hash Map
-     */
-    protected int size() {
-        return this.entryCount;
-    }
-    
-    /**
-     * Returns potential capacity of the Distributed Hash Map
-     */
-    protected int capacity() {
-        return this.bucketCount * this.bucketSize;
-    }
-    
-    /**
      * Tries the Addition request again in the next bucket if it failed
      * Leaves in Queue for later if refactoring
      */
@@ -371,7 +259,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
             this.pendingAdditions--;
             this.owner.tell(response, getSelf());
             if (this.refactoring) {
-                this.refactorOverCheck();
+                this.allAdditionsCommittedCheck();
             }
         }
         else {
@@ -381,7 +269,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
                 DistributedMapAdditionRequest request = new DistributedMapAdditionRequest(k, v);
                 this.preRefactorRequestQueue.add(request);
                 this.pendingAdditions--;
-                this.refactorOverCheck();
+                this.allAdditionsCommittedCheck();
             }
             else {
                 int nextBucketToTry = (response.getBucketNum() + 1) % this.bucketCount;
@@ -496,16 +384,65 @@ public class DistributedHashMappor extends PeerToPeerActor {
     }
     
     /**
-     * Checks if the refactoring period should end
+     * Refactor the Distributed HashMap if its total size exceeds a threshold
      */
-    private void refactorOverCheck() {
-        if (this.pendingReAdditions + this.pendingAdditions + this.pendingOtherRequests < 1) {
-            this.endRefactoring();
+    protected void refactor() {
+        System.out.println("Refactor");
+        this.refactoring = true;
+    }
+    
+    /**
+     * Checks if all additions have been committed before requesting the buckets are refactored
+     */
+    private void allAdditionsCommittedCheck() {
+        if (this.pendingAdditions < 1) {
+            System.out.println("All Additions Committed");
+            this.refactorBuckets();
         }
     }
     
     /**
+     * Calls for all buckets to send back their contents for refactoring into new buckets
+     */
+    private void refactorBuckets() {
+        System.out.println("Refactoring buckets");
+        this.oldBuckets = this.buckets;
+        this.bucketCount = ((this.bucketCount + 1) * 2) - 1;
+        this.createBuckets();
+        for (int i = 0; i< this.oldBuckets.size(); i++) {
+            ActorRef oldBucket = this.oldBuckets.get(i);
+            oldBucket.tell(new DistributedMapRefactorGetRequest(i), getSelf());
+            System.out.println("Telling bucket " + this.getBucketName(i) + " to refactor");
+        }
+    }
+    
+    /**
+     * When an old key value pair is received from an old bucket call for its re-addition into the new buckets
+     */
+    protected void processRefactorGetResponse(DistributedMapRefactorGetResponse response) {
+        Object k = response.getKey();
+        Object v = response.getValue();
+        this.requestReAdd(k, v);
+        this.entryCount--;
+    }
+    
+    /**
+     * Requests re-addition of the old key value pairs into the new buckets
+     * @param k
+     * @param v
+     */
+    private void requestReAdd(Object k, Object v) {
+        int index = hashFunction(k);
+        DistributedMapRefactorAddRequest readdRequest = new DistributedMapRefactorAddRequest(index, k, v);
+        int bucketNum = this.getBucketNum(index);
+        ActorRef bucketActor = this.buckets.get(bucketNum);
+        bucketActor.tell(readdRequest, getSelf());
+        this.pendingReAdditions++;
+    }
+    
+    /**
      * Tries another bucket if the refactor addition failed in this bucket
+     * Otherwise considers the re-addition a success and checks if all re-additions are done and refactoring is over
      * @param response
      */
     protected void processRefactorAddition(DistributedMapRefactorAddResponse response) {
@@ -525,5 +462,89 @@ public class DistributedHashMappor extends PeerToPeerActor {
             DistributedMapRefactorAddRequest request = new DistributedMapRefactorAddRequest(0, k, v);
             nextBucket.tell(request, getSelf());
         }
+    }
+    
+    /**
+     * Checks if the refactoring period should end
+     */
+    private void refactorOverCheck() {
+        if (this.pendingReAdditions + this.pendingAdditions + this.pendingOtherRequests < 1) {
+            System.out.println("Ending refactoring: " + (this.pendingReAdditions + this.pendingAdditions + this.pendingOtherRequests));
+            this.endRefactoring();
+        }
+    }
+    
+    /**
+     * End the refactoring of the Distributed Hash Map
+     * Wipes the old buckets clean
+     * Processes all the Queued Requests in the queue, checking their type first
+     */
+    private void endRefactoring() {
+        for (ActorRef oldBucket : this.oldBuckets) {
+            oldBucket.tell(PoisonPill.getInstance(), getSelf());
+        }
+        this.oldBuckets.clear();
+        this.oldBuckets = null;
+        this.refactoring = false;
+        while (!this.preRefactorRequestQueue.isEmpty()) {
+            DistributedMapRequest request = this.preRefactorRequestQueue.remove();
+            switch (request.getType()) {
+                case DistributedMapAdditionRequest:
+                    DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) request;
+                    this.requestAdd(additionRequest);
+                    break;
+                case DistributedMapContainsRequest:
+                    DistributedMapContainsRequest containsRequest = (DistributedMapContainsRequest) request;
+                    this.requestContains(containsRequest);
+                    break;
+                case DistributedMapGetRequest:
+                    DistributedMapGetRequest getRequest = (DistributedMapGetRequest) request;
+                    this.requestGet(getRequest);
+                    break;
+                case DistributedMapRemoveRequest:
+                    DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) request;
+                    this.requestRemove(removeRequest);
+                    break;
+                default:
+                    break;
+            }
+        }
+        while (!this.newRequestRefactorQueue.isEmpty()) {
+            DistributedMapRequest request = this.newRequestRefactorQueue.remove();
+            switch (request.getType()) {
+                case DistributedMapAdditionRequest:
+                    DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) request;
+                    this.requestAdd(additionRequest);
+                    break;
+                case DistributedMapContainsRequest:
+                    DistributedMapContainsRequest containsRequest = (DistributedMapContainsRequest) request;
+                    this.requestContains(containsRequest);
+                    break;
+                case DistributedMapGetRequest:
+                    DistributedMapGetRequest getRequest = (DistributedMapGetRequest) request;
+                    this.requestGet(getRequest);
+                    break;
+                case DistributedMapRemoveRequest:
+                    DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) request;
+                    this.requestRemove(removeRequest);
+                    break;
+                default:
+                    break;
+            }
+        }
+    }
+    
+    /**
+     * Returns the number of entries in the Distributed Hash Map
+     */
+    protected int size() {
+        return this.entryCount;
+    }
+    
+    /**
+     * Returns potential capacity of the Distributed Hash Map
+     */
+    protected int capacity() {
+        return this.bucketCount * this.bucketSize;
     }
 }
