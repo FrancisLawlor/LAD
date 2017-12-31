@@ -27,9 +27,12 @@ public class DistributedHashMappor extends PeerToPeerActor {
     private int bucketCount;
     private int entryCount;
     private boolean refactoring;
-    private Queue<DistributedMapRequest> refactorQueue;
-    private int refactorResponsesExpected;
+    private Queue<DistributedMapRequest> newRequestRefactorQueue;
+    private Queue<DistributedMapRequest> preRefactorRequestQueue;
     private ArrayList<ActorRef> oldBuckets;
+    private int pendingReAdditions;
+    private int pendingAdditions;
+    private int pendingOtherRequests;
     
     /**
      * Actor message processing
@@ -80,6 +83,10 @@ public class DistributedHashMappor extends PeerToPeerActor {
             DistributedMapRefactorGetResponse response = (DistributedMapRefactorGetResponse) message;
             this.processRefactorGetResponse(response);
         }
+        else if (message instanceof DistributedMapRefactorAddResponse) {
+            DistributedMapRefactorAddResponse response = (DistributedMapRefactorAddResponse) message;
+            this.processRefactorAddition(response);
+        }
     }
     
     /**
@@ -93,15 +100,17 @@ public class DistributedHashMappor extends PeerToPeerActor {
         this.bucketCount = init.getBucketCount();
         this.createBuckets();
         this.refactoring = false;
-        this.refactorQueue = new LinkedList<DistributedMapRequest>();
-        this.refactorResponsesExpected = 0;
+        this.newRequestRefactorQueue = new LinkedList<DistributedMapRequest>();
+        this.preRefactorRequestQueue = new LinkedList<DistributedMapRequest>();
+        this.pendingReAdditions = 0;
+        this.pendingAdditions = 0;
+        this.pendingOtherRequests = 0;
     }
     
     /**
      * Creates a new bucketCount sized set of buckets
      */
     private void createBuckets() {
-        this.entryCount = 0;
         this.buckets = new ArrayList<ActorRef>();
         for (int i = 0; i < this.bucketCount; i++) {
             ActorRef bucket = getContext().actorOf(Props.create(DistributedHashMapBucketor.class), getBucketName(i));
@@ -175,7 +184,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
      */
     protected void requestAdd(DistributedMapAdditionRequest request) {
         if (this.refactoring) {
-            this.refactorQueue.add(request);
+            this.newRequestRefactorQueue.add(request);
         }
         else {
             Object k = request.getKey();
@@ -184,6 +193,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
             DistributedMapBucketAdditionRequest addRequest = new DistributedMapBucketAdditionRequest(index, k, v);
             ActorRef bucketActor = this.getBucket(index);
             bucketActor.tell(addRequest, getSelf());
+            this.pendingAdditions++;
         }
     }
     
@@ -192,7 +202,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
      */
     protected void requestContains(DistributedMapContainsRequest request) {
         if (this.refactoring) {
-            this.refactorQueue.add(request);
+            this.newRequestRefactorQueue.add(request);
         }
         else {
             Object k = request.getKey();
@@ -200,6 +210,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
             DistributedMapBucketContainsRequest containsRequest = new DistributedMapBucketContainsRequest(index, k);
             ActorRef bucketActor = this.getBucket(index);
             bucketActor.tell(containsRequest, getSelf());
+            this.pendingOtherRequests++;
         }
     }
     
@@ -208,7 +219,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
      */
     protected void requestGet(DistributedMapGetRequest request) {
         if (this.refactoring) {
-            this.refactorQueue.add(request);
+            this.newRequestRefactorQueue.add(request);
         }
         else {
             Object k = request.getKey();
@@ -216,6 +227,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
             DistributedMapBucketGetRequest getRequest = new DistributedMapBucketGetRequest(index, k);
             ActorRef bucketActor = this.getBucket(index);
             bucketActor.tell(getRequest, getSelf());
+            this.pendingOtherRequests++;
         }
     }
     
@@ -224,7 +236,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
      */
     protected void requestRemove(DistributedMapRemoveRequest request) {
         if (this.refactoring) {
-            this.refactorQueue.add(request);
+            this.newRequestRefactorQueue.add(request);
         }
         else {
             Object k = request.getKey();
@@ -232,6 +244,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
             DistributedMapBucketRemoveRequest removeRequest = new DistributedMapBucketRemoveRequest(index, k);
             ActorRef bucketActor = this.getBucket(index);
             bucketActor.tell(removeRequest, getSelf());
+            this.pendingOtherRequests++;
         }
     }
     
@@ -240,7 +253,6 @@ public class DistributedHashMappor extends PeerToPeerActor {
      */
     protected void refactor() {
         this.refactoring = true;
-        this.refactorResponsesExpected = this.size();
         this.oldBuckets = this.buckets;
         this.bucketCount = (this.bucketCount * 2) - 1;
         this.createBuckets();
@@ -257,10 +269,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
         Object k = response.getKey();
         Object v = response.getValue();
         this.requestReAdd(k, v);
-        this.refactorResponsesExpected--;
-        if (this.refactorResponsesExpected == 0) {
-            this.endRefactoring();
-        }
+        this.entryCount--;
     }
     
     /**
@@ -270,10 +279,11 @@ public class DistributedHashMappor extends PeerToPeerActor {
      */
     private void requestReAdd(Object k, Object v) {
         int index = hashFunction(k);
-        DistributedMapBucketAdditionRequest readdRequest = new DistributedMapBucketAdditionRequest(index, k, v);
+        DistributedMapRefactorAddRequest readdRequest = new DistributedMapRefactorAddRequest(index, k, v);
         int bucketNum = this.getBucketNum(index);
         ActorRef bucketActor = this.buckets.get(bucketNum);
         bucketActor.tell(readdRequest, getSelf());
+        this.pendingReAdditions++;
     }
     
     /**
@@ -288,8 +298,31 @@ public class DistributedHashMappor extends PeerToPeerActor {
         this.oldBuckets.clear();
         this.oldBuckets = null;
         this.refactoring = false;
-        while (!this.refactorQueue.isEmpty()) {
-            DistributedMapRequest request = this.refactorQueue.remove();
+        while (!this.preRefactorRequestQueue.isEmpty()) {
+            DistributedMapRequest request = this.preRefactorRequestQueue.remove();
+            switch (request.getType()) {
+                case DistributedMapAdditionRequest:
+                    DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) request;
+                    this.requestAdd(additionRequest);
+                    break;
+                case DistributedMapContainsRequest:
+                    DistributedMapContainsRequest containsRequest = (DistributedMapContainsRequest) request;
+                    this.requestContains(containsRequest);
+                    break;
+                case DistributedMapGetRequest:
+                    DistributedMapGetRequest getRequest = (DistributedMapGetRequest) request;
+                    this.requestGet(getRequest);
+                    break;
+                case DistributedMapRemoveRequest:
+                    DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) request;
+                    this.requestRemove(removeRequest);
+                    break;
+                default:
+                    break;
+            }
+        }
+        while (!this.newRequestRefactorQueue.isEmpty()) {
+            DistributedMapRequest request = this.newRequestRefactorQueue.remove();
             switch (request.getType()) {
                 case DistributedMapAdditionRequest:
                     DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) request;
@@ -329,20 +362,26 @@ public class DistributedHashMappor extends PeerToPeerActor {
     
     /**
      * Tries the Addition request again in the next bucket if it failed
+     * Leaves in Queue for later if refactoring
      */
     protected void processAddition(DistributedMapAdditionResponse response) {
         boolean success = response.getSuccess();
         if (success) {
             this.entryCount++;
+            this.pendingAdditions--;
             this.owner.tell(response, getSelf());
-            this.refactorCheck();
+            if (this.refactoring) {
+                this.refactorOverCheck();
+            }
         }
         else {
             Object k = response.getKey();
             Object v = response.getValue();
             if (this.refactoring) {
                 DistributedMapAdditionRequest request = new DistributedMapAdditionRequest(k, v);
-                this.requestAdd(request);
+                this.preRefactorRequestQueue.add(request);
+                this.pendingAdditions--;
+                this.refactorOverCheck();
             }
             else {
                 int nextBucketToTry = (response.getBucketNum() + 1) % this.bucketCount;
@@ -355,17 +394,27 @@ public class DistributedHashMappor extends PeerToPeerActor {
     
     /**
      * Tries the Contains request again in the next bucket if it failed
+     * Leaves in Queue for later if refactoring
      */
     protected void processContains(DistributedMapContainsResponse response) {
         boolean success = response.getSuccess();
         if (success) {
+            this.pendingOtherRequests--;
             this.owner.tell(response, getSelf());
+            if (this.refactoring) {
+                this.refactorOverCheck();
+            }
+            else {
+                this.refactorCheck();
+            }
         }
         else {
             Object k = response.getKey();
             if (this.refactoring) {
                 DistributedMapContainsRequest request = new DistributedMapContainsRequest(k);
-                this.requestContains(request);
+                this.preRefactorRequestQueue.add(request);
+                this.pendingOtherRequests--;
+                this.refactorOverCheck();
             }
             else {
                 int nextBucketToTry = (response.getBucketNum() + 1) % this.bucketCount;
@@ -378,17 +427,24 @@ public class DistributedHashMappor extends PeerToPeerActor {
     
     /**
      * Tries the Get request again in the next bucket if it failed
+     * Leaves in Queue for later if refactoring
      */
     protected void processGet(DistributedMapGetResponse response) {
         boolean success = response.getSuccess();
         if (success) {
+            this.pendingOtherRequests--;
             this.owner.tell(response, getSelf());
+            if (this.refactoring) {
+                this.refactorOverCheck();
+            }
         }
         else {
             Object k = response.getKey();
             if (this.refactoring) {
                 DistributedMapGetRequest request = new DistributedMapGetRequest(k);
-                this.requestGet(request);
+                this.preRefactorRequestQueue.add(request);
+                this.pendingOtherRequests--;
+                this.refactorOverCheck();
             }
             else {
                 int nextBucketToTry = (response.getBucketNum() + 1) % this.bucketCount;
@@ -401,18 +457,25 @@ public class DistributedHashMappor extends PeerToPeerActor {
     
     /**
      * Tries the Remove request again in the next bucket if it failed
+     * Leaves in Queue for later if refactoring
      */
     protected void processRemove(DistributedMapRemoveResponse response) {
         boolean success = response.getSuccess();
         if (success) {
             this.entryCount--;
+            this.pendingOtherRequests--;
             this.owner.tell(response, getSelf());
+            if (this.refactoring) {
+                this.refactorOverCheck();
+            }
         }
         else {
             Object k = response.getKey();
             if (this.refactoring) {
                 DistributedMapRemoveRequest request = new DistributedMapRemoveRequest(k);
-                this.requestRemove(request);
+                this.preRefactorRequestQueue.add(request);
+                this.pendingOtherRequests--;
+                this.refactorOverCheck();
             }
             else {
                 int nextBucketToTry = (response.getBucketNum() + 1) % this.bucketCount;
@@ -429,6 +492,38 @@ public class DistributedHashMappor extends PeerToPeerActor {
     private void refactorCheck() {
         if (this.size() > THRESHOLD * this.capacity()) {
             this.refactor();
+        }
+    }
+    
+    /**
+     * Checks if the refactoring period should end
+     */
+    private void refactorOverCheck() {
+        if (this.pendingReAdditions + this.pendingAdditions + this.pendingOtherRequests < 1) {
+            this.endRefactoring();
+        }
+    }
+    
+    /**
+     * Tries another bucket if the refactor addition failed in this bucket
+     * @param response
+     */
+    protected void processRefactorAddition(DistributedMapRefactorAddResponse response) {
+        boolean success = response.getSuccess();
+        if (success) {
+            this.entryCount++;
+            this.pendingReAdditions--;
+            if (this.refactoring) {
+                this.refactorOverCheck();
+            }
+        }
+        else {
+            Object k = response.getKey();
+            Object v = response.getValue();
+            int nextBucketToTry = (response.getBucketNum() + 1) % this.bucketCount;
+            ActorRef nextBucket = this.buckets.get(nextBucketToTry);
+            DistributedMapRefactorAddRequest request = new DistributedMapRefactorAddRequest(0, k, v);
+            nextBucket.tell(request, getSelf());
         }
     }
 }

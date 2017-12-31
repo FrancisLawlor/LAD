@@ -48,6 +48,10 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
             DistributedMapRefactorGetRequest refactorGetRequest = (DistributedMapRefactorGetRequest) message;
             this.processRefactorGetRequest(refactorGetRequest);
         }
+        else if (message instanceof DistributedMapRefactorAddRequest) {
+            DistributedMapRefactorAddRequest refactorAddRequest = (DistributedMapRefactorAddRequest) message;
+            this.processRefactorAddRequest(refactorAddRequest);
+        }
         else {
             throw new UnknownMessageException();
         }
@@ -266,11 +270,61 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
     protected void processRefactorGetRequest(DistributedMapRefactorGetRequest request) {
         for (int i = 0; i < this.bucketSize; i++) {
             Object key = this.keyArray[i];
-            if (key != null) {
+            if (key != null && key != this.availableSlot) {
                 Object value = this.valueArray[i];
                 DistributedMapRefactorGetResponse response = new DistributedMapRefactorGetResponse(key, value);
                 this.owner.tell(response, getSelf());
             }
         }
+    }
+    
+    /**
+     * Adds a key value pair back after refactoring
+     * @param request
+     */
+    protected void processRefactorAddRequest(DistributedMapRefactorAddRequest additionRequest) {
+        boolean success = false;
+        Object value = null;
+        if (this.bucketSize > this.entryCount) {
+            int bucketIndex = additionRequest.getIndex() % this.bucketSize;
+            Object key = this.keyArray[bucketIndex];
+            if (key == null || key == this.availableSlot) {
+                this.keyArray[bucketIndex] = additionRequest.getKey();
+                this.valueArray[bucketIndex] = additionRequest.getValue();
+                this.entryCount++;
+                success = true;
+            }
+            else if (equals(key, additionRequest.getKey())) {
+                value = this.valueArray[bucketIndex];
+                this.valueArray[bucketIndex] = additionRequest.getValue();
+                success = true;
+            }
+            else {
+                for (int i = 1; i < this.bucketSize && !success; i++) {
+                    int linearProbeIndex = (bucketIndex + i) % this.bucketSize;
+                    key = this.keyArray[linearProbeIndex];
+                    if (key == null || key == this.availableSlot) {
+                        this.keyArray[linearProbeIndex] = additionRequest.getKey();
+                        this.valueArray[linearProbeIndex] = additionRequest.getValue();
+                        this.entryCount++;
+                        success = true;
+                    }
+                    else if (equals(key, additionRequest.getKey())) {
+                        value = this.valueArray[linearProbeIndex];
+                        this.valueArray[linearProbeIndex] = additionRequest.getValue();
+                        success = true;
+                    }
+                    else {
+                        success = false;
+                    }
+                }
+            }
+        }
+        else {
+            success = false;
+            value = additionRequest.getValue();
+        }
+        DistributedMapRefactorAddResponse response = new DistributedMapRefactorAddResponse(this.bucketNum, success, additionRequest.getKey(), value);
+        this.owner.tell(response, getSelf());
     }
 }

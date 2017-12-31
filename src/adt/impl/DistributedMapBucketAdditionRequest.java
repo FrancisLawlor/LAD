@@ -9,7 +9,6 @@ import peer.core.ActorMessageType;
 public class DistributedMapBucketAdditionRequest extends DistributedMapBucketRequest {
     private Object v;
     
-    
     public DistributedMapBucketAdditionRequest(int index, Object k, Object v) {
         super(index, k, ActorMessageType.DistributedMapBucketAdditionRequest);
         this.v = v;
