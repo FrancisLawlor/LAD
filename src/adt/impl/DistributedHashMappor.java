@@ -123,7 +123,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
     }
     
     /**
-     * Bucket name comes from the bucket number in the current Array of Size this.arrayLength
+     * Bucket name comes from the bucket number in the current Array of Size bucketSize
      * @param i
      * @return
      */
@@ -140,7 +140,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
         int arrayLength = this.capacity();
         int hashCode = k.hashCode();
         int scrambledHashCode = mix(hashCode);
-        return Math.abs(scrambledHashCode % arrayLength);
+        return Math.abs(scrambledHashCode) % arrayLength;
     }
     
     /**

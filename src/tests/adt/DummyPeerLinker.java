@@ -28,10 +28,6 @@ public class DummyPeerLinker extends DummyActor {
     private Map<UniversalId, Weight> containsTest2Map;
     private boolean containsTest2 = false;
     private int testNum = 1;
-    private int containsFails;
-    private int contains2Fails;
-    private int getFails;
-    private int removeFails;
     
     @Override
     public void onReceive(Object message) {
@@ -83,7 +79,7 @@ public class DummyPeerLinker extends DummyActor {
                         Weight value = this.containsTestMap.remove(key);
                         super.logger.logMessage("Contains Test Progress: " + this.containsTestMap.size() + " ; Key: " + key.toString() + " ; Contains: " + value.getWeight());
                     }
-                    else this.containsFails++;
+                    else this.distributedMap.requestContains(key);
                 }
                 else {
                     boolean contains = response.contains();
@@ -91,7 +87,7 @@ public class DummyPeerLinker extends DummyActor {
                         Weight value = this.containsTest2Map.remove(key);
                         super.logger.logMessage("Contains Test Progress: " + this.containsTest2Map.size() + " ; Key: " +  key.toString() + " ; Contains: " + value.getWeight());
                     }
-                    else this.contains2Fails++;
+                    else this.distributedMap.requestContains(key);
                     
                 }
             }
@@ -106,7 +102,7 @@ public class DummyPeerLinker extends DummyActor {
                     if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
                     super.logger.logMessage("Get Test Progress: " + this.getTestMap.size() + " ; Key: " +  key.toString() + " ; Weight: "  + value.getWeight());
                 }
-                else this.getFails++;
+                else this.distributedMap.requestGet(key);
             }
         }
         else if (message instanceof DistributedMapRemoveResponse) {
@@ -119,7 +115,7 @@ public class DummyPeerLinker extends DummyActor {
                     if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
                     super.logger.logMessage("Remove Test Progress: " + this.removeTestMap.size() + " ; Key: " + key.toString() + " ; Weight: "  + value.getWeight());
                 }
-                else this.removeFails++;
+                else this.distributedMap.requestRemove(key);
             }
         }
         else if (message instanceof EndTest) {
@@ -131,13 +127,9 @@ public class DummyPeerLinker extends DummyActor {
                 super.logger.logMessage("FAIL ; Some Tests have FAILED!");
                 super.logger.logMessage("AdditionTestMap Size: " + this.additionTestMap.size());
                 super.logger.logMessage("ContainsTestMap Size: " + this.containsTestMap.size());
-                super.logger.logMessage("ContainsTest Fails: " + this.containsFails);
                 super.logger.logMessage("GetTestMap Size: " + this.getTestMap.size());
-                super.logger.logMessage("GetTest Fails: " + this.getFails);
                 super.logger.logMessage("RemoveTestMap Size: " + this.removeTestMap.size());
-                super.logger.logMessage("RemoveTest Fails: " + this.removeFails);
                 super.logger.logMessage("ContainsTest2Map Size: " + this.containsTest2Map.size());
-                super.logger.logMessage("ContainsTest2 Fails: " + this.contains2Fails);
             }
         }
     }
@@ -160,10 +152,6 @@ public class DummyPeerLinker extends DummyActor {
             this.containsTest2Map.put(id, weight);
         }
         this.containsTest2 = false;
-        this.containsFails = 0;
-        this.contains2Fails = 0;
-        this.getFails = 0;
-        this.removeFails = 0;
     }
     
     protected void startAdditionTest() {
