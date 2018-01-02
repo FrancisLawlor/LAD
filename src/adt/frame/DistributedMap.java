@@ -3,6 +3,7 @@ package adt.frame;
 import adt.impl.DistributedMapAdditionResponse;
 import adt.impl.DistributedMapContainsResponse;
 import adt.impl.DistributedMapGetResponse;
+import adt.impl.DistributedMapIterationResponse;
 import adt.impl.DistributedMapRemoveResponse;
 import akka.actor.ActorRef;
 import akka.actor.UntypedActorContext;
@@ -20,6 +21,8 @@ public interface DistributedMap<K, V> {
     
     void requestRemove(K k);
     
+    void requestIterator();
+    
     public K getAddKey(DistributedMapAdditionResponse response);
     
     public V getAddValue(DistributedMapAdditionResponse response);
@@ -35,4 +38,8 @@ public interface DistributedMap<K, V> {
     public K getRemoveKey(DistributedMapRemoveResponse response);
     
     public V getRemoveValue(DistributedMapRemoveResponse response);
+    
+    public K getIterationKey(DistributedMapIterationResponse response);
+    
+    public V getIterationValue(DistributedMapIterationResponse response);
 }

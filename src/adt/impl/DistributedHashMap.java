@@ -72,6 +72,14 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
         this.hashMappor.tell(requestRemove, this.owner);
     }
     
+    /**
+     * Request all of the key value pairs in the map
+     */
+    public void requestIterator() {
+        DistributedMapIterationRequest request = new DistributedMapIterationRequest();
+        this.hashMappor.tell(request, this.owner);
+    }
+    
     public K getAddKey(DistributedMapAdditionResponse response) {
         return this.kClass.cast(response.getKey());
     }
@@ -101,6 +109,14 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
     }
     
     public V getRemoveValue(DistributedMapRemoveResponse response) {
+        return this.vClass.cast(response.getValue());
+    }
+    
+    public K getIterationKey(DistributedMapIterationResponse response) {
+        return this.kClass.cast(response.getKey());
+    }
+    
+    public V getIterationValue(DistributedMapIterationResponse response) {
         return this.vClass.cast(response.getValue());
     }
 }

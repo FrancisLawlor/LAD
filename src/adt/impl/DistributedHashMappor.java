@@ -65,19 +65,19 @@ public class DistributedHashMappor extends PeerToPeerActor {
         }
         else if (message instanceof DistributedMapAdditionResponse) {
             DistributedMapAdditionResponse response = (DistributedMapAdditionResponse) message;
-            this.processAddition(response);
+            this.processAdditionResponse(response);
         }
         else if (message instanceof DistributedMapContainsResponse) {
             DistributedMapContainsResponse response = (DistributedMapContainsResponse) message;
-            this.processContains(response);
+            this.processContainsResponse(response);
         }
         else if (message instanceof DistributedMapGetResponse) {
             DistributedMapGetResponse response = (DistributedMapGetResponse) message;
-            this.processGet(response);
+            this.processGetResponse(response);
         }
         else if (message instanceof DistributedMapRemoveResponse) {
             DistributedMapRemoveResponse response = (DistributedMapRemoveResponse) message;
-            this.processRemove(response);
+            this.processRemoveResponse(response);
         }
         else if (message instanceof DistributedMapRefactorGetResponse) {
             DistributedMapRefactorGetResponse response = (DistributedMapRefactorGetResponse) message;
@@ -86,6 +86,14 @@ public class DistributedHashMappor extends PeerToPeerActor {
         else if (message instanceof DistributedMapRefactorAddResponse) {
             DistributedMapRefactorAddResponse response = (DistributedMapRefactorAddResponse) message;
             this.processRefactorAddition(response);
+        }
+        else if (message instanceof DistributedMapIterationRequest) {
+            DistributedMapIterationRequest request = (DistributedMapIterationRequest) message;
+            this.requestIteration(request);
+        }
+        else if (message instanceof DistributedMapIterationResponse) {
+            DistributedMapIterationResponse response = (DistributedMapIterationResponse) message;
+            this.owner.tell(response, getSelf());
         }
     }
     
@@ -181,6 +189,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
     
     /**
      * Request an addition of a key value pair at the hash index
+     * @param request
      */
     protected void requestAdd(DistributedMapAdditionRequest request) {
         if (this.refactoring) {
@@ -199,6 +208,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
     
     /**
      * Ask whether the hash map contains a key at this index
+     * @param request
      */
     protected void requestContains(DistributedMapContainsRequest request) {
         if (this.refactoring) {
@@ -216,6 +226,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
     
     /**
      * Try to get the value that has this key in the hash map
+     * @param request
      */
     protected void requestGet(DistributedMapGetRequest request) {
         if (this.refactoring) {
@@ -233,6 +244,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
     
     /**
      * Request removal of this key and its value in the map
+     * @param request
      */
     protected void requestRemove(DistributedMapRemoveRequest request) {
         if (this.refactoring) {
@@ -249,10 +261,25 @@ public class DistributedHashMappor extends PeerToPeerActor {
     }
     
     /**
+     * Request Iteration through all key-value pairs in all buckets
+     * @param request
+     */
+    protected void requestIteration(DistributedMapIterationRequest request) {
+        if (this.refactoring) {
+            this.newRequestRefactorQueue.add(request);
+        }
+        else {
+            for (ActorRef bucketor : this.buckets) {
+                bucketor.tell(request, getSelf());
+            }
+        }
+    }
+    
+    /**
      * Tries the Addition request again in the next bucket if it failed
      * Leaves in Queue for later if refactoring
      */
-    protected void processAddition(DistributedMapAdditionResponse response) {
+    protected void processAdditionResponse(DistributedMapAdditionResponse response) {
         boolean success = response.getSuccess();
         if (success) {
             this.entryCount++;
@@ -284,7 +311,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
      * Tries the Contains request again in the next bucket if it failed
      * Leaves in Queue for later if refactoring
      */
-    protected void processContains(DistributedMapContainsResponse response) {
+    protected void processContainsResponse(DistributedMapContainsResponse response) {
         boolean success = response.getSuccess();
         if (success) {
             this.pendingOtherRequests--;
@@ -317,7 +344,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
      * Tries the Get request again in the next bucket if it failed
      * Leaves in Queue for later if refactoring
      */
-    protected void processGet(DistributedMapGetResponse response) {
+    protected void processGetResponse(DistributedMapGetResponse response) {
         boolean success = response.getSuccess();
         if (success) {
             this.pendingOtherRequests--;
@@ -347,7 +374,7 @@ public class DistributedHashMappor extends PeerToPeerActor {
      * Tries the Remove request again in the next bucket if it failed
      * Leaves in Queue for later if refactoring
      */
-    protected void processRemove(DistributedMapRemoveResponse response) {
+    protected void processRemoveResponse(DistributedMapRemoveResponse response) {
         boolean success = response.getSuccess();
         if (success) {
             this.entryCount--;
@@ -483,50 +510,42 @@ public class DistributedHashMappor extends PeerToPeerActor {
         this.refactoring = false;
         while (!this.preRefactorRequestQueue.isEmpty()) {
             DistributedMapRequest request = this.preRefactorRequestQueue.remove();
-            switch (request.getType()) {
-                case DistributedMapAdditionRequest:
-                    DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) request;
-                    this.requestAdd(additionRequest);
-                    break;
-                case DistributedMapContainsRequest:
-                    DistributedMapContainsRequest containsRequest = (DistributedMapContainsRequest) request;
-                    this.requestContains(containsRequest);
-                    break;
-                case DistributedMapGetRequest:
-                    DistributedMapGetRequest getRequest = (DistributedMapGetRequest) request;
-                    this.requestGet(getRequest);
-                    break;
-                case DistributedMapRemoveRequest:
-                    DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) request;
-                    this.requestRemove(removeRequest);
-                    break;
-                default:
-                    break;
-            }
+            this.reRequest(request);
         }
         while (!this.newRequestRefactorQueue.isEmpty()) {
             DistributedMapRequest request = this.newRequestRefactorQueue.remove();
-            switch (request.getType()) {
-                case DistributedMapAdditionRequest:
-                    DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) request;
-                    this.requestAdd(additionRequest);
-                    break;
-                case DistributedMapContainsRequest:
-                    DistributedMapContainsRequest containsRequest = (DistributedMapContainsRequest) request;
-                    this.requestContains(containsRequest);
-                    break;
-                case DistributedMapGetRequest:
-                    DistributedMapGetRequest getRequest = (DistributedMapGetRequest) request;
-                    this.requestGet(getRequest);
-                    break;
-                case DistributedMapRemoveRequest:
-                    DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) request;
-                    this.requestRemove(removeRequest);
-                    break;
-                default:
-                    break;
-            }
+            this.reRequest(request);
         }
+    }
+    
+    /**
+     * Attempts to request again after request being denied and buffered in a queue during refactoring
+     * @param request
+     */
+    private void reRequest(DistributedMapRequest request) {
+        switch (request.getType()) {
+        case DistributedMapAdditionRequest:
+            DistributedMapAdditionRequest additionRequest = (DistributedMapAdditionRequest) request;
+            this.requestAdd(additionRequest);
+            break;
+        case DistributedMapContainsRequest:
+            DistributedMapContainsRequest containsRequest = (DistributedMapContainsRequest) request;
+            this.requestContains(containsRequest);
+            break;
+        case DistributedMapGetRequest:
+            DistributedMapGetRequest getRequest = (DistributedMapGetRequest) request;
+            this.requestGet(getRequest);
+            break;
+        case DistributedMapRemoveRequest:
+            DistributedMapRemoveRequest removeRequest = (DistributedMapRemoveRequest) request;
+            this.requestRemove(removeRequest);
+            break;
+        case DistributedMapIterationRequest:
+            DistributedMapIterationRequest iterationRequest = (DistributedMapIterationRequest) request;
+            this.requestIteration(iterationRequest);
+        default:
+            break;
+    }
     }
     
     /**

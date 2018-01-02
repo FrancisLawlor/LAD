@@ -3,8 +3,11 @@ package adt.impl;
 import akka.actor.ActorRef;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
-import peer.core.xcept.UnknownMessageException;
 
+/**
+ * Actor that contains a bucket for a Distributed Hash Map
+ *
+ */
 public class DistributedHashMapBucketor extends PeerToPeerActor {
     private ActorRef owner;
     private Class<?> kClass;
@@ -52,8 +55,8 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
             DistributedMapRefactorAddRequest refactorAddRequest = (DistributedMapRefactorAddRequest) message;
             this.processRefactorAddRequest(refactorAddRequest);
         }
-        else {
-            throw new UnknownMessageException();
+        else if (message instanceof DistributedMapIterationRequest) {
+            this.processIterationRequest();
         }
     }
     
@@ -264,7 +267,7 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
     }
     
     /**
-     * Sends back the contents of this bucket to the owner for refactoring
+     * Sends back the contents of this bucket to the owner in an iterative fashion
      * @param request
      */
     protected void processRefactorGetRequest(DistributedMapRefactorGetRequest request) {
@@ -326,5 +329,19 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
         }
         DistributedMapRefactorAddResponse response = new DistributedMapRefactorAddResponse(this.bucketNum, success, additionRequest.getKey(), value);
         this.owner.tell(response, getSelf());
+    }
+    
+    /**
+     * Returns the contents of this bucket as part of an iteration through the map
+     */
+    protected void processIterationRequest() {
+        for (int i = 0; i < this.bucketSize; i++) {
+            Object key = this.keyArray[i];
+            if (key != null && key != this.availableSlot) {
+                Object value = this.valueArray[i];
+                DistributedMapIterationResponse response = new DistributedMapIterationResponse(this.bucketNum, key, value);
+                this.owner.tell(response, getSelf());
+            }
+        }
     }
 }

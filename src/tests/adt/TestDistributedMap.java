@@ -29,6 +29,8 @@ public class TestDistributedMap {
         Thread.sleep(10000);
         peerLinker.tell(new StartTest(), ActorRef.noSender());
         Thread.sleep(10000);
+        peerLinker.tell(new StartTest(), ActorRef.noSender());
+        Thread.sleep(10000);
         peerLinker.tell(new EndTest(), ActorRef.noSender());
         Thread.sleep(5000);
         

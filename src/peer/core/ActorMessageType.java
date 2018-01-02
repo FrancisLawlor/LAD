@@ -63,7 +63,9 @@ public enum ActorMessageType {
     DistributedMapGetRequest("DistributedMapGetRequest"),
     DistributedMapRemoveRequest("DistributedMapRemoveRequest"),
     DistributedMapRefactorAddRequest("DistributedMapRefactorAddRequest"),
-    DistributedMapRefactorAddResponse("DistributedMapRefactorAddResponse");
+    DistributedMapRefactorAddResponse("DistributedMapRefactorAddResponse"),
+    DistributedMapIterationRequest("DistributedMapIterationRequest"),
+    DistributedMapIterationResponse("DistributedMapIterationResponse");
     
     private String typeName;
     
