@@ -46,7 +46,7 @@ public class StartState extends State {
 			stateMachine.execute(StateName.INIT);
 			sceneContainerStage.show();
 		} else {
-			stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
+			stateMachine.setCurrentState(StateName.ADD_FILE.toString());
 			sceneContainerStage.setTitle(GUIText.SETUP);
 			stateMachine.execute(StateName.INIT);
 			sceneContainerStage.show();
