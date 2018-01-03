@@ -27,6 +27,7 @@ import peer.graph.weight.LocalWeightUpdateRequest;
 import peer.graph.weight.PeerWeightUpdateRequest;
 import peer.graph.weight.Weight;
 import peer.graph.weight.WeightRequest;
+import peer.graph.weight.WeightResponse;
 
 /**
  * Represents theoretical similarity between peers by weighted links
@@ -39,9 +40,11 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
     private Map<Integer, PeerWeightedLinkAddition> additionsWaitingOnContains;
     private Map<Integer, PeerWeightedLinkAddition> additionsWaitingOnGets;
     private Map<Integer, ExistenceResponder> existenceRequestsWaitingOnContains;
-    private Map<Integer, LocalWeightUpdateRequest> weightUpdateWaitingOnContains;
-    private Map<Integer, LocalWeightUpdateRequest> weightUpdateWaitingOnGets;
-    private Set<UniversalId> pendingAdditions;
+    private Map<Integer, LocalWeightUpdateRequest> localWeightUpdateWaitingOnContains;
+    private Map<Integer, LocalWeightUpdateRequest> localWeightUpdateWaitingOnGets;
+    private Map<Integer, PeerWeightUpdateRequest> remoteWeightUpdateWaitingOnContains;
+    private Map<Integer, PeerWeightUpdateRequest> remoteWeightUpdateWaitingOnGets;
+    private Set<Integer> pendingAdditions;
     private Map<Integer, ActorRef> pendingWeightRequests;
     private Map<Integer, ActorRef> pendingIterationRequests;
     
@@ -123,9 +126,11 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
         this.additionsWaitingOnContains = new HashMap<Integer, PeerWeightedLinkAddition>();
         this.additionsWaitingOnGets = new HashMap<Integer, PeerWeightedLinkAddition>();
         this.existenceRequestsWaitingOnContains = new HashMap<Integer, ExistenceResponder>();
-        this.weightUpdateWaitingOnContains = new HashMap<Integer, LocalWeightUpdateRequest>();
-        this.weightUpdateWaitingOnGets = new HashMap<Integer, LocalWeightUpdateRequest>();
-        this.pendingAdditions = new HashSet<UniversalId>();
+        this.localWeightUpdateWaitingOnContains = new HashMap<Integer, LocalWeightUpdateRequest>();
+        this.localWeightUpdateWaitingOnGets = new HashMap<Integer, LocalWeightUpdateRequest>();
+        this.remoteWeightUpdateWaitingOnContains = new HashMap<Integer, PeerWeightUpdateRequest>();
+        this.remoteWeightUpdateWaitingOnGets = new HashMap<Integer, PeerWeightUpdateRequest>();
+        this.pendingAdditions = new HashSet<Integer>();
         this.pendingWeightRequests = new HashMap<Integer, ActorRef>();
         this.pendingIterationRequests = new HashMap<Integer, ActorRef>();
     }
@@ -153,15 +158,20 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
     }
     
     /**
-     * 
+     * Requests all the peer links by requesting an iteration of the distributed hash map
      * @param request
      */
     protected void processPeerLinksRequest(PeerLinksRequest request) {
-        
+        int requestNum = this.distributedMap.requestIterator();
+        this.pendingIterationRequests.put(requestNum, getSender());
     }
     
+    /**
+     * Request the weight of a link
+     * @param request
+     */
     protected void processWeightRequest(WeightRequest request) {
-        
+        this.distributedMap.requestGet(request.getLinkedPeerId());
     }
     
     /**
@@ -171,11 +181,17 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
      */
     protected void processLocalWeightUpdateRequest(LocalWeightUpdateRequest request) {
         int requestNum = this.distributedMap.requestContains(request.getLinkedPeerId());
-        this.weightUpdateWaitingOnContains.put(requestNum, request);
+        this.localWeightUpdateWaitingOnContains.put(requestNum, request);
     }
     
+    /**
+     * Asks if the Distributed Map contains the link before attempting to update it
+     * Request waits for request with this request number to return as a contains response
+     * @param request
+     */
     protected void processPeerWeightUpdateRequest(PeerWeightUpdateRequest request) {
-        
+        int requestNum = this.distributedMap.requestContains(request.getUpdateRequestingPeerId());
+        this.remoteWeightUpdateWaitingOnContains.put(requestNum, request);
     }
     
     /**
@@ -215,13 +231,21 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
             PeerLinkExistenceResponse existsResponse = new PeerLinkExistenceResponse(request.getLinkToCheckPeerId(), response.contains());
             requester.tell(existsResponse, getSelf());
         }
-        else if (this.weightUpdateWaitingOnContains.containsKey(requestNum)) {
-            LocalWeightUpdateRequest request = this.weightUpdateWaitingOnContains.remove(requestNum);
+        else if (this.localWeightUpdateWaitingOnContains.containsKey(requestNum)) {
+            LocalWeightUpdateRequest request = this.localWeightUpdateWaitingOnContains.remove(requestNum);
             if (response.contains()) {
                 int requestNumForGet = this.distributedMap.requestGet(request.getLinkedPeerId());
-                this.weightUpdateWaitingOnGets.put(requestNumForGet, request);
+                this.localWeightUpdateWaitingOnGets.put(requestNumForGet, request);
             }
             else throw new WeightUpdateForNonExistentLinkException(request.getLinkedPeerId(), request.getNewWeight());
+        }
+        else if (this.remoteWeightUpdateWaitingOnContains.containsKey(requestNum)) {
+            PeerWeightUpdateRequest request = this.remoteWeightUpdateWaitingOnContains.remove(requestNum);
+            if (response.contains()) {
+                int requestNumForGet = this.distributedMap.requestGet(request.getUpdateRequestingPeerId());
+                this.remoteWeightUpdateWaitingOnGets.put(requestNumForGet, request);
+            }
+            else throw new WeightUpdateForNonExistentLinkException(request.getUpdateRequestingPeerId(), request.getNewWeight());
         }
         else throw new RuntimeException();
     }
@@ -242,14 +266,27 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
             Weight newWeight = request.getLinkWeight();
             existingWeight.add(newWeight);
         }
-        else if (this.weightUpdateWaitingOnGets.containsKey(requestNum)) {
-            LocalWeightUpdateRequest request = this.weightUpdateWaitingOnGets.remove(requestNum);
+        else if (this.localWeightUpdateWaitingOnGets.containsKey(requestNum)) {
+            LocalWeightUpdateRequest request = this.localWeightUpdateWaitingOnGets.remove(requestNum);
             Weight existingWeight = this.distributedMap.getGetValue(response);
             Weight newWeight = request.getNewWeight();
             existingWeight.add(newWeight);
             PeerWeightUpdateRequest peerUpdateRequest = new PeerWeightUpdateRequest(super.peerId, request.getLinkedPeerId(), request.getNewWeight());
             ActorSelection outComm = getContext().actorSelection(ActorPaths.getPathToOutComm());
             outComm.tell(peerUpdateRequest, getSelf());
+        }
+        else if (this.remoteWeightUpdateWaitingOnGets.containsKey(requestNum)) {
+            PeerWeightUpdateRequest request = this.remoteWeightUpdateWaitingOnGets.remove(requestNum);
+            Weight existingWeight = this.distributedMap.getGetValue(response);
+            Weight newWeight = request.getNewWeight();
+            existingWeight.add(newWeight);
+        }
+        else if (this.pendingWeightRequests.containsKey(requestNum)) {
+            ActorRef requester = this.pendingWeightRequests.remove(requestNum);
+            UniversalId linkPeerId = this.distributedMap.getGetKey(response);
+            Weight linkWeight = this.distributedMap.getGetValue(response);
+            WeightResponse weightResponse = new WeightResponse(linkPeerId, linkWeight);
+            requester.tell(weightResponse, getSelf());
         }
         else throw new RuntimeException();
     }
