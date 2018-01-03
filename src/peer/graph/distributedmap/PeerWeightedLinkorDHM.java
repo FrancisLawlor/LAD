@@ -171,7 +171,8 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
      * @param request
      */
     protected void processWeightRequest(WeightRequest request) {
-        this.distributedMap.requestGet(request.getLinkedPeerId());
+        int requestNum = this.distributedMap.requestGet(request.getLinkedPeerId());
+        this.pendingWeightRequests.put(requestNum, getSender());
     }
     
     /**
