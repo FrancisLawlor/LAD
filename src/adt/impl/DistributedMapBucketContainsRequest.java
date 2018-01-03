@@ -8,7 +8,7 @@ import peer.core.ActorMessageType;
  */
 public class DistributedMapBucketContainsRequest extends DistributedMapBucketRequest {
     
-    public DistributedMapBucketContainsRequest(int index, Object k) {
-        super(index, k, ActorMessageType.DistributedMapBucketContainsRequest);
+    public DistributedMapBucketContainsRequest(int requestNum, int index, Object k) {
+        super(requestNum, index, k, ActorMessageType.DistributedMapBucketContainsRequest);
     }
 }

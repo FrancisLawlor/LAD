@@ -9,8 +9,8 @@ import peer.core.ActorMessageType;
 public class DistributedMapRemoveResponse extends DistributedMapResponse {
     private Object v;
     
-    public DistributedMapRemoveResponse(int bucketNum, boolean success, Object k, Object v) {
-        super(bucketNum, success, k, ActorMessageType.DistributedMapRemoveResponse);
+    public DistributedMapRemoveResponse(int requestNum, int bucketNum, boolean success, Object k, Object v) {
+        super(requestNum, bucketNum, success, k, ActorMessageType.DistributedMapRemoveResponse);
         this.v = v;
     }
     

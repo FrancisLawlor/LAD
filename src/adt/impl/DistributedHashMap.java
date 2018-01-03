@@ -15,13 +15,14 @@ import peer.core.UniversalId;
  */
 public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
     private static final String NAME = "DistributedHashMappor";
-    private static final int DEFAULT_BUCKET_SIZE = 127;
+    private static final int DEFAULT_BUCKET_SIZE = 255;
     private static final int DEFAULT_BUCKET_COUNT = 7;
     
     private Class<K> kClass;
     private Class<V> vClass;
     private ActorRef owner;
     private ActorRef hashMappor;
+    private int requestNumber;
     
     /**
      * Initialise the Distributed Hash Map
@@ -38,46 +39,57 @@ public class DistributedHashMap<K, V> implements DistributedMap<K, V> {
         this.hashMappor.tell(peerIdInit, owner);
         DistributedHashMapporInit init = new DistributedHashMapporInit(DEFAULT_BUCKET_SIZE, DEFAULT_BUCKET_COUNT, kClass);
         this.hashMappor.tell(init, owner);
+        this.requestNumber = 0;
     }
     
     /**
      * Request an addition of a key value pair
      */
-    public void requestAdd(K k, V v) {
-        DistributedMapAdditionRequest requestAdd = new DistributedMapAdditionRequest(k, v);
+    public int requestAdd(K k, V v) {
+        int requestNum = this.requestNumber++;
+        DistributedMapAdditionRequest requestAdd = new DistributedMapAdditionRequest(requestNum, k, v);
         this.hashMappor.tell(requestAdd, this.owner);
+        return requestNum;
     }
     
     /**
      * Ask whether the hash map contains a key
      */
-    public void requestContains(K k) {
-        DistributedMapContainsRequest requestContains = new DistributedMapContainsRequest(k);
+    public int requestContains(K k) {
+        int requestNum = this.requestNumber++;
+        DistributedMapContainsRequest requestContains = new DistributedMapContainsRequest(requestNum, k);
         this.hashMappor.tell(requestContains, this.owner);
+        return requestNum;
     }
     
     /**
      * Try to get the value that has this key
      */
-    public void requestGet(K k) {
-        DistributedMapGetRequest requestGet = new DistributedMapGetRequest(k);
+    public int requestGet(K k) {
+        int requestNum = this.requestNumber++;
+        DistributedMapGetRequest requestGet = new DistributedMapGetRequest(requestNum, k);
         this.hashMappor.tell(requestGet, this.owner);
+        return requestNum;
     }
     
     /**
      * Request removal of this key and its value
      */
-    public void requestRemove(K k) {
-        DistributedMapRemoveRequest requestRemove = new DistributedMapRemoveRequest(k);
+    public int requestRemove(K k) {
+        int requestNum = this.requestNumber++;
+        DistributedMapRemoveRequest requestRemove = new DistributedMapRemoveRequest(requestNum, k);
         this.hashMappor.tell(requestRemove, this.owner);
+        return requestNum;
     }
     
     /**
      * Request all of the key value pairs in the map
      */
-    public void requestIterator() {
-        DistributedMapIterationRequest request = new DistributedMapIterationRequest();
+    public int requestIterator() {
+        int requestNum = this.requestNumber++;
+        DistributedMapIterationRequest request = new DistributedMapIterationRequest(requestNum);
         this.hashMappor.tell(request, this.owner);
+        return requestNum;
     }
     
     public K getAddKey(DistributedMapAdditionResponse response) {

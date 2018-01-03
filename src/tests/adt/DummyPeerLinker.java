@@ -1,9 +1,11 @@
 package tests.adt;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import adt.frame.DistributedMap;
 import adt.impl.DistributedHashMap;
@@ -30,9 +32,16 @@ public class DummyPeerLinker extends DummyActor {
     private Map<UniversalId, Weight> containsTest2Map;
     private boolean containsTest2 = false;
     private int testNum = 1;
+    private Set<Integer> additionRequestNums;
+    private Set<Integer> containsRequestNums;
+    private Integer iterationRequestNum;
+    private Set<Integer> getRequestNums;
+    private Set<Integer> removeRequestNums;
+    private Set<Integer> contains2RequestNums;
     
     @Override
     public void onReceive(Object message) {
+        try {
         if (message instanceof PeerToPeerActorInit) {
             PeerToPeerActorInit init = (PeerToPeerActorInit) message;
             super.initialisePeerToPeerActor(init);
@@ -72,6 +81,9 @@ public class DummyPeerLinker extends DummyActor {
                 Weight value = this.additionTestMap.remove(key);
                 if (value == null) throw new RuntimeException();
                 super.logger.logMessage("Addition Test Progress : " + this.additionTestMap.size() + " ; Key: " + key.toString());
+                Integer requestNum = response.getRequestNum();
+                if (!this.additionRequestNums.contains(requestNum)) throw new RuntimeException();
+                this.additionRequestNums.remove(requestNum);
             }
         }
         else if (message instanceof DistributedMapContainsResponse) {
@@ -83,16 +95,33 @@ public class DummyPeerLinker extends DummyActor {
                     if (contains) {
                         Weight value = this.containsTestMap.remove(key);
                         super.logger.logMessage("Contains Test Progress: " + this.containsTestMap.size() + " ; Key: " + key.toString() + " ; Contains: " + value.getWeight());
+                        Integer requestNum = response.getRequestNum();
+                        if (!this.containsRequestNums.contains(requestNum)) throw new RuntimeException();
+                        this.containsRequestNums.remove(requestNum);
+                        
                     }
-                    else this.distributedMap.requestContains(key);
+                    else {
+                        Integer requestNum = response.getRequestNum();
+                        this.containsRequestNums.remove(requestNum);
+                        requestNum = this.distributedMap.requestContains(key);
+                        this.containsRequestNums.add(requestNum);
+                    }
                 }
                 else {
                     boolean contains = response.contains();
                     if (!contains) {
                         Weight value = this.containsTest2Map.remove(key);
                         super.logger.logMessage("Contains Test 2 Progress: " + this.containsTest2Map.size() + " ; Key: " +  key.toString() + " ; Contains: " + value.getWeight());
+                        Integer requestNum = response.getRequestNum();
+                        if (!this.contains2RequestNums.contains(requestNum)) throw new RuntimeException();
+                        this.contains2RequestNums.remove(requestNum);
                     }
-                    else this.distributedMap.requestContains(key);
+                    else {
+                        Integer requestNum = response.getRequestNum();
+                        this.contains2RequestNums.remove(requestNum);
+                        requestNum = this.distributedMap.requestContains(key);
+                        this.contains2RequestNums.add(requestNum);
+                    }
                     
                 }
             }
@@ -103,8 +132,10 @@ public class DummyPeerLinker extends DummyActor {
                 UniversalId key = this.distributedMap.getIterationKey(response);
                 Weight value = this.distributedMap.getIterationValue(response);
                 Weight valueCheck = this.iterationTestMap.remove(key);
-                if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
+                if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException(value.getWeight() + " : " + valueCheck.getWeight());
                 super.logger.logMessage("Iteration Test Progress: " + this.iterationTestMap.size() + " ; Key: " + key.toString() + " ; Contains: " + value.getWeight());
+                Integer requestNum = response.getRequestNum();
+                if (!requestNum.equals(this.iterationRequestNum)) throw new RuntimeException(requestNum + " : " + this.iterationRequestNum);
             }
         }
         else if (message instanceof DistributedMapGetResponse) {
@@ -114,10 +145,18 @@ public class DummyPeerLinker extends DummyActor {
                 Weight value = (Weight) this.distributedMap.getGetValue(response);
                 if (value != null) {
                     Weight valueCheck = this.getTestMap.remove(key);
-                    if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
+                    if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException(value.getWeight() + " : " + valueCheck.getWeight());
                     super.logger.logMessage("Get Test Progress: " + this.getTestMap.size() + " ; Key: " +  key.toString() + " ; Weight: "  + value.getWeight());
+                    Integer requestNum = response.getRequestNum();
+                    if (!this.getRequestNums.contains(requestNum)) throw new RuntimeException();
+                    this.getRequestNums.remove(requestNum);
                 }
-                else this.distributedMap.requestGet(key);
+                else {
+                    Integer requestNum = response.getRequestNum();
+                    this.getRequestNums.remove(requestNum);
+                    requestNum = this.distributedMap.requestGet(key);
+                    this.getRequestNums.add(requestNum);
+                }
             }
         }
         else if (message instanceof DistributedMapRemoveResponse) {
@@ -127,27 +166,44 @@ public class DummyPeerLinker extends DummyActor {
                 Weight value = this.distributedMap.getRemoveValue(response);
                 if (value != null) {
                     Weight valueCheck = this.removeTestMap.remove(key);
-                    if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException();
+                    if (value.getWeight() != valueCheck.getWeight()) throw new RuntimeException(value.getWeight() + " : " + valueCheck.getWeight());
                     super.logger.logMessage("Remove Test Progress: " + this.removeTestMap.size() + " ; Key: " + key.toString() + " ; Weight: "  + value.getWeight());
+                    Integer requestNum = response.getRequestNum();
+                    if (!this.removeRequestNums.contains(requestNum)) throw new RuntimeException();
+                    this.removeRequestNums.remove(requestNum);
                 }
-                else this.distributedMap.requestRemove(key);
+                else {
+                    Integer requestNum = response.getRequestNum();
+                    this.removeRequestNums.remove(requestNum);
+                    requestNum = this.distributedMap.requestRemove(key);
+                    this.removeRequestNums.add(requestNum);
+                    
+                }
             }
         }
         else if (message instanceof EndTest) {
             if (this.additionTestMap.size() == 0 && this.containsTestMap.size() == 0 && this.iterationTestMap.size() == 0 &&
-                    this.getTestMap.size() == 0 && this.removeTestMap.size() == 0 && this.containsTest2Map.size() == 0) {
+                    this.getTestMap.size() == 0 && this.removeTestMap.size() == 0 && this.containsTest2Map.size() == 0 &&
+                    this.additionRequestNums.size() == 0 && this.containsRequestNums.size() == 0 && this.getRequestNums.size() == 0 &&
+                    this.removeRequestNums.size() == 0 && this.contains2RequestNums.size() == 0) {
                 super.logger.logMessage("SUCCESS ; All Tests have SUCCEEDED!");
             }
             else {
                 super.logger.logMessage("FAIL ; Some Tests have FAILED!");
                 super.logger.logMessage("AdditionTestMap Size: " + this.additionTestMap.size());
+                super.logger.logMessage("AdditionRequestNums Size: " + this.additionRequestNums.size());
                 super.logger.logMessage("ContainsTestMap Size: " + this.containsTestMap.size());
+                super.logger.logMessage("ContainsRequestNums Size: " + this.containsRequestNums.size());
                 super.logger.logMessage("IterationTestMap Size: " + this.iterationTestMap.size());
                 super.logger.logMessage("GetTestMap Size: " + this.getTestMap.size());
+                super.logger.logMessage("GetRequestNums Size: " + this.getRequestNums.size());
                 super.logger.logMessage("RemoveTestMap Size: " + this.removeTestMap.size());
+                super.logger.logMessage("RemoveRequestNums Size: " + this.removeRequestNums.size());
                 super.logger.logMessage("ContainsTest2Map Size: " + this.containsTest2Map.size());
+                super.logger.logMessage("Contains2RequestNums Size: " + this.contains2RequestNums.size());
             }
         }
+        } catch (Exception e) { e.printStackTrace(); }
     }
     
     protected void initialise() {
@@ -159,7 +215,7 @@ public class DummyPeerLinker extends DummyActor {
         this.getTestMap = new HashMap<UniversalId, Weight>();
         this.removeTestMap = new HashMap<UniversalId, Weight>();
         this.containsTest2Map = new HashMap<UniversalId, Weight>();
-        for (int i = 0; i < 5000; i++) {
+        for (int i = 0; i < TestDistributedMap.TEST_SIZE; i++) {
             UniversalId id = new UniversalId("Peer"+ i);
             Weight weight = new Weight(i);
             this.additionTestMap.put(id, weight);
@@ -170,13 +226,19 @@ public class DummyPeerLinker extends DummyActor {
             this.containsTest2Map.put(id, weight);
         }
         this.containsTest2 = false;
+        this.additionRequestNums = new HashSet<Integer>();
+        this.containsRequestNums = new HashSet<Integer>();
+        this.getRequestNums = new HashSet<Integer>();
+        this.removeRequestNums = new HashSet<Integer>();
+        this.contains2RequestNums = new HashSet<Integer>();
     }
     
     protected void startAdditionTest() {
         Iterator<Entry<UniversalId, Weight>> iterator = additionTestMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<UniversalId, Weight> entry = iterator.next();
-            this.distributedMap.requestAdd(entry.getKey(), entry.getValue());
+            int requestNum = this.distributedMap.requestAdd(entry.getKey(), entry.getValue());
+            this.additionRequestNums.add(requestNum);
             super.logger.logMessage("Addition Test ; Key: " + entry.getKey().toString() + " ; Weight: " + entry.getValue().getWeight());
         }
     }
@@ -185,13 +247,15 @@ public class DummyPeerLinker extends DummyActor {
         Iterator<Entry<UniversalId, Weight>>iterator = containsTestMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<UniversalId, Weight> entry = iterator.next();
-            this.distributedMap.requestContains(entry.getKey());
+            int requestNum = this.distributedMap.requestContains(entry.getKey());
+            this.containsRequestNums.add(requestNum);
             super.logger.logMessage("Contains Test ; Key: " + entry.getKey().toString() + " ; Weight: " + entry.getValue().getWeight());
         }
     }
     
     protected void startIterationTest() {
-        this.distributedMap.requestIterator();
+        int requestNum = this.distributedMap.requestIterator();
+        this.iterationRequestNum = requestNum;
         super.logger.logMessage("Requesting iteration");
     }
     
@@ -199,7 +263,8 @@ public class DummyPeerLinker extends DummyActor {
         Iterator<Entry<UniversalId, Weight>> iterator = getTestMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<UniversalId, Weight> entry = iterator.next();
-            this.distributedMap.requestGet(entry.getKey());
+            int requestNum = this.distributedMap.requestGet(entry.getKey());
+            this.getRequestNums.add(requestNum);
             super.logger.logMessage("Get Test ; Key: " + entry.getKey().toString() + " ; Weight: " + entry.getValue().getWeight());
         }
     }
@@ -208,7 +273,8 @@ public class DummyPeerLinker extends DummyActor {
         Iterator<Entry<UniversalId, Weight>> iterator = removeTestMap.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<UniversalId, Weight> entry = iterator.next();
-            this.distributedMap.requestRemove(entry.getKey());
+            int requestNum = this.distributedMap.requestRemove(entry.getKey());
+            this.removeRequestNums.add(requestNum);
             super.logger.logMessage("Remove Test ; Key: " + entry.getKey().toString() + " ; Weight: " + entry.getValue().getWeight());
         }
     }
@@ -218,7 +284,8 @@ public class DummyPeerLinker extends DummyActor {
         Iterator<Entry<UniversalId, Weight>> iterator = containsTest2Map.entrySet().iterator();
         while (iterator.hasNext()) {
             Entry<UniversalId, Weight> entry = iterator.next();
-            this.distributedMap.requestContains(entry.getKey());
+            int requestNum = this.distributedMap.requestContains(entry.getKey());
+            this.contains2RequestNums.add(requestNum);
             super.logger.logMessage("Contains Test 2 ; Key: " + entry.getKey().toString() + " ; Weight: " + entry.getValue().getWeight());
         }
     }

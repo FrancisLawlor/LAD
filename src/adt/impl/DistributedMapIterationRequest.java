@@ -7,8 +7,7 @@ import peer.core.ActorMessageType;
  *
  */
 public class DistributedMapIterationRequest extends DistributedMapRequest {
-    
-    public DistributedMapIterationRequest() {
-        super(null, ActorMessageType.DistributedMapIterationRequest);
+    public DistributedMapIterationRequest(int requestNum) {
+        super(requestNum, null, ActorMessageType.DistributedMapIterationRequest);
     }
 }

@@ -13,15 +13,15 @@ public interface DistributedMap<K, V> {
     
     void initialise(Class<K> kClass, Class<V> vClass, UntypedActorContext actorContext, ActorRef owner, UniversalId peerId);
     
-    void requestAdd(K k, V v);
+    int requestAdd(K k, V v);
     
-    void requestContains(K k);
+    int requestContains(K k);
     
-    void requestGet(K k);
+    int requestGet(K k);
     
-    void requestRemove(K k);
+    int requestRemove(K k);
     
-    void requestIterator();
+    int requestIterator();
     
     public K getAddKey(DistributedMapAdditionResponse response);
     

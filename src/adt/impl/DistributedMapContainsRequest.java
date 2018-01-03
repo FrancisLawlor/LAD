@@ -8,8 +8,8 @@ import peer.core.ActorMessageType;
  */
 public class DistributedMapContainsRequest extends DistributedMapRequest {
     
-    public DistributedMapContainsRequest(Object k) {
-        super(k, ActorMessageType.DistributedMapContainsRequest);
+    public DistributedMapContainsRequest(int requestNum, Object k) {
+        super(requestNum, k, ActorMessageType.DistributedMapContainsRequest);
     }
     
 }

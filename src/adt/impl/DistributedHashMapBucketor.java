@@ -56,7 +56,8 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
             this.processRefactorAddRequest(refactorAddRequest);
         }
         else if (message instanceof DistributedMapIterationRequest) {
-            this.processIterationRequest();
+            DistributedMapIterationRequest request = (DistributedMapIterationRequest) message;
+            this.processIterationRequest(request);
         }
     }
     
@@ -123,7 +124,8 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
             success = false;
             value = additionRequest.getValue();
         }
-        DistributedMapAdditionResponse response = new DistributedMapAdditionResponse(this.bucketNum, success, additionRequest.getKey(), value);
+        int requestNum = additionRequest.getRequestNum();
+        DistributedMapAdditionResponse response = new DistributedMapAdditionResponse(requestNum, this.bucketNum, success, additionRequest.getKey(), value);
         this.owner.tell(response, getSelf());
     }
     
@@ -164,7 +166,8 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
                 }
             }
         }
-        DistributedMapContainsResponse response = new DistributedMapContainsResponse(this.bucketNum, success, containsRequest.getKey(), contains);
+        int requestNum = containsRequest.getRequestNum();
+        DistributedMapContainsResponse response = new DistributedMapContainsResponse(requestNum, this.bucketNum, success, containsRequest.getKey(), contains);
         this.owner.tell(response, getSelf());
     }
     
@@ -205,7 +208,8 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
                 }
             }
         }
-        DistributedMapGetResponse response = new DistributedMapGetResponse(this.bucketNum, success, getRequest.getKey(), value);
+        int requestNum = getRequest.getRequestNum();
+        DistributedMapGetResponse response = new DistributedMapGetResponse(requestNum, this.bucketNum, success, getRequest.getKey(), value);
         this.owner.tell(response, getSelf());
     }
     
@@ -250,7 +254,8 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
                 }
             }
         }
-        DistributedMapRemoveResponse response = new DistributedMapRemoveResponse(this.bucketNum, success, removeRequest.getKey(), value);
+        int requestNum = removeRequest.getRequestNum();
+        DistributedMapRemoveResponse response = new DistributedMapRemoveResponse(requestNum, this.bucketNum, success, removeRequest.getKey(), value);
         this.owner.tell(response, getSelf());
     }
     
@@ -334,12 +339,13 @@ public class DistributedHashMapBucketor extends PeerToPeerActor {
     /**
      * Returns the contents of this bucket as part of an iteration through the map
      */
-    protected void processIterationRequest() {
+    protected void processIterationRequest(DistributedMapIterationRequest request) {
+        int requestNum = request.getRequestNum();
         for (int i = 0; i < this.bucketSize; i++) {
             Object key = this.keyArray[i];
             if (key != null && key != this.availableSlot) {
                 Object value = this.valueArray[i];
-                DistributedMapIterationResponse response = new DistributedMapIterationResponse(this.bucketNum, key, value);
+                DistributedMapIterationResponse response = new DistributedMapIterationResponse(requestNum, this.bucketNum, key, value);
                 this.owner.tell(response, getSelf());
             }
         }

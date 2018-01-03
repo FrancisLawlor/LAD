@@ -10,7 +10,7 @@ public class DistributedMapRefactorAddRequest extends DistributedMapBucketReques
     private Object v;
     
     public DistributedMapRefactorAddRequest(int index, Object k, Object v) {
-        super(index, k, ActorMessageType.DistributedMapRefactorAddRequest);
+        super(-1, index, k, ActorMessageType.DistributedMapRefactorAddRequest);
         this.v = v;
     }
     

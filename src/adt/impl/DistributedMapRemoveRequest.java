@@ -8,8 +8,8 @@ import peer.core.ActorMessageType;
  */
 public class DistributedMapRemoveRequest extends DistributedMapRequest {
     
-    public DistributedMapRemoveRequest(Object k) {
-        super(k, ActorMessageType.DistributedMapRemoveRequest);
+    public DistributedMapRemoveRequest(int requestNum, Object k) {
+        super(requestNum, k, ActorMessageType.DistributedMapRemoveRequest);
     }
     
 }

@@ -10,7 +10,7 @@ public class DistributedMapRefactorGetResponse extends DistributedMapResponse {
     private Object v;
     
     public DistributedMapRefactorGetResponse(Object k, Object v) {
-        super(-1, false, k, ActorMessageType.DistributedMapRefactorGetResponse);
+        super(-1, -1, false, k, ActorMessageType.DistributedMapRefactorGetResponse);
         this.v = v;
     }
     
