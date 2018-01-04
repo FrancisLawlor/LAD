@@ -36,10 +36,18 @@ public class AddFileState extends State {
 			case INIT:
 				sceneContainerStage.changeScene(gui.getAddFileScene());
 				sceneContainerStage.setTitle(GUIText.ADD_FILE);
+				
 				file = chooseFile();
+				
+				if (file == null) {
+					stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+					stateMachine.execute(StateName.INIT);
+				}
 				break;
 			case CLICK_SUBMIT:
 				writeInfoToFile();
+				stateMachine.setCurrentState(StateName.DASHBOARD.toString());
+				stateMachine.execute(StateName.INIT);
 				break;
 			default:
 				break;
@@ -80,9 +88,6 @@ public class AddFileState extends State {
 		} catch (IOException e1) {
 			e1.printStackTrace();
 		}	
-		
-		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
-		stateMachine.execute(StateName.INIT);
 	}
 	
 	private String writeJSON() {
