@@ -27,6 +27,9 @@ public class SetupPane extends BorderPane {
 		
 		GridPane setupForm = configureInput();
 		this.setCenter(setupForm);
+		
+		GridPane errorMessage = configureErrorLabel();
+		this.setBottom(errorMessage);
 	}
 	
 	private GridPane configureExplanation() {
@@ -36,15 +39,35 @@ public class SetupPane extends BorderPane {
 		// Set alignment values
 	    gridPaneContainingExplanation.setAlignment(Pos.CENTER);
 	    
-	    Label portNumberLabel = new Label(GUIText.SETUP_INFO);
-	    portNumberLabel.setMinWidth(100);
-	    portNumberLabel.setMinHeight(100);
-	    portNumberLabel.setFont(Font.font (15));
+	    Label setupInfoLabel = new Label(GUIText.SETUP_INFO);
+	    setupInfoLabel.setMinWidth(100);
+	    setupInfoLabel.setMinHeight(100);
+	    setupInfoLabel.setFont(Font.font (15));
 
-	    GridPane.setHalignment(portNumberLabel, HPos.RIGHT);
-	    gridPaneContainingExplanation.add(portNumberLabel, 0, 0);
+	    GridPane.setHalignment(setupInfoLabel, HPos.RIGHT);
+	    gridPaneContainingExplanation.add(setupInfoLabel, 0, 0);
 	    
 		return gridPaneContainingExplanation;
+	}
+	
+	private GridPane configureErrorLabel() {
+		GridPane gridPaneContainingErrorLabel = new GridPane();
+		gridPaneContainingErrorLabel.setBackground(new Background(new BackgroundFill(Color.web("#e0f6f9"), CornerRadii.EMPTY, Insets.EMPTY)));
+		
+		// Set alignment value
+		gridPaneContainingErrorLabel.setAlignment(Pos.CENTER);
+	    
+	    Label portErrorLabel = new Label();
+	    portErrorLabel.setTextFill(Color.RED);
+	    this.errorLabel = portErrorLabel;
+	    portErrorLabel.setMinWidth(100);
+	    portErrorLabel.setMinHeight(100);
+	    portErrorLabel.setFont(Font.font (15));
+
+	    GridPane.setHalignment(portErrorLabel, HPos.RIGHT);
+	    gridPaneContainingErrorLabel.add(portErrorLabel, 0, 0);
+	    
+		return gridPaneContainingErrorLabel;
 	}
 
 	private GridPane configureInput() {
