@@ -33,7 +33,7 @@ public class HashUtil {
         while(j<(long)Math.pow(Math.pow(1048576,2),2)){
             byte bstream[] = new byte[(int)j-2];
             for(int i =0; i<j-2 ;i++) {
-                bstream[i] = (byte) (Math.random() * 127);
+                bstream[i] = (byte) (Math.random() * 255);
             }
             System.out.print(j + "  ");
             System.out.println(generateHash(bstream));
