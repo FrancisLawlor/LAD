@@ -15,7 +15,7 @@ public class WaitingPane extends BorderPane {
 	private StackPane configureStackPane(String waitingMessage) {
 		StackPane content = new StackPane();
 		ProgressIndicator progressIndicator = new ProgressIndicator();
-		progressIndicator.setMaxSize(150, 150);
+		progressIndicator.setMaxSize(300, 300);
 	    	content.getChildren().add(progressIndicator);
 	    	content.getChildren().add(new Text(waitingMessage));
 	    	

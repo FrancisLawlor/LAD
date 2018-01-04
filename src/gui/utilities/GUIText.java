@@ -21,4 +21,5 @@ public class GUIText {
 	public static final String PORT_UNAVAILABLE = "Port is unavailable. Please try another.";
 	public static final String FILE_NAME = "File name";
 	public static final String GENRE = "Genre";
+	public static final String SETUP_INFO = "Enter the port number you would like to deploy to when running the application.";
 }
