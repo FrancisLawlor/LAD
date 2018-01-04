@@ -145,7 +145,7 @@ public class PeerRecommendationAggregator extends PeerToPeerActor {
     /**
      * Asks Weighter what Weight this Peer's Link should have in aggregate Recommendations
      */
-    private void sendPeerLinkWeightRequest(UniversalId peerId) {
+    protected void sendPeerLinkWeightRequest(UniversalId peerId) {
         WeightRequest request = new WeightRequest(peerId);
         
         ActorSelection peerWeighter = getContext().actorSelection(ActorPaths.getPathToWeighter(peerId));

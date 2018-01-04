@@ -23,22 +23,6 @@ public class Gossiper extends PeerToPeerActor {
             GossipInit gossipInit = (GossipInit) message;
             this.processGossipInit(gossipInit);
         }
-        else if (message instanceof AddressChangeAnnounce) {
-            AddressChangeAnnounce announcement = (AddressChangeAnnounce) message;
-            this.processAddressChangeAnnounce(announcement);
-        }
-        else if (message instanceof AddressChangedAcknowledged) {
-            AddressChangedAcknowledged acknowledgement = (AddressChangedAcknowledged) message;
-            this.processAddressChangedAcknowledged(acknowledgement);
-        }
-        else if (message instanceof OldPeerAddressResponse) {
-            OldPeerAddressResponse oldPeerAddress = (OldPeerAddressResponse) message;
-            this.processOldPeerAddressResponse(oldPeerAddress);
-        }
-        else if (message instanceof ResolvePeerAddressRequest) {
-            ResolvePeerAddressRequest resolveRequest = (ResolvePeerAddressRequest) message;
-            this.processResolvePeerAddressRequest(resolveRequest);
-        }
         else {
             throw new UnknownMessageException();
         }
@@ -49,38 +33,6 @@ public class Gossiper extends PeerToPeerActor {
      * @param gossipInit
      */
     protected void processGossipInit(GossipInit gossipInit) {
-        
-    }
-    
-    /**
-     * 
-     * @param announcement
-     */
-    protected void processAddressChangeAnnounce(AddressChangeAnnounce announcement) {
-        
-    }
-    
-    /**
-     * 
-     * @param acknowledgement
-     */
-    protected void processAddressChangedAcknowledged(AddressChangedAcknowledged acknowledgement) {
-        
-    }
-    
-    /**
-     * 
-     * @param oldPeerAddress
-     */
-    protected void processOldPeerAddressResponse(OldPeerAddressResponse oldPeerAddress) {
-        
-    }
-    
-    /**
-     * 
-     * @param resolveRequest
-     */
-    protected void processResolvePeerAddressRequest(ResolvePeerAddressRequest resolveRequest) {
         
     }
 }

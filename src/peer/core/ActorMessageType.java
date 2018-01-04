@@ -45,7 +45,28 @@ public enum ActorMessageType {
     SimilarContentViewPeerResponse("SimilarContentViewPeerResponse"),
     RetrievedContentFile("RetrievedContentFile"),
     ContentViewAddition("ContentViewAddition"),
-    RecordContentView("RecordContentView");
+    RecordContentView("RecordContentView"),
+    DistributedHashMapporInit("DistributedHashMapporInit"),
+    DistributedHashMapBucketInit("DistributedHashMapBucketInit"),
+    DistributedMapAdditionResponse("DistributedMapAdditionResponse"),
+    DistributedMapContainsResponse("DistributedMapContainsResponse"),
+    DistributedMapGetResponse("DistributedMapGetResponse"),
+    DistributedMapRemoveResponse("DistributedMapRemoveResponse"),
+    DistributedMapRefactorGetRequest("DistributedMapRefactorGetRequest"),
+    DistributedMapRefactorGetResponse("DistributedMapRefactorGetResponse"),
+    DistributedMapBucketAdditionRequest("DistributedMapBucketAdditionRequest"),
+    DistributedMapBucketContainsRequest("DistributedMapBucketContainsRequest"),
+    DistributedMapBucketGetRequest("DistributedMapBucketGetRequest"),
+    DistributedMapBucketRemoveRequest("DistributedMapBucketRemoveRequest"),
+    DistributedMapAdditionRequest("DistributedMapAdditionRequest"),
+    DistributedMapContainsRequest("DistributedMapContainsRequest"),
+    DistributedMapGetRequest("DistributedMapGetRequest"),
+    DistributedMapRemoveRequest("DistributedMapRemoveRequest"),
+    DistributedMapRefactorAddRequest("DistributedMapRefactorAddRequest"),
+    DistributedMapRefactorAddResponse("DistributedMapRefactorAddResponse"),
+    DistributedMapIterationRequest("DistributedMapIterationRequest"),
+    DistributedMapIterationResponse("DistributedMapIterationResponse"),
+    PeerWeightedLinkAddition("PeerWeightedLinkAddition");
     
     private String typeName;
     

@@ -12,6 +12,8 @@ import tests.core.DummyInit;
 import tests.core.StartTest;
 
 public class TestPeerLinker {
+    public static final String TESTOR_NAME = "PeerLinkerTestor";
+    
     public static void main(String[] args) throws Exception {
         UniversalId peerOneId = new UniversalId("PeerOne");
         
@@ -21,8 +23,8 @@ public class TestPeerLinker {
         PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.PEER_LINKER);
         peerLinker.tell(peerIdInit, null);
         
-        final ActorRef peerLinkTestor = actorSystem.actorOf(Props.create(PeerLinkerTestor.class), "PeerLinkerTestor");
-        peerIdInit = new PeerToPeerActorInit(peerOneId, "PeerLinkerTestor");
+        final ActorRef peerLinkTestor = actorSystem.actorOf(Props.create(PeerLinkerTestor.class), TESTOR_NAME);
+        peerIdInit = new PeerToPeerActorInit(peerOneId, TESTOR_NAME);
         peerLinkTestor.tell(peerIdInit, null);
         
         // Logger
