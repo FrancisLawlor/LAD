@@ -5,6 +5,7 @@ import peer.core.ActorPaths;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
 import peer.graph.distributedmap.PeerWeightedLinkAddition;
+import peer.graph.distributedmap.RemotePeerWeightedLinkAddition;
 import peer.graph.link.PeerLinkExistenceRequest;
 import peer.graph.link.PeerLinkExistenceResponse;
 import peer.graph.link.PeerLinkResponse;
@@ -25,6 +26,7 @@ public class PeerWeightedLinkorDHMTestor extends DummyActor {
     private static final String PEER_FOUR = "PeerFour";
     private static final String PEER_FIVE = "PeerFive";
     
+    private UniversalId peerOneId = new UniversalId(PEER_ONE);
     private UniversalId peerTwoId = new UniversalId(PEER_TWO);
     private UniversalId peerThreeId = new UniversalId(PEER_THREE);
     private UniversalId peerFourId = new UniversalId(PEER_FOUR);
@@ -98,7 +100,7 @@ public class PeerWeightedLinkorDHMTestor extends DummyActor {
     protected void startLinkAddition() {
         PeerWeightedLinkAddition addPeerTwo = new PeerWeightedLinkAddition(peerTwoId, new Weight(2.0));
         PeerWeightedLinkAddition addPeerThree = new PeerWeightedLinkAddition(peerThreeId, new Weight(3.0));
-        PeerWeightedLinkAddition addPeerFour = new PeerWeightedLinkAddition(peerFourId, new Weight(4.0));
+        RemotePeerWeightedLinkAddition addPeerFour = new RemotePeerWeightedLinkAddition(peerFourId, peerOneId, new Weight(4.0));
         
         ActorSelection peerWeightedLinkor = getContext().actorSelection(ActorPaths.getPathToPeerLinker());
         
@@ -106,7 +108,7 @@ public class PeerWeightedLinkorDHMTestor extends DummyActor {
         peerWeightedLinkor.tell(addPeerTwo, getSelf());
         super.logger.logMessage("Adding a link between " + PEER_ONE + " and " + PEER_THREE + " to the Peer Graph");
         peerWeightedLinkor.tell(addPeerThree, getSelf());
-        super.logger.logMessage("Adding a link between " + PEER_ONE + " and " + PEER_FOUR + " to the Peer Graph");
+        super.logger.logMessage("Adding a link between " + PEER_FOUR + " and " + PEER_ONE + " to the Peer Graph");
         peerWeightedLinkor.tell(addPeerFour, getSelf());
         super.logger.logMessage("NOT adding a link between " + PEER_ONE + " and " + PEER_FIVE);
         super.logger.logMessage("\n");
@@ -145,7 +147,7 @@ public class PeerWeightedLinkorDHMTestor extends DummyActor {
     protected void startRemoteWeightUpdateCheckTest() {
         ActorSelection peerWeightedLinkor = getContext().actorSelection(ActorPaths.getPathToPeerLinker());
         
-        super.logger.logMessage("Checking Remote Peer Weight Update request from " + PEER_TWO + " has updated the weighted link between " + PEER_ONE + " and " + PEER_TWO + " in the Peer Graph of " + PEER_ONE);
+        super.logger.logMessage("Checking Remote Peer Weight Update request from " + PEER_TWO + " has updated the weighted link between " + PEER_ONE + " and " + PEER_TWO + " in the Peer Graph of " + PEER_ONE + " to 7.0");
         peerWeightedLinkor.tell(new WeightRequest(peerTwoId), getSelf());
         super.logger.logMessage("");
     }
@@ -161,7 +163,7 @@ public class PeerWeightedLinkorDHMTestor extends DummyActor {
     protected void startLocalWeightUpdateCheckTest() {
         ActorSelection peerWeightedLinkor = getContext().actorSelection(ActorPaths.getPathToPeerLinker());
         
-        super.logger.logMessage("Checking Weight of link between " + PEER_ONE + " and " + PEER_TWO + " has been updated in the Peer Graph of " + PEER_ONE + " after Local Weight Update Request");
+        super.logger.logMessage("Checking Weight of link between " + PEER_ONE + " and " + PEER_TWO + " has been updated in the Peer Graph of " + PEER_ONE + " after Local Weight Update Request to 13.0");
         peerWeightedLinkor.tell(new WeightRequest(peerTwoId), getSelf());
         super.logger.logMessage("");
     }

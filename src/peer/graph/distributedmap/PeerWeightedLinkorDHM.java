@@ -37,8 +37,10 @@ import peer.graph.weight.WeightResponse;
  */
 public class PeerWeightedLinkorDHM extends PeerToPeerActor {
     private DistributedMap<UniversalId, Weight> distributedMap;
-    private Map<Integer, PeerWeightedLinkAddition> additionsWaitingOnContains;
-    private Map<Integer, PeerWeightedLinkAddition> additionsWaitingOnGets;
+    private Map<Integer, PeerWeightedLinkAddition> localAdditionsWaitingOnContains;
+    private Map<Integer, PeerWeightedLinkAddition> localAdditionsWaitingOnGets;
+    private Map<Integer, RemotePeerWeightedLinkAddition> remoteAdditionsWaitingOnContains;
+    private Map<Integer, RemotePeerWeightedLinkAddition> remoteAdditionsWaitingOnGets;
     private Map<Integer, ExistenceResponder> existenceRequestsWaitingOnContains;
     private Map<Integer, LocalWeightUpdateRequest> localWeightUpdateWaitingOnContains;
     private Map<Integer, LocalWeightUpdateRequest> localWeightUpdateWaitingOnGets;
@@ -74,6 +76,10 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
         else if (message instanceof PeerWeightedLinkAddition) {
             PeerWeightedLinkAddition addition = (PeerWeightedLinkAddition) message;
             this.processPeerWeightedLinkAddition(addition);
+        }
+        else if (message instanceof RemotePeerWeightedLinkAddition) {
+            RemotePeerWeightedLinkAddition addition = (RemotePeerWeightedLinkAddition) message;
+            this.processRemotePeerWeightedLinkAddition(addition);
         }
         else if (message instanceof PeerLinkExistenceRequest) {
             PeerLinkExistenceRequest request = (PeerLinkExistenceRequest) message;
@@ -123,8 +129,10 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
     public void initialise() {
         this.distributedMap = new DistributedHashMap<UniversalId, Weight>();
         this.distributedMap.initialise(UniversalId.class, Weight.class, getContext(), getSelf(), super.peerId);
-        this.additionsWaitingOnContains = new HashMap<Integer, PeerWeightedLinkAddition>();
-        this.additionsWaitingOnGets = new HashMap<Integer, PeerWeightedLinkAddition>();
+        this.localAdditionsWaitingOnContains = new HashMap<Integer, PeerWeightedLinkAddition>();
+        this.localAdditionsWaitingOnGets = new HashMap<Integer, PeerWeightedLinkAddition>();
+        this.remoteAdditionsWaitingOnContains = new HashMap<Integer, RemotePeerWeightedLinkAddition>();
+        this.remoteAdditionsWaitingOnGets = new HashMap<Integer, RemotePeerWeightedLinkAddition>();
         this.existenceRequestsWaitingOnContains = new HashMap<Integer, ExistenceResponder>();
         this.localWeightUpdateWaitingOnContains = new HashMap<Integer, LocalWeightUpdateRequest>();
         this.localWeightUpdateWaitingOnGets = new HashMap<Integer, LocalWeightUpdateRequest>();
@@ -138,11 +146,28 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
     /**
      * Check if the map contains the link already before adding
      * Contains response from the distributed map will determine what to do next
+     * This local peer will now need to send a request to the other peer to ask it to add the same link
+     * RemotePeerWeightedLinkAddition is required to be sent to tell remote peer to add this link
+     * This request keeps the weighted links of the peer graphs consistent from both perspectives
      * @param addition
      */
     protected void processPeerWeightedLinkAddition(PeerWeightedLinkAddition addition) {
         int requestNum = this.distributedMap.requestContains(addition.getLinkPeerId());
-        this.additionsWaitingOnContains.put(requestNum, addition);
+        this.localAdditionsWaitingOnContains.put(requestNum, addition);
+        RemotePeerWeightedLinkAddition otherPeerAddition = new RemotePeerWeightedLinkAddition(super.peerId, addition.getLinkPeerId(), addition.getLinkWeight());
+        ActorSelection outComm = getContext().actorSelection(ActorPaths.getPathToOutComm());
+        outComm.tell(otherPeerAddition, getSelf());
+    }
+    
+    /**
+     * Check if the map contains the link already before adding
+     * Contains response from the distributed map will determine what to do next
+     * This is a remote peer requesting a link be added to keep the weighted link consistent on both ends
+     * @param addition
+     */
+    protected void processRemotePeerWeightedLinkAddition(RemotePeerWeightedLinkAddition addition) {
+        int requestNum = this.distributedMap.requestContains(addition.getLinkPeerId());
+        this.remoteAdditionsWaitingOnContains.put(requestNum, addition);
     }
     
     /**
@@ -214,12 +239,23 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
      */
     protected void processContainsResponse(DistributedMapContainsResponse response) {
         int requestNum = response.getRequestNum();
-        if (this.additionsWaitingOnContains.containsKey(requestNum)) {
-            PeerWeightedLinkAddition addition = this.additionsWaitingOnContains.remove(requestNum);
+        if (this.localAdditionsWaitingOnContains.containsKey(requestNum)) {
+            PeerWeightedLinkAddition addition = this.localAdditionsWaitingOnContains.remove(requestNum);
             boolean containsLink = response.contains();
             if (containsLink) {
                 int requestNumForGet = this.distributedMap.requestGet(addition.getLinkPeerId());
-                this.additionsWaitingOnGets.put(requestNumForGet, addition);
+                this.localAdditionsWaitingOnGets.put(requestNumForGet, addition);
+            }
+            else {
+                this.distributedMap.requestAdd(addition.getLinkPeerId(), addition.getLinkWeight());
+            }
+        }
+        else if (this.remoteAdditionsWaitingOnContains.containsKey(requestNum)) {
+            RemotePeerWeightedLinkAddition addition = this.remoteAdditionsWaitingOnContains.remove(requestNum);
+            boolean containsLink = response.contains();
+            if (containsLink) {
+                int requestNumForGet = this.distributedMap.requestGet(addition.getLinkPeerId());
+                this.remoteAdditionsWaitingOnGets.put(requestNumForGet, addition);
             }
             else {
                 this.distributedMap.requestAdd(addition.getLinkPeerId(), addition.getLinkWeight());
@@ -261,8 +297,14 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
      */
     protected void processGetResponse(DistributedMapGetResponse response) {
         int requestNum = response.getRequestNum();
-        if (this.additionsWaitingOnGets.containsKey(requestNum)) {
-            PeerWeightedLinkAddition request = this.additionsWaitingOnGets.remove(requestNum);
+        if (this.localAdditionsWaitingOnGets.containsKey(requestNum)) {
+            PeerWeightedLinkAddition request = this.localAdditionsWaitingOnGets.remove(requestNum);
+            Weight existingWeight = this.distributedMap.getGetValue(response);
+            Weight newWeight = request.getLinkWeight();
+            existingWeight.add(newWeight);
+        }
+        else if (this.remoteAdditionsWaitingOnGets.containsKey(requestNum)) {
+            RemotePeerWeightedLinkAddition request = this.remoteAdditionsWaitingOnGets.remove(requestNum);
             Weight existingWeight = this.distributedMap.getGetValue(response);
             Weight newWeight = request.getLinkWeight();
             existingWeight.add(newWeight);

@@ -66,7 +66,8 @@ public enum ActorMessageType {
     DistributedMapRefactorAddResponse("DistributedMapRefactorAddResponse"),
     DistributedMapIterationRequest("DistributedMapIterationRequest"),
     DistributedMapIterationResponse("DistributedMapIterationResponse"),
-    PeerWeightedLinkAddition("PeerWeightedLinkAddition");
+    PeerWeightedLinkAddition("PeerWeightedLinkAddition"),
+    RemotePeerWeightedLinkAddition("RemotePeerWeightedLinkAddition");
     
     private String typeName;
     
