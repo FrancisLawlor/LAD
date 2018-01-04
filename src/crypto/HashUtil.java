@@ -20,15 +20,7 @@ public class HashUtil {
         }
         return Long.toUnsignedString(hash);
     }
-    /*
-        public static String generateHash(Scanner file){
-            long hash = 5381;
-            int a = 33;
-            while(file.next()){
-                hash = ((hash << 5) + hash) + file[i];
-            }
-            return Long.toUnsignedString(hash);
-        }*/
+
     //compares a hash with a files hash
     public static Boolean authenticateHash(byte bytestream[], String hash){
         return (generateHash(bytestream).equals(hash));
