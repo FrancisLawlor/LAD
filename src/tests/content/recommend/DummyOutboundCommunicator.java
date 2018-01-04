@@ -25,12 +25,24 @@ public class DummyOutboundCommunicator extends DummyActor {
         this.contentListPeerTwo = new LinkedList<Content>();
         this.contentListPeerTwo.add(new Content("2a", "2a", "2a", 2));
         this.contentListPeerTwo.add(new Content("2b", "2b", "2b", 2));
+        this.contentListPeerTwo.add(new Content("2c", "2c", "2c", 2));
+        this.contentListPeerTwo.add(new Content("2d", "2d", "2d", 2));
+        this.contentListPeerTwo.add(new Content("2e", "2e", "2e", 2));
+        this.contentListPeerTwo.add(new Content("2f", "2f", "2f", 2));
         this.contentListPeerThree = new LinkedList<Content>();
         this.contentListPeerThree.add(new Content("3a", "3a", "3a", 3));
         this.contentListPeerThree.add(new Content("3b", "3b", "3b", 3));
+        this.contentListPeerThree.add(new Content("3c", "3c", "3c", 3));
+        this.contentListPeerThree.add(new Content("3d", "3d", "3d", 3));
+        this.contentListPeerThree.add(new Content("3e", "3e", "3e", 3));
+        this.contentListPeerThree.add(new Content("3f", "3f", "3f", 3));
         this.contentListPeerFour = new LinkedList<Content>();
         this.contentListPeerFour.add(new Content("4a", "4a", "4a", 4));
         this.contentListPeerFour.add(new Content("4b", "4b", "4b", 4));
+        this.contentListPeerFour.add(new Content("4c", "4c", "4c", 4));
+        this.contentListPeerFour.add(new Content("4d", "4d", "4d", 4));
+        this.contentListPeerFour.add(new Content("4e", "4e", "4e", 4));
+        this.contentListPeerFour.add(new Content("4f", "4f", "4f", 4));
     }
     
     @Override
