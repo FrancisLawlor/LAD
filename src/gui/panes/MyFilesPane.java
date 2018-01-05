@@ -42,29 +42,31 @@ public class MyFilesPane extends BorderPane {
 
 	private ListView<Content> configureListView(ObservableList<Content> data) {
 		final ListView<Content> listView = new ListView<Content>(data);
-        listView.setCellFactory(new Callback<ListView<Content>, ListCell<Content>>() {
-
-            @Override
-            public ListCell<Content> call(ListView<Content> arg) {
-                return new ListCell<Content>() {
-
-                    @Override
-                    protected void updateItem(Content item, boolean bln) {
-                        super.updateItem(item, bln);
-                        if (item != null) {
-                            VBox vBox = new VBox(new Text(item.getFileName()), new Text(item.getFileFormat()));
-                            HBox hBox = new HBox(new Label("[Graphic]"), vBox);
-                            hBox.setSpacing(10);
-                            setGraphic(hBox);
-                        }
-                    }
-
-                };
-            }
-
-        });
-        
-        return listView;
+		listView.setCellFactory(new Callback<ListView<Content>, ListCell<Content>>() {
+			
+			@Override
+			public ListCell<Content> call(ListView<Content> arg) {
+				return new ListCell<Content>() {
+					
+					@Override
+					protected void updateItem(Content item, boolean emptyCell) {
+						super.updateItem(item, emptyCell);
+						if (emptyCell) {
+							setText(null);
+                        		setGraphic(null);
+                        		}
+						if (item != null) {
+							VBox vBox = new VBox(new Text(item.getFileName()), new Text(item.getFileFormat()));
+							HBox hBox = new HBox(new Label("[Graphic]"), vBox);
+							hBox.setSpacing(10);
+							setGraphic(hBox);
+						}
+					}
+				};
+			}
+		});
+		
+		return listView;
 	}
 	
 	public Button getBackButton() {
