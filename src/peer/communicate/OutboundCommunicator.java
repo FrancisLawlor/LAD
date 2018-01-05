@@ -22,9 +22,9 @@ import peer.graph.weight.PeerWeightUpdateRequest;
  *
  */
 public class OutboundCommunicator extends PeerToPeerActor {
-    private CamelContext camelContext;
-    private ProducerTemplate camelTemplate;
-    private Gson gson;
+    protected CamelContext camelContext;
+    protected ProducerTemplate camelTemplate;
+    protected Gson gson;
     
     public OutboundCommunicator() {
         this.gson = new Gson();
@@ -132,5 +132,4 @@ public class OutboundCommunicator extends PeerToPeerActor {
         String requestJson = this.gson.toJson(request);
         this.camelTemplate.sendBody(restletUri, requestJson);
     }
-
 }
