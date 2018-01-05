@@ -52,29 +52,32 @@ public class DashBoardPane extends BorderPane {
 	private ListView<Recommendation> configureListView(ObservableList<Recommendation> data) {
 		final ListView<Recommendation> listView = new ListView<Recommendation>(data);
 		
-        listView.setCellFactory(new Callback<ListView<Recommendation>, ListCell<Recommendation>>() {
+		listView.setCellFactory(new Callback<ListView<Recommendation>, ListCell<Recommendation>>() {
 
-            @Override
-            public ListCell<Recommendation> call(ListView<Recommendation> arg) {
-                return new ListCell<Recommendation>() {
-
-                    @Override
-                    protected void updateItem(Recommendation item, boolean bln) {
-                        super.updateItem(item, bln);
-                        if (item != null) {
-                            VBox vBox = new VBox(new Text(item.getContentName()), new Text(item.getContentType()));
-                            HBox hBox = new HBox(new Label("[Graphic]"), vBox);
-                            hBox.setSpacing(10);
-                            setGraphic(hBox);
-                        }
-                    }
-
-                };
-            }
-
-        });
-        
-        return listView;
+			@Override
+			public ListCell<Recommendation> call(ListView<Recommendation> arg) {
+				return new ListCell<Recommendation>() {
+					
+					@Override
+					protected void updateItem(Recommendation item, boolean emptyCell) {
+						super.updateItem(item, emptyCell);
+						
+						if (emptyCell) {
+							setText(null);
+							setGraphic(null);
+						}
+						if (item != null) {
+							VBox vBox = new VBox(new Text(item.getContentName()), new Text(item.getContentType()));
+							HBox hBox = new HBox(new Label("[Graphic]"), vBox);
+							hBox.setSpacing(10);
+							setGraphic(hBox);
+						}
+					}
+				};
+			}
+		});
+		
+		return listView;
 	}
 	
 	private BorderPane configureRightBar(ObservableList<Recommendation> data) {
