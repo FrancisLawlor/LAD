@@ -13,4 +13,5 @@ public class FileConstants {
 	public static final String WRAPPED_FILE_EXTENSION = ".lad";
 	public static final String JSON_FILE_NAME = "files.json";
 	public static final String JSON_INIT = "{\"files\":[]}";
+	public static final String JSON_FILES_KEY = "files";
 }

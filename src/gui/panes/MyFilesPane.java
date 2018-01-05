@@ -16,13 +16,15 @@ import javafx.util.Callback;
 
 public class MyFilesPane extends BorderPane {
 	private Button backButton;
+	private ListView<Content> filesListView;
 	
 	public MyFilesPane(ObservableList<Content> data) {
 		VBox leftBar = configureLeftBar();
 		this.setLeft(leftBar);
 		
-		ListView<Content> listView = configureListView(data);
-		this.setCenter(listView);
+		ListView<Content> filesListView = configureListView(data);
+		this.filesListView = filesListView;
+		this.setCenter(filesListView);
 	}
 	
 	private VBox configureLeftBar() {
@@ -67,5 +69,9 @@ public class MyFilesPane extends BorderPane {
 	
 	public Button getBackButton() {
 		return backButton;
+	}
+	
+	public ListView<Content> getListView() {
+		return filesListView;
 	}
 }
