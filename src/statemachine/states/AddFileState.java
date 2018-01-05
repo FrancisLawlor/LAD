@@ -6,6 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import filemanagement.core.FileConstants;
@@ -91,10 +92,24 @@ public class AddFileState extends State {
 	}
 	
 	private String writeJSON() {
-		return new JSONObject()
-				.put(FileHeaderKeys.CONTENT, new JSONObject()
-						.put(FileHeaderKeys.FILE_NAME, file.getName())
-						.put(FileHeaderKeys.FILE_GENRE, gui.getAddFileScene().getGenreTextField().getText()
-                    		 )).toString();
+		JSONObject headerJSON = new JSONObject();
+		
+		JSONArray recentContentViews = new JSONArray();
+		recentContentViews.put(new JSONObject()
+			.put(FileHeaderKeys.NORMALISED_RATING, -1)
+			.put(FileHeaderKeys.NUMBER_OF_VIEWS, 0)
+			.put(FileHeaderKeys.AVERAGE_VIEWING_TIME, 0)
+			.put(FileHeaderKeys.CONTENT, new JSONObject()
+				.put(FileHeaderKeys.UNIQUE_ID, "")
+				.put(FileHeaderKeys.FILE_NAME, "")
+				.put(FileHeaderKeys.File_FORMAT, "")
+				.put(FileHeaderKeys.VIEW_LENGTH, 10))
+			.put(FileHeaderKeys.VIEWING_PEER_ID, new JSONObject()
+					.put(FileHeaderKeys.IP_AND_PORT, ""))
+		);
+		
+		headerJSON.put(FileHeaderKeys.RECENT_CONTENT_VIEWS, recentContentViews);
+		
+		return headerJSON.toString();
 	}
 }
