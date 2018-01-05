@@ -70,7 +70,6 @@ public class Databaser extends PeerToPeerActor {
     protected void processContentFileExistenceRequest(ContentFileExistenceRequest request) {
         Content content = request.getContent();
         
-        // To do
     }
     
     /**
@@ -79,15 +78,14 @@ public class Databaser extends PeerToPeerActor {
      */
     protected void processContentFileRequest(ContentFileRequest request) {
         Content content = request.getContent();
+        String filename = content.getFileName();
         
-        // To do
     }
     
     /**
      * Writes a retrieved content file to the database
      */
     protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) throws IOException {
-        // We rely on a simple file manager for now until the database is implemented
         ContentFile contentFile = retrievedContentFile.getContentFile();
         FileManager.writeContentFile(contentFile);
     }
@@ -98,6 +96,5 @@ public class Databaser extends PeerToPeerActor {
      */
     protected void processContentViewAddition(ContentViewAddition contentViewAddition) {
         
-        // To do
     }
 }

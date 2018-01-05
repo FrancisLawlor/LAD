@@ -7,8 +7,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Properties;
 
+import akka.actor.ActorRef;
+import content.core.Content;
 import content.core.ContentFile;
+import content.similarity.SimilarContentViewPeers;
+import content.view.ContentView;
 import filemanagement.core.FileConstants;
+import peer.graph.distributedmap.PeerWeightedLink;
 
 /**
  * Writes files to disk
@@ -42,7 +47,7 @@ public class FileManager {
     }
     
     /**
-     * Writes a media file to the temporary viewing directory
+     * Writes a media file to the files directory
      * @param fileName
      * @param fileFormat
      * @param media
@@ -66,7 +71,7 @@ public class FileManager {
     }
     
     /**
-     * Gets the temporary viewing directory for media files
+     * Gets the files directory
      * @return
      * @throws IOException
      */
@@ -87,8 +92,7 @@ public class FileManager {
     }
     
     /**
-     * Writes the full Content File, not just the media segment, to the temporary viewing directory
-     * Backup if Database is unavailable
+     * Writes the full Content File, not just the media segment, to the files directory
      * @param contentFile
      * @throws IOException
      */
@@ -96,5 +100,61 @@ public class FileManager {
         String key = contentFile.getContent().getId();
         String filepath = FileManager.getFilePath(key, CONTENT_FILE_EXTENSION);
         FileManager.writeFile(filepath, contentFile.getBytes());
+    }
+    
+    /**
+     * 
+     * @param content
+     */
+    public static void checkContentFileExists(Content content) {
+        
+    }
+    
+    /**
+     * 
+     * @param content
+     */
+    public static void readContentFile(Content content) {
+        
+    }
+    
+    /**
+     * 
+     * @param contentView
+     */
+    public static void contentViewAddition(ContentView contentView) {
+        
+    }
+    
+    /**
+     * 
+     * @param peerWeightedLink
+     */
+    public static void backupPeerLink(PeerWeightedLink peerWeightedLink) {
+        
+    }
+    
+    /**
+     * 
+     * @param requester
+     */
+    public static void requestBackedUpPeerLinks(ActorRef requester) {
+        
+    }
+    
+    /**
+     * 
+     * @param similarContentViewPeers
+     */
+    public static void backupSimilarContentViewPeers(SimilarContentViewPeers similarContentViewPeers) {
+        
+    }
+    
+    /**
+     * 
+     * @param requester
+     */
+    public static void requestBackedUpSimilarContentViewPeers(ActorRef requester) {
+        
     }
 }
