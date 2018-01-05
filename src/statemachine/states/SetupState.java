@@ -51,6 +51,7 @@ public class SetupState extends State {
 			try {
 				createConfigFile();
 				createFilesDirectory();
+				createFilesJson();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (URISyntaxException e) {
@@ -66,6 +67,14 @@ public class SetupState extends State {
 		}
 	}
 	
+	private void createFilesJson() throws IOException {
+		FileWriter jsonFile = new FileWriter(FileConstants.JSON_FILE_NAME, true);
+		
+		jsonFile.write(FileConstants.JSON_INIT);
+		
+		jsonFile.close();
+	}
+
 	private void createConfigFile() throws IOException, URISyntaxException {
 		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME, true);
 		String filesPath = new File("").getAbsolutePath();

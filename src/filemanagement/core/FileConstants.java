@@ -11,4 +11,6 @@ public class FileConstants {
 	public static final String FAILED_TO_CREATE_FILES_DIRECTORY = "Failed to create files directory.";
 	public static final String DESKTOP_NOT_SUPPORTED = "Desktop not supported.";
 	public static final String WRAPPED_FILE_EXTENSION = ".lad";
+	public static final String JSON_FILE_NAME = "files.json";
+	public static final String JSON_INIT = "{\"files\":[]}";
 }
