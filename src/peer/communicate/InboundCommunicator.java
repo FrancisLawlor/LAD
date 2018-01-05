@@ -9,8 +9,8 @@ import peer.core.ActorPaths;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
-import peer.core.xcept.RequestCommunicationOriginPeerIdMismatchException;
-import peer.core.xcept.RequestCommunicationTargetPeerIdMismatchException;
+import peer.core.xcept.PeerToPeerRequestOriginPeerIdMismatchException;
+import peer.core.xcept.PeerToPeerRequestTargetPeerIdMismatchException;
 import peer.core.xcept.UnknownMessageException;
 import peer.graph.weight.PeerWeightUpdateRequest;
 
@@ -63,7 +63,7 @@ public class InboundCommunicator extends PeerToPeerActor {
      */
     protected void processPeerRecommendationRequest(PeerRecommendationRequest request) {
         if (!request.getOriginalTarget().equals(super.peerId))
-            throw new RequestCommunicationTargetPeerIdMismatchException(request.getOriginalTarget(), super.peerId);
+            throw new PeerToPeerRequestTargetPeerIdMismatchException(request.getOriginalTarget(), super.peerId);
         
         ActorSelection recommender = getContext().actorSelection(ActorPaths.getPathToRecommender());
         recommender.tell(request, getSelf());
@@ -75,7 +75,7 @@ public class InboundCommunicator extends PeerToPeerActor {
      */
     protected void processPeerRecommendation(PeerRecommendation recommendation) {
         if (!recommendation.getOriginalRequester().equals(super.peerId)) 
-            throw new RequestCommunicationOriginPeerIdMismatchException(recommendation.getOriginalRequester(), super.peerId);
+            throw new PeerToPeerRequestOriginPeerIdMismatchException(recommendation.getOriginalRequester(), super.peerId);
         
         ActorSelection aggregator = getContext().actorSelection(ActorPaths.getPathToAggregator());
         aggregator.tell(recommendation, getSelf());
@@ -87,7 +87,7 @@ public class InboundCommunicator extends PeerToPeerActor {
      */
     protected void processPeerRetrieveContentRequest(PeerRetrieveContentRequest contentRequest) {
         if (!contentRequest.getOriginalTarget().equals(super.peerId)) 
-            throw new RequestCommunicationTargetPeerIdMismatchException(contentRequest.getOriginalTarget(), super.peerId);
+            throw new PeerToPeerRequestTargetPeerIdMismatchException(contentRequest.getOriginalTarget(), super.peerId);
         
         ActorSelection retriever = getContext().actorSelection(ActorPaths.getPathToRetriever());
         retriever.tell(contentRequest, getSelf());
@@ -99,7 +99,7 @@ public class InboundCommunicator extends PeerToPeerActor {
      */
     protected void processRetrievedContent(RetrievedContent retrievedContent) {
         if (!retrievedContent.getOriginalRequester().equals(super.peerId)) 
-            throw new RequestCommunicationOriginPeerIdMismatchException(retrievedContent.getOriginalRequester(), super.peerId);
+            throw new PeerToPeerRequestOriginPeerIdMismatchException(retrievedContent.getOriginalRequester(), super.peerId);
         
         ActorSelection aggregator = getContext().actorSelection(ActorPaths.getPathToRetriever());
         aggregator.tell(retrievedContent, getSelf());
@@ -111,16 +111,10 @@ public class InboundCommunicator extends PeerToPeerActor {
      */
     protected void processPeerWeightUpdateRequest(PeerWeightUpdateRequest updateWeightRequest) {
         if (!updateWeightRequest.getOriginalTarget().equals(super.peerId)) 
-            throw new RequestCommunicationTargetPeerIdMismatchException(updateWeightRequest.getOriginalTarget(), super.peerId);
+            throw new PeerToPeerRequestTargetPeerIdMismatchException(updateWeightRequest.getOriginalTarget(), super.peerId);
         
         UniversalId linkedPeerId = updateWeightRequest.getOriginalRequester();
         ActorSelection weighter = getContext().actorSelection(ActorPaths.getPathToWeighter(linkedPeerId));
         weighter.tell(updateWeightRequest, getSelf());
     }
-    
-    // TEAM NOTE:
-    // Consider checking if the original target is in a list of targets for PeerRecommendation and RetrievedContent...
-    // ... to stop malicious injection of fake recommendations and retrieved content!
-    // We could have a list of RequestCommunications that have been sent out
-    // Will need to be properly designed because Outbound Communicator is a separate actor from Inbound at the moment...
 }

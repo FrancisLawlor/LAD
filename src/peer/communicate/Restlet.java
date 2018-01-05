@@ -14,4 +14,5 @@ public class Restlet {
     public static final String PEER_RETRIEVE_CONTENT_REQUEST = "/PeerRetrieveContentRequest";
     public static final String RETRIEVED_CONTENT = "/RetrievedContent";
     public static final String PEER_WEIGHT_UPDATE_REQUEST = "/PeerWeightUpdateRequest";
+    public static final String REMOTE_PEER_WEIGHTED_LINK_ADDITION = "/RemotePeerWeightedLinkAddition";
 }
