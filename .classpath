@@ -37,6 +37,7 @@
 	<classpathentry kind="lib" path="lib/org.restlet.ext.httpclient-2.3.6.jar"/>
 	<classpathentry kind="lib" path="lib/scala-library-2.12.2.jar"/>
 	<classpathentry kind="lib" path="lib/slf4j-api-1.7.22.jar"/>
+    <classpathentry kind="lib" path="lib/sqlite-jdbc-3.21.0.jar"/>
 	<classpathentry kind="lib" path="lib/surefire-api-2.12.4.jar"/>
 	<classpathentry kind="lib" path="lib/surefire-booter-2.12.4.jar"/>
 	<classpathentry kind="lib" path="lib/surefire-junit3-2.12.4.jar"/>

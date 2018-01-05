@@ -26,7 +26,10 @@ import peer.communicate.PeerRecommendationRequestProcessor;
 import peer.communicate.PeerRetrieveContentRequestProcessor;
 import peer.communicate.PeerWeightUpdateRequestProcessor;
 import peer.communicate.RetrievedContentProcessor;
+import peer.data.Database;
 import peer.data.Databaser;
+import peer.data.DatabaserInit;
+import peer.data.SqlLiteDatabase;
 import peer.graph.link.PeerLinker;
 
 /**
@@ -42,7 +45,7 @@ public class PeerToPeerActorSystem {
     
     /**
      * Initialises the Actor System and Camel Communication System for this Peer
-     * @param args
+     * @param
      */
     public PeerToPeerActorSystem(UniversalId peerId) {
         this.peerId = peerId;
@@ -64,10 +67,14 @@ public class PeerToPeerActorSystem {
         return this.channel;
     }
     
-    protected void initialiseDatabase() {
+    protected void initialiseDatabase() throws ClassNotFoundException {
         ActorRef databaser = this.actorSystem.actorOf(Props.create(Databaser.class), ActorNames.DATABASER);
         PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(peerId, ActorNames.VIEWER);
         databaser.tell(peerIdInit, ActorRef.noSender());
+
+        Database db = new SqlLiteDatabase();
+        DatabaserInit databaserInit = new DatabaserInit(db);
+        databaser.tell(databaserInit, null);
     }
     
     protected void initialiseViewingSystem() throws Exception {
