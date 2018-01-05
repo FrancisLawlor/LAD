@@ -32,6 +32,7 @@ public class StartState extends State {
 		gui.getFileRetrievalQueryScene().getNoButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_NO, stateMachine));
 		gui.getFileRetrievalQueryScene().getYesButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_YES, stateMachine));
 		gui.getMyFilesScene().getBackButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_BACK, stateMachine));
+		gui.getMyFilesScene().getFilesListView().setOnMousePressed(new ListViewEventHandler(StateName.CLICK_FILE, stateMachine));
 		gui.getRatingScene().getBackButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_BACK, stateMachine));
 		gui.getRatingScene().getSubmitButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_SUBMIT, stateMachine));
 		gui.getSetupScene().getNextButton().setOnAction(new StateMachineEventHandler(StateName.CLICK_SUBMIT, stateMachine));
@@ -46,7 +47,7 @@ public class StartState extends State {
 			stateMachine.execute(StateName.INIT);
 			sceneContainerStage.show();
 		} else {
-			stateMachine.setCurrentState(StateName.ADD_FILE.toString());
+			stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
 			sceneContainerStage.setTitle(GUIText.SETUP);
 			stateMachine.execute(StateName.INIT);
 			sceneContainerStage.show();

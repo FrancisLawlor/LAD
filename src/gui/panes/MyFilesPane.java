@@ -2,6 +2,8 @@ package gui.panes;
 
 import content.core.Content;
 import gui.utilities.GUIText;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -16,13 +18,15 @@ import javafx.util.Callback;
 
 public class MyFilesPane extends BorderPane {
 	private Button backButton;
+	private ListView<Content> filesListView;
 	
 	public MyFilesPane(ObservableList<Content> data) {
 		VBox leftBar = configureLeftBar();
 		this.setLeft(leftBar);
 		
-		ListView<Content> listView = configureListView(data);
-		this.setCenter(listView);
+		ListView<Content> filesListView = configureListView(data);
+		this.filesListView = filesListView;
+		this.setCenter(filesListView);
 	}
 	
 	private VBox configureLeftBar() {
@@ -40,32 +44,48 @@ public class MyFilesPane extends BorderPane {
 
 	private ListView<Content> configureListView(ObservableList<Content> data) {
 		final ListView<Content> listView = new ListView<Content>(data);
-        listView.setCellFactory(new Callback<ListView<Content>, ListCell<Content>>() {
-
-            @Override
-            public ListCell<Content> call(ListView<Content> arg) {
-                return new ListCell<Content>() {
-
-                    @Override
-                    protected void updateItem(Content item, boolean bln) {
-                        super.updateItem(item, bln);
-                        if (item != null) {
-                            VBox vBox = new VBox(new Text(item.getFileName()), new Text(item.getFileFormat()));
-                            HBox hBox = new HBox(new Label("[Graphic]"), vBox);
-                            hBox.setSpacing(10);
-                            setGraphic(hBox);
-                        }
-                    }
-
-                };
-            }
-
-        });
-        
-        return listView;
+		
+		listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Content>() {
+			@Override
+			public void changed(ObservableValue<? extends Content> observable, Content oldValue, Content newValue) {  
+				if (newValue != null) {
+					System.out.println(newValue.getFileName());
+				}
+		    }
+		});
+		
+		listView.setCellFactory(new Callback<ListView<Content>, ListCell<Content>>() {
+			
+			@Override
+			public ListCell<Content> call(ListView<Content> arg) {
+				return new ListCell<Content>() {
+					
+					@Override
+					protected void updateItem(Content item, boolean emptyCell) {
+						super.updateItem(item, emptyCell);
+						if (emptyCell || item == null) {
+							setText(null);
+                        		setGraphic(null);
+                        	}
+						if (item != null) {
+							VBox vBox = new VBox(new Text(item.getFileName()), new Text(item.getFileFormat()));
+							HBox hBox = new HBox(new Label("[Graphic]"), vBox);
+							hBox.setSpacing(10);
+							setGraphic(hBox);
+						}
+					}
+				};
+			}
+		});
+		
+		return listView;
 	}
 	
 	public Button getBackButton() {
 		return backButton;
+	}
+	
+	public ListView<Content> getListView() {
+		return filesListView;
 	}
 }

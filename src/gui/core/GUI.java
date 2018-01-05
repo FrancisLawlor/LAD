@@ -1,5 +1,6 @@
 package gui.core;
 
+import content.core.Content;
 import content.recommend.Recommendation;
 import gui.panes.AddFilePane;
 import gui.panes.DashBoardPane;
@@ -39,16 +40,13 @@ public class GUI {
 	private AddFilePane addFilePane;
 	
 	public GUI(SceneContainerStage containerStage) {
-	    ObservableList<Recommendation> data = FXCollections.observableArrayList();
-	    /*
-		data.addAll(new Content("234134", "Akira", ".mp4", "https://speed.hetzner.de/100MB.bin", 0), 
-				new Content("234134as", "Shakira - Shewolf", ".mp4", "http://francislawlor.com/modules.html", 0), 
-				new Content("31234da", "My Chemical Romance - I am Sad", ".mp3", "http://francislawlor.com/modules.html", 0));
-		*/
-		this.dashBoardPane = new DashBoardPane(data);
+	    ObservableList<Recommendation> recommendationsData = FXCollections.observableArrayList();
+	    ObservableList<Content> storedFilesData = FXCollections.observableArrayList();
+
+		this.dashBoardPane = new DashBoardPane(recommendationsData);
 		this.fileRetrievalQueryPane = new FileRetrievalQueryPane();
 		this.fileRetrievalPane = new WaitingPane(GUIText.RETRIEVING_FILE);
-		this.myFilesPane = new MyFilesPane(null);
+		this.myFilesPane = new MyFilesPane(storedFilesData);
 		this.ratingPane = new RatingPane();
 		this.retrieveRecommendationsPane = new WaitingPane(GUIText.FINDING_RECOMMENDATIONS);
 		this.setupPane = new SetupPane(containerStage);

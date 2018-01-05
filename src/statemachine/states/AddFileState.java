@@ -3,9 +3,13 @@ package statemachine.states;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.Properties;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import filemanagement.core.FileConstants;
@@ -46,6 +50,11 @@ public class AddFileState extends State {
 				break;
 			case CLICK_SUBMIT:
 				writeInfoToFile();
+				try {
+					storeFileInformation();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
 				stateMachine.setCurrentState(StateName.DASHBOARD.toString());
 				stateMachine.execute(StateName.INIT);
 				break;
@@ -67,7 +76,7 @@ public class AddFileState extends State {
 	}
 	
 	private void writeInfoToFile() {
-		String jsonData = writeJSON();
+		String jsonData = writeJSONHeader();
 		
 		try {
 			byte[] wrappedFile = FileWrapper.mergeHeaderDataWithMediaFile(jsonData.getBytes(), file.getAbsolutePath());
@@ -90,11 +99,47 @@ public class AddFileState extends State {
 		}	
 	}
 	
-	private String writeJSON() {
-		return new JSONObject()
-				.put(FileHeaderKeys.CONTENT, new JSONObject()
-						.put(FileHeaderKeys.FILE_NAME, file.getName())
-						.put(FileHeaderKeys.FILE_GENRE, gui.getAddFileScene().getGenreTextField().getText()
-                    		 )).toString();
+	private String writeJSONHeader() {
+		JSONObject headerJSON = new JSONObject();
+		
+		JSONArray recentContentViews = new JSONArray();
+		recentContentViews.put(new JSONObject()
+			.put(FileHeaderKeys.NORMALISED_RATING, -1)
+			.put(FileHeaderKeys.NUMBER_OF_VIEWS, 0)
+			.put(FileHeaderKeys.AVERAGE_VIEWING_TIME, 0)
+			.put(FileHeaderKeys.CONTENT, new JSONObject()
+				.put(FileHeaderKeys.UNIQUE_ID, "")
+				.put(FileHeaderKeys.FILE_NAME, gui.getAddFileScene().getFileNameTextField().getText())
+				.put(FileHeaderKeys.File_FORMAT, "")
+				.put(FileHeaderKeys.VIEW_LENGTH, 10))
+			.put(FileHeaderKeys.VIEWING_PEER_ID, new JSONObject()
+					.put(FileHeaderKeys.IP_AND_PORT, ""))
+		);
+		
+		headerJSON.put(FileHeaderKeys.RECENT_CONTENT_VIEWS, recentContentViews);
+		
+		return headerJSON.toString();
+	}
+	
+	private void storeFileInformation() throws IOException {
+		String filesJSONString = new String (Files.readAllBytes(Paths.get("./" + FileConstants.JSON_FILE_NAME)));
+		
+		JSONObject filesJSONObject = new JSONObject(filesJSONString);
+		
+		((JSONArray) filesJSONObject.get("files"))
+			.put(new JSONObject()
+				.put(FileHeaderKeys.FILE_NAME, gui.getAddFileScene().getFileNameTextField().getText())
+				.put(FileHeaderKeys.File_FORMAT, "file format")
+			);
+		
+		File jsonFile = new File("./" + FileConstants.JSON_FILE_NAME);
+		
+		try {
+			FileWriter fileWriter = new FileWriter(jsonFile, false);
+			fileWriter.write(filesJSONObject.toString());
+			fileWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
