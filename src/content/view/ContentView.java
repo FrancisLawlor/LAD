@@ -3,11 +3,13 @@ package content.view;
 import content.core.Content;
 import peer.core.UniversalId;
 
+import java.io.Serializable;
+
 /**
  * Information on a viewable piece of Content
  *
  */
-public class ContentView {
+public class ContentView implements Serializable {
     private static final int MIN_RATING = 0;
     private static final int MAX_RATING = 5;
     private static final int RANGE = MAX_RATING - MIN_RATING;

@@ -7,12 +7,14 @@ import akka.actor.ActorRef;
 import akka.actor.ActorSelection;
 import content.core.*;
 import content.retrieve.RetrievedContentFile;
+import content.view.ContentView;
 import content.view.ContentViewAddition;
 import filemanagement.fileretrieval.FileManager;
 import peer.core.ActorPaths;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
 import peer.core.xcept.UnknownMessageException;
+import peer.data.messages.*;
 
 /**
  * Actor that handles the database
@@ -104,5 +106,26 @@ public class Databaser extends PeerToPeerActor {
      */
     protected void processContentViewAddition(ContentViewAddition contentViewAddition) {
         db.appendToHeader(contentViewAddition);
+    }
+
+    protected void processGetAllContentRequest(GetAllContentRequest request) {
+
+    }
+
+    protected void processGetAllStoredPeerLinksRequest(GetAllStoredPeerLinksRequest request) {
+        
+    }
+
+    protected void processStorePeerLinkRequest(StorePeerLinkRequest request) {
+        db.storePeerLink( request.getId() );
+    }
+
+    protected void processStorePeerLinkWeightRequest(StorePeerLinkWeightRequest request) {
+        db.addPeerLinkWeight( request.getId(), request.getWeight() );
+    }
+
+    protected void processStoreNewContentViewRequest(StoreNewContentViewRequest request) {
+        ContentView contentView = request.getContentView();
+        db.storeNewContentViewInHistory( contentView );
     }
 }
