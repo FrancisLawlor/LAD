@@ -7,7 +7,7 @@ import java.io.IOException;
 import content.recommend.Recommendation;
 import content.retrieve.RetrievedContent;
 import filemanagement.core.FileConstants;
-import filemanagement.fileretrieval.FileManager;
+import filemanagement.fileretrieval.MediaFileSaver;
 import filemanagement.fileretrieval.RetrievedFile;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
@@ -57,7 +57,7 @@ public class RetrievingFileState extends State {
 			    viewer.createNewContentView(retrievedContent.getContent());
 			    String fileName = retrievedContent.getContent().getFileName();
 			    String fileFormat = retrievedContent.getContent().getFileFormat();
-			    File file = FileManager.getFile(fileName, fileFormat);
+			    File file = MediaFileSaver.getFile(fileName, fileFormat);
 			    retrievedFile.setFile(file);
 				return null;
 			}

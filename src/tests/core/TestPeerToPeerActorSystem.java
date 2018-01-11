@@ -1,4 +1,4 @@
-package peer.core;
+package tests.core;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -17,58 +17,64 @@ import content.similarity.Similaritor;
 import content.view.ViewHistorian;
 import content.view.Viewer;
 import content.view.ViewerInit;
-import peer.communicate.DistributedRecommenderRouterDHM;
+import peer.communicate.DistributedRecommenderRouter;
 import peer.communicate.InboundCommunicator;
 import peer.communicate.OutboundCommInit;
 import peer.communicate.OutboundCommunicator;
-import peer.data.BackedUpPeerLinksRequest;
-import peer.data.BackedUpSimilarContentViewPeersRequest;
+import peer.communicate.PeerRecommendationProcessor;
+import peer.communicate.PeerRecommendationRequestProcessor;
+import peer.communicate.PeerRetrieveContentRequestProcessor;
+import peer.communicate.PeerWeightUpdateRequestProcessor;
+import peer.communicate.RetrievedContentProcessor;
+import peer.core.ActorNames;
+import peer.core.PeerToPeerActorInit;
+import peer.core.UniversalId;
+import peer.core.ViewerToUIChannel;
 import peer.data.Databaser;
-import peer.graph.distributedmap.PeerWeightedLinkorDHM;
+import peer.graph.link.PeerLinker;
 
 /**
- * Creates the permanent Actors for this Peer
- * Creates the Apache Camel Communication System for this Peer
+ * Initialises the permanent Actors for this Peer
+ * Initialises the Apache Camel Communication System for this Peer
  *
  */
-public class PeerToPeerActorSystem {
+public class TestPeerToPeerActorSystem {
     protected UniversalId peerId;
     protected ActorSystem actorSystem;
     protected CamelContext camelContext;
     protected ViewerToUIChannel channel;
     
     /**
-     * Creates the Actor System and Camel Communication System for this Peer
-     * @param peerId
+     * Initialises the Actor System and Camel Communication System for this Peer
+     * @param args
      */
-    public PeerToPeerActorSystem(UniversalId peerId) {
+    public TestPeerToPeerActorSystem(UniversalId peerId) {
         this.peerId = peerId;
         this.actorSystem = ActorSystem.create("ContentSystem");
     }
     
     public void createActors() throws Exception {
-        final ActorRef databaser = createDatabase();
-        createViewingSystem();
-        createHistorySystem();
-        createSimilaritySystem(databaser);
-        createCommunicationSystem();
-        createPeerGraph(databaser);
-        createRecommendingSystem();
-        createRetrievingSystem();
+        initialiseDatabase();
+        initialiseViewingSystem();
+        initialiseHistorySystem();
+        initialiseSimilaritySystem();
+        initialiseCommunicationSystem();
+        initialisePeerGraph();
+        initialiseRecommendingSystem();
+        initialiseRetrievingSystem();
     }
     
     public ViewerToUIChannel getViewerChannel() {
         return this.channel;
     }
     
-    protected final ActorRef createDatabase() {
-        final ActorRef databaser = this.actorSystem.actorOf(Props.create(Databaser.class), ActorNames.DATABASER);
+    protected void initialiseDatabase() {
+        ActorRef databaser = this.actorSystem.actorOf(Props.create(Databaser.class), ActorNames.DATABASER);
         PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(peerId, ActorNames.DATABASER);
         databaser.tell(peerIdInit, ActorRef.noSender());
-        return databaser;
     }
     
-    protected void createViewingSystem() throws Exception {
+    protected void initialiseViewingSystem() throws Exception {
         ActorRef viewer = this.actorSystem.actorOf(Props.create(Viewer.class), ActorNames.VIEWER);
         PeerToPeerActorInit viewerActorInit = new PeerToPeerActorInit(peerId, ActorNames.VIEWER);
         viewer.tell(viewerActorInit, ActorRef.noSender());
@@ -81,21 +87,19 @@ public class PeerToPeerActorSystem {
         viewer.tell(viewerInit, ActorRef.noSender());
     }
     
-    protected void createHistorySystem() {
+    protected void initialiseHistorySystem() {
         final ActorRef viewHistorian = this.actorSystem.actorOf(Props.create(ViewHistorian.class), ActorNames.VIEW_HISTORIAN);
         PeerToPeerActorInit viewHistorianInit = new PeerToPeerActorInit(peerId, ActorNames.VIEW_HISTORIAN);
         viewHistorian.tell(viewHistorianInit, ActorRef.noSender());
     }
     
-    protected void createSimilaritySystem(final ActorRef databaser) {
+    protected void initialiseSimilaritySystem() {
         final ActorRef similaritor = this.actorSystem.actorOf(Props.create(Similaritor.class), ActorNames.SIMILARITOR);
         PeerToPeerActorInit init = new PeerToPeerActorInit(peerId, ActorNames.SIMILARITOR);
         similaritor.tell(init, ActorRef.noSender());
-        
-        databaser.tell(new BackedUpSimilarContentViewPeersRequest(), similaritor);
     }
     
-    protected void createCommunicationSystem() throws Exception {
+    protected void initialiseCommunicationSystem() throws Exception {
         final ActorRef inboundCommunicator = this.actorSystem.actorOf(Props.create(InboundCommunicator.class), ActorNames.INBOUND_COMM);
         PeerToPeerActorInit inboundInit = new PeerToPeerActorInit(peerId, ActorNames.INBOUND_COMM);
         inboundCommunicator.tell(inboundInit, ActorRef.noSender());
@@ -113,26 +117,47 @@ public class PeerToPeerActorSystem {
     
     protected CamelContext getCamelContext(ActorRef inboundComm) throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
-        DistributedRecommenderRouterDHM router = new DistributedRecommenderRouterDHM(peerId, inboundComm);
+        // Router and Processors for Routes initialisation
+        PeerRecommendationRequestProcessor peerRecommendationRequestProcessor = 
+                new PeerRecommendationRequestProcessor(inboundComm);
+        PeerRecommendationProcessor peerRecommendationProcessor = 
+                new PeerRecommendationProcessor(inboundComm);
+        PeerRetrieveContentRequestProcessor peerRetrieveContentRequestProcessor = 
+                new PeerRetrieveContentRequestProcessor(inboundComm);
+        RetrievedContentProcessor retrievedContentProcessor = 
+                new RetrievedContentProcessor(inboundComm);
+        PeerWeightUpdateRequestProcessor peerWeightUpdateRequestProcessor = 
+                new PeerWeightUpdateRequestProcessor(inboundComm);
+        DistributedRecommenderRouter router = 
+                new DistributedRecommenderRouter(
+                        peerId,
+                        peerRecommendationRequestProcessor, 
+                        peerRecommendationProcessor, 
+                        peerRetrieveContentRequestProcessor, 
+                        retrievedContentProcessor, 
+                        peerWeightUpdateRequestProcessor);
         camelContext.addRoutes(router);
         return camelContext;
     }
     
-    protected void createPeerGraph(final ActorRef databaser) throws Exception {
-        final ActorRef peerWeightedLinkor = actorSystem.actorOf(Props.create(PeerWeightedLinkorDHM.class), ActorNames.PEER_LINKER);
+    protected void initialisePeerGraph() throws Exception {
+        final ActorRef peerLinker = actorSystem.actorOf(Props.create(PeerLinker.class), ActorNames.PEER_LINKER);
         PeerToPeerActorInit peerLinkerInit = new PeerToPeerActorInit(peerId, ActorNames.PEER_LINKER);
-        peerWeightedLinkor.tell(peerLinkerInit, ActorRef.noSender());
+        peerLinker.tell(peerLinkerInit, ActorRef.noSender());
         
-        databaser.tell(new BackedUpPeerLinksRequest(), peerWeightedLinkor);
+        // Loop over a file and tell peerLinker it's peers...
+        
+        // Loop over a file and create a weighter for each peer
+        // While looping over file tell each weighter its weight
     }
     
-    protected void createRecommendingSystem() throws Exception {
+    protected void initialiseRecommendingSystem() throws Exception {
         final ActorRef recommender = this.actorSystem.actorOf(Props.create(Recommender.class), ActorNames.RECOMMENDER);
         PeerToPeerActorInit recommenderInit = new PeerToPeerActorInit(peerId, ActorNames.RECOMMENDER);
         recommender.tell(recommenderInit, ActorRef.noSender());
     }
     
-    protected void createRetrievingSystem() throws Exception {
+    protected void initialiseRetrievingSystem() throws Exception {
         final ActorRef retriever = this.actorSystem.actorOf(Props.create(Retriever.class), ActorNames.RETRIEVER);
         PeerToPeerActorInit retrieverInit = new PeerToPeerActorInit(peerId, ActorNames.RETRIEVER);
         retriever.tell(retrieverInit, ActorRef.noSender());

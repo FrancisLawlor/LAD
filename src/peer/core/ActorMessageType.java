@@ -21,11 +21,6 @@ public enum ActorMessageType {
     OutboundCommInit("OutboundCommInit"),
     AddressChangeAnnounce("AddressChangeAnnounce"),
     AddressChangedAcknowledged("AddressChangedAcknowledged"),
-    GossipInit("GossipInit"),
-    NewAddressForPeer("NewAddressForPeer"),
-    OldPeerAddressesRequest("OldPeerAddressesRequest"),
-    OldPeerAddressResponse("OldPeerAddressResponse"),
-    ResolvePeerAddressRequest("ResolvePeerAddressRequest"),
     PeerLinkAddition("PeerLinkAddition"),
     PeerLinkResponse("PeerLinkResponse"),
     PeerLinksRequest("PeerLinksRequest"),
@@ -67,7 +62,13 @@ public enum ActorMessageType {
     DistributedMapIterationRequest("DistributedMapIterationRequest"),
     DistributedMapIterationResponse("DistributedMapIterationResponse"),
     PeerWeightedLinkAddition("PeerWeightedLinkAddition"),
-    RemotePeerWeightedLinkAddition("RemotePeerWeightedLinkAddition");
+    RemotePeerWeightedLinkAddition("RemotePeerWeightedLinkAddition"),
+    BackedUpPeerLinkResponse("BackedUpPeerLinkResponse"),
+    BackedUpPeerLinksRequest("BackedUpPeerLinksRequest"),
+    BackedUpSimilarContentViewPeersRequest("BackedUpSimilarContentViewPeersRequest"),
+    BackedUpSimilarContentViewPeersResponse("BackedUpSimilarContentViewPeersResponse"),
+    BackupPeerLinkRequest("BackupPeerLinkRequest"),
+    BackupSimilarContentViewPeersRequest("BackupSimilarContentViewPeersRequest");
     
     private String typeName;
     

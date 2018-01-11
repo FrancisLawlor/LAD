@@ -19,6 +19,8 @@ import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
 import peer.core.xcept.UnknownMessageException;
 import peer.core.xcept.WeightUpdateForNonExistentLinkException;
+import peer.data.BackedUpPeerLinkResponse;
+import peer.data.BackupPeerLinkRequest;
 import peer.graph.link.PeerLinkExistenceRequest;
 import peer.graph.link.PeerLinkExistenceResponse;
 import peer.graph.link.PeerLinkResponse;
@@ -116,6 +118,10 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
         else if (message instanceof DistributedMapIterationResponse) {
             DistributedMapIterationResponse response = (DistributedMapIterationResponse) message;
             this.processIterationResponse(response);
+        }
+        else if (message instanceof BackedUpPeerLinkResponse) {
+            BackedUpPeerLinkResponse response = (BackedUpPeerLinkResponse) message;
+            this.processBackedUpPeerLinkResponse(response);
         }
         else {
             throw new UnknownMessageException();
@@ -248,6 +254,7 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
             }
             else {
                 this.distributedMap.requestAdd(addition.getLinkPeerId(), addition.getLinkWeight());
+                this.backupPeerWeightedLink(new PeerWeightedLink(addition.getLinkPeerId(), addition.getLinkWeight()));
             }
         }
         else if (this.remoteAdditionsWaitingOnContains.containsKey(requestNum)) {
@@ -259,6 +266,7 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
             }
             else {
                 this.distributedMap.requestAdd(addition.getLinkPeerId(), addition.getLinkWeight());
+                this.backupPeerWeightedLink(new PeerWeightedLink(addition.getLinkPeerId(), addition.getLinkWeight()));
             }
         }
         else if (this.existenceRequestsWaitingOnContains.containsKey(requestNum)) {
@@ -293,6 +301,7 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
      * If it's a weight update request then the weight update weight will be added to the gotten weight and,
      * ... a PeerWeightUpdateRequest will be sent to the corresponding peer to tell them to update the weight similarly on their end
      * ... which will keep the weighted link consistent on both sides of our theoretical graph
+     * If it's a weight request it gets the weight and returns it to the requester in a WeightResponse
      * @param response
      */
     protected void processGetResponse(DistributedMapGetResponse response) {
@@ -302,18 +311,22 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
             Weight existingWeight = this.distributedMap.getGetValue(response);
             Weight newWeight = request.getLinkWeight();
             existingWeight.add(newWeight);
+            this.backupPeerWeightedLink(new PeerWeightedLink(request.getLinkPeerId(), existingWeight));
         }
         else if (this.remoteAdditionsWaitingOnGets.containsKey(requestNum)) {
             RemotePeerWeightedLinkAddition request = this.remoteAdditionsWaitingOnGets.remove(requestNum);
             Weight existingWeight = this.distributedMap.getGetValue(response);
             Weight newWeight = request.getLinkWeight();
             existingWeight.add(newWeight);
+            this.backupPeerWeightedLink(new PeerWeightedLink(request.getLinkPeerId(), existingWeight));
         }
         else if (this.localWeightUpdateWaitingOnGets.containsKey(requestNum)) {
             LocalWeightUpdateRequest request = this.localWeightUpdateWaitingOnGets.remove(requestNum);
             Weight existingWeight = this.distributedMap.getGetValue(response);
             Weight newWeight = request.getNewWeight();
             existingWeight.add(newWeight);
+            this.backupPeerWeightedLink(new PeerWeightedLink(request.getLinkedPeerId(), existingWeight));
+            
             PeerWeightUpdateRequest peerUpdateRequest = new PeerWeightUpdateRequest(super.peerId, request.getLinkedPeerId(), request.getNewWeight());
             ActorSelection outComm = getContext().actorSelection(ActorPaths.getPathToOutComm());
             outComm.tell(peerUpdateRequest, getSelf());
@@ -323,6 +336,7 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
             Weight existingWeight = this.distributedMap.getGetValue(response);
             Weight newWeight = request.getNewWeight();
             existingWeight.add(newWeight);
+            this.backupPeerWeightedLink(new PeerWeightedLink(request.getUpdateRequestingPeerId(), existingWeight));
         }
         else if (this.pendingWeightRequests.containsKey(requestNum)) {
             ActorRef requester = this.pendingWeightRequests.remove(requestNum);
@@ -345,5 +359,24 @@ public class PeerWeightedLinkorDHM extends PeerToPeerActor {
         ActorRef requester = this.pendingIterationRequests.get(requestNum);
         PeerLinkResponse peerLinkResponse = new PeerLinkResponse(linkPeerId);
         requester.tell(peerLinkResponse, getSelf());
+    }
+    
+    /**
+     * Asks the databaser to backup the peer weighted link with these current values
+     * @param peerWeightedLink
+     */
+    protected void backupPeerWeightedLink(PeerWeightedLink peerWeightedLink) {
+        BackupPeerLinkRequest request = new BackupPeerLinkRequest(peerWeightedLink);
+        ActorSelection databaser = getContext().actorSelection(ActorPaths.getPathToDatabaser());
+        databaser.tell(request, getSelf());
+    }
+    
+    /**
+     * Re-Add a backed up Peer Link at startup
+     * @param response
+     */
+    protected void processBackedUpPeerLinkResponse(BackedUpPeerLinkResponse response) {
+        PeerWeightedLink peerWeightedLink = response.getPeerWeightedLink();
+        this.distributedMap.requestAdd(peerWeightedLink.getLinkedPeerId(), peerWeightedLink.getLinkWeight());
     }
 }

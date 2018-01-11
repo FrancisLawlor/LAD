@@ -19,12 +19,6 @@ import peer.communicate.DistributedRecommenderRouterDHM;
 import peer.communicate.InboundCommunicatorDHM;
 import peer.communicate.OutboundCommInit;
 import peer.communicate.OutboundCommunicatorDHM;
-import peer.communicate.PeerRecommendationProcessor;
-import peer.communicate.PeerRecommendationRequestProcessor;
-import peer.communicate.PeerRetrieveContentRequestProcessor;
-import peer.communicate.PeerWeightUpdateRequestProcessor;
-import peer.communicate.RemotePeerWeightedLinkAdditionProcessor;
-import peer.communicate.RetrievedContentProcessor;
 import peer.core.ActorNames;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
@@ -75,28 +69,8 @@ public class TestCommunicatorsSideSendDHM {
     
     private static CamelContext getCamelContext(ActorRef inboundComm) throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
-        // Router and Processors for Routes initialisation
-        PeerRecommendationRequestProcessor peerRecommendationRequestProcessor = 
-                new PeerRecommendationRequestProcessor(inboundComm);
-        PeerRecommendationProcessor peerRecommendationProcessor = 
-                new PeerRecommendationProcessor(inboundComm);
-        PeerRetrieveContentRequestProcessor peerRetrieveContentRequestProcessor = 
-                new PeerRetrieveContentRequestProcessor(inboundComm);
-        RetrievedContentProcessor retrievedContentProcessor = 
-                new RetrievedContentProcessor(inboundComm);
-        PeerWeightUpdateRequestProcessor peerWeightUpdateRequestProcessor = 
-                new PeerWeightUpdateRequestProcessor(inboundComm);
-        RemotePeerWeightedLinkAdditionProcessor remotePeerWeightedLinkAdditionProcessor =
-                new RemotePeerWeightedLinkAdditionProcessor(inboundComm);
         DistributedRecommenderRouterDHM router = 
-                new DistributedRecommenderRouterDHM(
-                        peerOneId,
-                        peerRecommendationRequestProcessor, 
-                        peerRecommendationProcessor, 
-                        peerRetrieveContentRequestProcessor, 
-                        retrievedContentProcessor, 
-                        peerWeightUpdateRequestProcessor,
-                        remotePeerWeightedLinkAdditionProcessor);
+                new DistributedRecommenderRouterDHM( peerOneId, inboundComm);
         camelContext.addRoutes(router);
         return camelContext;
     }

@@ -9,7 +9,7 @@ import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
 public class ApplicationWindow extends Application {
-    private static UniversalId id;
+    private static final String ADDRESS = "localhost:10001";
     private static PeerToPeerActorSystem actorSystem;
     private static ViewerToUIChannel viewerChannel;
     
@@ -22,7 +22,7 @@ public class ApplicationWindow extends Application {
 	}
     
     public static void main(String[] args) throws Exception {
-        id = new UniversalId("localhost:10001");
+        UniversalId id = new UniversalId(ADDRESS);
         actorSystem = new PeerToPeerActorSystem(id);
         actorSystem.createActors();
         viewerChannel = actorSystem.getViewerChannel();

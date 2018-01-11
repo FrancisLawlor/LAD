@@ -3,6 +3,7 @@ package peer.communicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
+import akka.actor.ActorRef;
 import peer.core.UniversalId;
 
 public class DistributedRecommenderRouterDHM extends RouteBuilder {
@@ -16,19 +17,14 @@ public class DistributedRecommenderRouterDHM extends RouteBuilder {
     
     public DistributedRecommenderRouterDHM(
             UniversalId peerId,
-            PeerRecommendationRequestProcessor peerRecommendationRequestProcessor, 
-            PeerRecommendationProcessor peerRecommendationProcessor, 
-            PeerRetrieveContentRequestProcessor peerRetrieveContentRequestProcessor, 
-            RetrievedContentProcessor retrievedContentProcessor, 
-            PeerWeightUpdateRequestProcessor peerWeightUpdateRequestProcessor,
-            RemotePeerWeightedLinkAdditionProcessor remotePeerWeightedLinkAddition) {
+            ActorRef inboundComm) {
         this.peerId = peerId;
-        this.peerRecommendationRequestProcessor = peerRecommendationRequestProcessor;
-        this.peerRecommendationProcessor = peerRecommendationProcessor;
-        this.peerRetrieveContentRequestProcessor = peerRetrieveContentRequestProcessor;
-        this.retrievedContentProcessor = retrievedContentProcessor;
-        this.peerWeightUpdateRequestProcessor = peerWeightUpdateRequestProcessor;
-        this.remotePeerWeightedLinkAdditionProcessor = remotePeerWeightedLinkAddition;
+        this.peerRecommendationRequestProcessor = new PeerRecommendationRequestProcessor(inboundComm);
+        this.peerRecommendationProcessor = new PeerRecommendationProcessor(inboundComm);
+        this.peerRetrieveContentRequestProcessor = new PeerRetrieveContentRequestProcessor(inboundComm);
+        this.retrievedContentProcessor = new RetrievedContentProcessor(inboundComm);
+        this.peerWeightUpdateRequestProcessor = new PeerWeightUpdateRequestProcessor(inboundComm);
+        this.remotePeerWeightedLinkAdditionProcessor = new RemotePeerWeightedLinkAdditionProcessor(inboundComm);
     }
     
     @Override

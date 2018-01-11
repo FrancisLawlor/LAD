@@ -30,7 +30,7 @@ public class TestHeaderMediaFile {
     
     static byte[] getHeaderMediaFile() {
         Content content = new Content("UniqueId", "Filename", "FileFormat", 10);
-        ContentViews contentViews = new ContentViews();
+        ContentViews contentViews = new ContentViews(content);
         ContentView contentView = new ContentView(content, new UniversalId("localhost:10010"));
         contentView.recordView(new ViewingTime(5));
         contentView.setRating(new Rating(4.0));

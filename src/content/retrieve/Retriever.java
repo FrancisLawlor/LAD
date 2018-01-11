@@ -20,7 +20,7 @@ import content.similarity.SimilarContentViewPeerResponse;
 import content.similarity.SimilarContentViewPeerAlert;
 import content.view.ContentView;
 import content.view.ContentViews;
-import filemanagement.fileretrieval.FileManager;
+import filemanagement.fileretrieval.MediaFileSaver;
 import filemanagement.filewrapper.FileUnwrapper;
 import peer.core.ActorNames;
 import peer.core.ActorPaths;
@@ -214,7 +214,7 @@ public class Retriever extends PeerToPeerActor {
         String fileName = contentFile.getContent().getFileName();
         String fileFormat = contentFile.getContent().getFileFormat();
         byte[] media = FileUnwrapper.extractFileArray(contentFile.getBytes());
-        FileManager.writeMediaFile(fileName, fileFormat, media);
+        MediaFileSaver.writeMediaFile(fileName, fileFormat, media);
     }
     
     /**

@@ -66,4 +66,29 @@ public class FileWrapper {
 		
 		return appendedFilesArray;
 	}
+    
+    public static byte[] mergeHeaderDataWithMediaFile (byte[] headerArray, byte[] mediaArray) throws IOException {
+        long headerLength = headerArray.length;
+        
+        byte[] appendedFilesArray = new byte[headerArray.length + mediaArray.length + Long.BYTES];
+        byte[] headerLengthAsByteArray = ArrayToLongConverter.longToByteArray(headerLength);
+        
+        int i;
+        
+        for (i = 0; i < Long.BYTES; i++) {
+            appendedFilesArray[i] = headerLengthAsByteArray[i];
+        }
+        
+        for (int j = 0; j < headerArray.length; j++) {
+            appendedFilesArray[i] = headerArray[j];
+            i++;
+        }
+        
+        for (int j = 0; j < mediaArray.length; j++) {
+            appendedFilesArray[i] = mediaArray[j];
+            i++;
+        }
+        
+        return appendedFilesArray;
+    }
 }

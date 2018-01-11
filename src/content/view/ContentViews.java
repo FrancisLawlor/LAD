@@ -4,6 +4,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
+import content.core.Content;
+
 /**
  * Content Views header for Content File
  * Lists recent content views containing Peer ID and content info
@@ -11,10 +13,16 @@ import java.util.List;
  *
  */
 public class ContentViews implements Iterable<ContentView> {
+    private Content content;
     private List<ContentView> recentContentViews;
     
-    public ContentViews() {
+    public ContentViews(Content content) {
+        this.content = content;
         this.recentContentViews = new LinkedList<ContentView>();
+    }
+    
+    public Content getContent() {
+        return this.content;
     }
     
     public void addContentView(ContentView contentView) {

@@ -14,6 +14,9 @@ import peer.core.ActorPaths;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
+import peer.core.xcept.UnknownMessageException;
+import peer.data.BackedUpSimilarContentViewPeersResponse;
+import peer.data.BackupSimilarContentViewPeersRequest;
 import peer.graph.distributedmap.PeerWeightedLinkAddition;
 import peer.graph.link.PeerLinkExistenceRequest;
 import peer.graph.link.PeerLinkExistenceResponse;
@@ -45,6 +48,7 @@ public class SimilaritorDHM extends PeerToPeerActor {
         if (message instanceof PeerToPeerActorInit) {
             PeerToPeerActorInit init = (PeerToPeerActorInit) message;
             super.initialisePeerToPeerActor(init);
+            this.initialise();
         }
         else if (message instanceof SimilarContentViewPeerAlert) {
             SimilarContentViewPeerAlert alert = (SimilarContentViewPeerAlert) message;
@@ -65,6 +69,13 @@ public class SimilaritorDHM extends PeerToPeerActor {
         else if (message instanceof DistributedMapGetResponse) {
             DistributedMapGetResponse response = (DistributedMapGetResponse) message;
             this.processGetResponse(response);
+        }
+        else if (message instanceof BackedUpSimilarContentViewPeersResponse) {
+            BackedUpSimilarContentViewPeersResponse response = (BackedUpSimilarContentViewPeersResponse) message;
+            this.processBackedUpSimilarContentViewPeersResponse(response);
+        }
+        else {
+            throw new UnknownMessageException();
         }
     }
     
@@ -130,6 +141,7 @@ public class SimilaritorDHM extends PeerToPeerActor {
             SimilarViewPeers similarViewPeers = new SimilarViewPeers();
             similarViewPeers.add(similarViewContentPeerId);
             this.distributedMap.requestAdd(similarViewContent, similarViewPeers);
+            this.backupSimilarContentViewPeers(new SimilarContentViewPeers(similarViewContent, similarViewPeers));
         }
     }
     
@@ -148,6 +160,7 @@ public class SimilaritorDHM extends PeerToPeerActor {
             SimilarContentViewPeerAlert alert = this.similarContentViewPeerAdditionWaitingOnContains.remove(requestNum);
             UniversalId similarViewPeerId = alert.getSimilarViewPeerId();
             similarViewPeers.add(similarViewPeerId);
+            this.backupSimilarContentViewPeers(new SimilarContentViewPeers(similarViewedContent, similarViewPeers));
         }
         else if (this.iterationWaitingOnGets.containsKey(requestNum)) {
             ActorRef requester = this.iterationWaitingOnGets.remove(requestNum);
@@ -176,5 +189,24 @@ public class SimilaritorDHM extends PeerToPeerActor {
             PeerWeightedLinkAddition addition = new PeerWeightedLinkAddition(linkedPeerId, weight);
             peerLinker.tell(addition, getSelf());
         }
+    }
+    
+    /**
+     * Asks the databaser to backup this set of peers who viewed the same content
+     * @param similarContentViewPeers
+     */
+    protected void backupSimilarContentViewPeers(SimilarContentViewPeers similarContentViewPeers) {
+        BackupSimilarContentViewPeersRequest request = new BackupSimilarContentViewPeersRequest(similarContentViewPeers);
+        ActorSelection databaser = getContext().actorSelection(ActorPaths.getPathToDatabaser());
+        databaser.tell(request, getSelf());
+    }
+    
+    /**
+     * Re-Add a backed up set of peers who watched the same piece of content
+     * @param response
+     */
+    protected void processBackedUpSimilarContentViewPeersResponse(BackedUpSimilarContentViewPeersResponse response) {
+        SimilarContentViewPeers similarContentViewPeers = response.getSimilarContentViewPeers();
+        this.distributedMap.requestAdd(similarContentViewPeers.getContent(), similarContentViewPeers.getSimilarViewPeers());
     }
 }

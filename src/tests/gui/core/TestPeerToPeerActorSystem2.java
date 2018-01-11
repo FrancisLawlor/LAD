@@ -8,12 +8,12 @@ import peer.communicate.OutboundCommInit;
 import peer.core.ActorNames;
 import peer.core.ActorPaths;
 import peer.core.PeerToPeerActorInit;
-import peer.core.PeerToPeerActorSystem;
 import peer.core.UniversalId;
 import peer.graph.link.PeerLinkAddition;
 import peer.graph.weight.Weight;
+import tests.core.TestPeerToPeerActorSystem;
 
-public class TestPeerToPeerActorSystem2 extends PeerToPeerActorSystem {
+public class TestPeerToPeerActorSystem2 extends TestPeerToPeerActorSystem {
     public TestPeerToPeerActorSystem2(UniversalId peerId) {
         super(peerId);
     }

@@ -73,7 +73,7 @@ public class DummyOutboundCommunicator extends DummyActor {
     
     private static byte[] getHeaderMediaFile() {
         Content content = new Content("UniqueId", "Filename", "FileFormat", 10);
-        ContentViews contentViews = new ContentViews();
+        ContentViews contentViews = new ContentViews(content);
         contentViews.addContentView(new ContentView(content, new UniversalId("localhost:10010")));
         contentViews.addContentView(new ContentView(content, new UniversalId("localhost:10011")));
         contentViews.addContentView(new ContentView(content, new UniversalId("localhost:10012")));

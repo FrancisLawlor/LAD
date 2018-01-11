@@ -21,21 +21,26 @@ public class TestPeerWeightedLinkorDHM {
         
         final ActorRef peerWeightedLinkor = actorSystem.actorOf(Props.create(PeerWeightedLinkorDHM.class), ActorNames.PEER_LINKER);
         PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.PEER_LINKER);
-        peerWeightedLinkor.tell(peerIdInit, null);
+        peerWeightedLinkor.tell(peerIdInit, ActorRef.noSender());
         
         final ActorRef peerWeightedLinkorTestor = actorSystem.actorOf(Props.create(PeerWeightedLinkorDHMTestor.class), TESTOR_NAME);
         peerIdInit = new PeerToPeerActorInit(peerOneId, TESTOR_NAME);
-        peerWeightedLinkorTestor.tell(peerIdInit, null);
+        peerWeightedLinkorTestor.tell(peerIdInit, ActorRef.noSender());
         
         final ActorRef dummyOutboundComm = actorSystem.actorOf(Props.create(DummyOutboundCommunicator.class), ActorNames.OUTBOUND_COMM);
         peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.OUTBOUND_COMM);
-        dummyOutboundComm.tell(peerIdInit, null);
+        dummyOutboundComm.tell(peerIdInit, ActorRef.noSender());
+        
+        final ActorRef dummyDatabaser = actorSystem.actorOf(Props.create(DummyDatabaser.class), ActorNames.DATABASER);
+        peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.DATABASER);
+        dummyDatabaser.tell(peerIdInit, ActorRef.noSender());
         
         // Logger
         ActorTestLogger logger = new ActorTestLogger();
         DummyInit loggerInit = new DummyInit(logger);
-        peerWeightedLinkorTestor.tell(loggerInit, null);
-        dummyOutboundComm.tell(loggerInit, null);
+        peerWeightedLinkorTestor.tell(loggerInit, ActorRef.noSender());
+        dummyOutboundComm.tell(loggerInit, ActorRef.noSender());
+        dummyDatabaser.tell(loggerInit, ActorRef.noSender());
         
         // Start Test
         peerWeightedLinkorTestor.tell(new StartTest(), null);
