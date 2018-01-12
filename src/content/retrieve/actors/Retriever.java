@@ -125,7 +125,7 @@ public class Retriever extends PeerToPeerActor {
     
     /**
      * An affirmative response will cause the retriever to delegate to the transferer for the transfer
-     * A negative response will have the retriever ask the gossiper if it knows who might have the file
+     * A negative response will have the retriever ask the Similaritor if it knows who might have the file
      * @param response
      */
     protected void processContentFileExistenceResponse(ContentFileExistenceResponse response) {

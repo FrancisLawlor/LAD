@@ -5,7 +5,6 @@ import akka.actor.ActorSelection;
 import akka.actor.Props;
 import peer.communicate.actors.InboundCommunicator;
 import peer.communicate.messages.OutboundCommInit;
-import peer.data.actors.Databaser;
 import peer.frame.core.ActorNames;
 import peer.frame.core.ActorPaths;
 import peer.frame.core.UniversalId;
@@ -45,7 +44,7 @@ public class TestPeerToPeerActorSystem2 extends TestPeerToPeerActorSystem {
     
     @Override
     protected void initialiseDatabase() {
-        final ActorRef databaser = this.actorSystem.actorOf(Props.create(Databaser.class), ActorNames.DATABASER);
+        final ActorRef databaser = this.actorSystem.actorOf(Props.create(DummyDatabaser.class), ActorNames.DATABASER);
         PeerToPeerActorInit init = new PeerToPeerActorInit(peerId, ActorNames.INBOUND_COMM);
         databaser.tell(init, ActorRef.noSender());
     }
