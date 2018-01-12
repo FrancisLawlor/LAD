@@ -21,17 +21,12 @@ import peer.communicate.DistributedRecommenderRouter;
 import peer.communicate.InboundCommunicator;
 import peer.communicate.OutboundCommInit;
 import peer.communicate.OutboundCommunicator;
-import peer.communicate.PeerRecommendationProcessor;
-import peer.communicate.PeerRecommendationRequestProcessor;
-import peer.communicate.PeerRetrieveContentRequestProcessor;
-import peer.communicate.PeerWeightUpdateRequestProcessor;
-import peer.communicate.RetrievedContentProcessor;
 import peer.core.ActorNames;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
 import peer.core.ViewerToUIChannel;
 import peer.data.Databaser;
-import peer.graph.link.PeerLinker;
+import peer.graph.distributedmap.PeerWeightedLinkor;
 
 /**
  * Initialises the permanent Actors for this Peer
@@ -117,38 +112,15 @@ public class TestPeerToPeerActorSystem {
     
     protected CamelContext getCamelContext(ActorRef inboundComm) throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
-        // Router and Processors for Routes initialisation
-        PeerRecommendationRequestProcessor peerRecommendationRequestProcessor = 
-                new PeerRecommendationRequestProcessor(inboundComm);
-        PeerRecommendationProcessor peerRecommendationProcessor = 
-                new PeerRecommendationProcessor(inboundComm);
-        PeerRetrieveContentRequestProcessor peerRetrieveContentRequestProcessor = 
-                new PeerRetrieveContentRequestProcessor(inboundComm);
-        RetrievedContentProcessor retrievedContentProcessor = 
-                new RetrievedContentProcessor(inboundComm);
-        PeerWeightUpdateRequestProcessor peerWeightUpdateRequestProcessor = 
-                new PeerWeightUpdateRequestProcessor(inboundComm);
-        DistributedRecommenderRouter router = 
-                new DistributedRecommenderRouter(
-                        peerId,
-                        peerRecommendationRequestProcessor, 
-                        peerRecommendationProcessor, 
-                        peerRetrieveContentRequestProcessor, 
-                        retrievedContentProcessor, 
-                        peerWeightUpdateRequestProcessor);
+        DistributedRecommenderRouter router = new DistributedRecommenderRouter(peerId, inboundComm);
         camelContext.addRoutes(router);
         return camelContext;
     }
     
     protected void initialisePeerGraph() throws Exception {
-        final ActorRef peerLinker = actorSystem.actorOf(Props.create(PeerLinker.class), ActorNames.PEER_LINKER);
+        final ActorRef peerWeightedLinkor = actorSystem.actorOf(Props.create(PeerWeightedLinkor.class), ActorNames.PEER_LINKER);
         PeerToPeerActorInit peerLinkerInit = new PeerToPeerActorInit(peerId, ActorNames.PEER_LINKER);
-        peerLinker.tell(peerLinkerInit, ActorRef.noSender());
-        
-        // Loop over a file and tell peerLinker it's peers...
-        
-        // Loop over a file and create a weighter for each peer
-        // While looping over file tell each weighter its weight
+        peerWeightedLinkor.tell(peerLinkerInit, ActorRef.noSender());
     }
     
     protected void initialiseRecommendingSystem() throws Exception {

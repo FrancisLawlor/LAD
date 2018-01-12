@@ -19,7 +19,7 @@ import tests.core.DummyActor;
 import tests.core.DummyInit;
 import tests.core.StartTest;
 
-public class PeerWeightedLinkorDHMTestor extends DummyActor {
+public class PeerWeightedLinkorTestor extends DummyActor {
     public static final String PEER_ONE = "PeerOne";
     private static final String PEER_TWO = "PeerTwo";
     private static final String PEER_THREE = "PeerThree";
@@ -71,7 +71,7 @@ public class PeerWeightedLinkorDHMTestor extends DummyActor {
         }
         else if (message instanceof PeerLinkExistenceResponse) {
             PeerLinkExistenceResponse response = (PeerLinkExistenceResponse) message;
-            super.logger.logMessage("Received a PeerLinkExistenceResponse in the PeerWeightedLinkorDHMTestor");
+            super.logger.logMessage("Received a PeerLinkExistenceResponse in the PeerWeightedLinkorTestor");
             super.logger.logMessage("Type: " + response.getType().toString());
             super.logger.logMessage("LinkChecked: " + response.getLinkToCheckPeerId());
             super.logger.logMessage("Link exists: " + response.isLinkInExistence());
@@ -79,7 +79,7 @@ public class PeerWeightedLinkorDHMTestor extends DummyActor {
         }
         else if (message instanceof PeerLinkResponse) {
             PeerLinkResponse response = (PeerLinkResponse) message;
-            super.logger.logMessage("Received a PeerLinkResponse in the PeerWeightedLinkorDHMTestor");
+            super.logger.logMessage("Received a PeerLinkResponse in the PeerWeightedLinkorTestor");
             super.logger.logMessage("Type: " + response.getType().toString());
             super.logger.logMessage("Link recorded between " + PEER_ONE + " and " + response.getPeerId());
             super.logger.logMessage("Checking weight of this link");
@@ -89,7 +89,7 @@ public class PeerWeightedLinkorDHMTestor extends DummyActor {
         }
         else if (message instanceof WeightResponse) {
             WeightResponse response = (WeightResponse) message;
-            super.logger.logMessage("Received a WeightResponse in the PeerWeightedLinkorDHMTestor");
+            super.logger.logMessage("Received a WeightResponse in the PeerWeightedLinkorTestor");
             super.logger.logMessage("Type: " + response.getType().toString());
             super.logger.logMessage("Weighted Link between " + PEER_ONE + " and " + response.getLinkedPeerId());
             super.logger.logMessage("Weight of Link: " + response.getLinkWeight().getWeight());

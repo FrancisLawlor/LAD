@@ -37,7 +37,7 @@ import peer.graph.weight.WeightResponse;
  * Distributed Hash Map used to map peer ID links to weights
  *
  */
-public class PeerWeightedLinkorDHM extends PeerToPeerActor {
+public class PeerWeightedLinkor extends PeerToPeerActor {
     private DistributedMap<UniversalId, Weight> distributedMap;
     private Map<Integer, PeerWeightedLinkAddition> localAdditionsWaitingOnContains;
     private Map<Integer, PeerWeightedLinkAddition> localAdditionsWaitingOnGets;

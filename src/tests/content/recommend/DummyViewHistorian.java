@@ -57,15 +57,8 @@ public class DummyViewHistorian extends DummyActor {
         List<ContentView> contentViews = new LinkedList<ContentView>();
         for (int i = 1; i <= contentList.size(); i++) {
             ContentView contentView = new ContentView(contentList.get(i - 1), new UniversalId("Peer" + (i + 10)));
-            if (i % 2 == 0) {
-                super.logger.logMessage("Recording full view for content " + i);
-                contentView.recordView(new ViewingTime(20));
-            }
-            else {
-                super.logger.logMessage("Recording zero view for content " + i);
-                contentView.recordView(new ViewingTime(0));
-                
-            }
+            super.logger.logMessage("Recording view of length " + i + " for content name " + i);
+            contentView.recordView(new ViewingTime(i));
             contentViews.add(contentView);
         }
         return contentViews;

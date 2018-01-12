@@ -3,16 +3,9 @@ package peer.communicate;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 
+import akka.actor.ActorRef;
 import peer.core.UniversalId;
 
-/**
- * Describes Route information for Apache Camel
- * Tells Apache Camel what component and protocol to use
- * Tells Apache Camel what IP and port to run component on listening for messages
- * Takes in processors for each potential message type
- * Processors process REST messages back into Actor messages
- *
- */
 public class DistributedRecommenderRouter extends RouteBuilder {
     private UniversalId peerId;
     private Processor peerRecommendationRequestProcessor;
@@ -20,20 +13,18 @@ public class DistributedRecommenderRouter extends RouteBuilder {
     private Processor peerRetrieveContentRequestProcessor;
     private Processor retrievedContentProcessor;
     private Processor peerWeightUpdateRequestProcessor;
+    private Processor remotePeerWeightedLinkAdditionProcessor;
     
     public DistributedRecommenderRouter(
             UniversalId peerId,
-            PeerRecommendationRequestProcessor peerRecommendationRequestProcessor, 
-            PeerRecommendationProcessor peerRecommendationProcessor, 
-            PeerRetrieveContentRequestProcessor peerRetrieveContentRequestProcessor, 
-            RetrievedContentProcessor retrievedContentProcessor, 
-            PeerWeightUpdateRequestProcessor peerWeightUpdateRequestProcessor) {
+            ActorRef inboundComm) {
         this.peerId = peerId;
-        this.peerRecommendationRequestProcessor = peerRecommendationRequestProcessor;
-        this.peerRecommendationProcessor = peerRecommendationProcessor;
-        this.peerRetrieveContentRequestProcessor = peerRetrieveContentRequestProcessor;
-        this.retrievedContentProcessor = retrievedContentProcessor;
-        this.peerWeightUpdateRequestProcessor = peerWeightUpdateRequestProcessor;
+        this.peerRecommendationRequestProcessor = new PeerRecommendationRequestProcessor(inboundComm);
+        this.peerRecommendationProcessor = new PeerRecommendationProcessor(inboundComm);
+        this.peerRetrieveContentRequestProcessor = new PeerRetrieveContentRequestProcessor(inboundComm);
+        this.retrievedContentProcessor = new RetrievedContentProcessor(inboundComm);
+        this.peerWeightUpdateRequestProcessor = new PeerWeightUpdateRequestProcessor(inboundComm);
+        this.remotePeerWeightedLinkAdditionProcessor = new RemotePeerWeightedLinkAdditionProcessor(inboundComm);
     }
     
     @Override
@@ -52,5 +43,8 @@ public class DistributedRecommenderRouter extends RouteBuilder {
         
         from(CamelRestletUris.getPeerWeightUpdateRequest(peerId))
         .process(this.peerWeightUpdateRequestProcessor);
+        
+        from(CamelRestletUris.getRemotePeerWeightedLinkAddition(peerId))
+        .process(this.remotePeerWeightedLinkAdditionProcessor);
     }
 }

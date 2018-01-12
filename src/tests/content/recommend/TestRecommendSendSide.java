@@ -30,7 +30,7 @@ public class TestRecommendSendSide {
         PeerToPeerActorInit init = new PeerToPeerActorInit(peerOneId, ActorNames.RECOMMENDER);
         recommenderToTest.tell(init, null);
         
-        final ActorRef dummyPeerLinker = actSys.actorOf(Props.create(DummyPeerLinker.class), ActorNames.PEER_LINKER);
+        final ActorRef dummyPeerLinker = actSys.actorOf(Props.create(DummyPeerWeightedLinkor.class), ActorNames.PEER_LINKER);
         init = new PeerToPeerActorInit(peerOneId, ActorNames.PEER_LINKER);
         dummyPeerLinker.tell(init, null);
         dummyPeerLinker.tell(dummyInit, null);

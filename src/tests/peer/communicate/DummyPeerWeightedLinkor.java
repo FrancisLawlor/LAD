@@ -6,7 +6,7 @@ import peer.graph.weight.PeerWeightUpdateRequest;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 
-public class DummyPeerWeightedLinkorDHM extends DummyActor {
+public class DummyPeerWeightedLinkor extends DummyActor {
     @Override
     public void onReceive(Object message) {
         if (message instanceof PeerToPeerActorInit) {
@@ -19,7 +19,7 @@ public class DummyPeerWeightedLinkorDHM extends DummyActor {
         }
         else if (message instanceof RemotePeerWeightedLinkAddition) {
             RemotePeerWeightedLinkAddition addition = (RemotePeerWeightedLinkAddition) message;
-            super.logger.logMessage("PeerWeightedLinkorDHM received RemotePeerWeightedLinkAddition");
+            super.logger.logMessage("PeerWeightedLinkor received RemotePeerWeightedLinkAddition");
             super.logger.logMessage("Type: " + addition.getType().toString());
             super.logger.logMessage("OriginalRequester: " + addition.getOriginalRequester());
             super.logger.logMessage("OriginalTarget: " + addition.getOriginalTarget());
@@ -29,7 +29,7 @@ public class DummyPeerWeightedLinkorDHM extends DummyActor {
         }
         else if (message instanceof PeerWeightUpdateRequest) {
             PeerWeightUpdateRequest request = (PeerWeightUpdateRequest) message;
-            super.logger.logMessage("PeerWeightedLinkorDHM received PeerWeightUpdateRequest");
+            super.logger.logMessage("PeerWeightedLinkor received PeerWeightUpdateRequest");
             super.logger.logMessage("Type: " + request.getType().toString());
             super.logger.logMessage("OriginalRequester: " + request.getOriginalRequester());
             super.logger.logMessage("OriginalTarget: " + request.getOriginalTarget());

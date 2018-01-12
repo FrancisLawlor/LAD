@@ -17,14 +17,14 @@ import content.similarity.Similaritor;
 import content.view.ViewHistorian;
 import content.view.Viewer;
 import content.view.ViewerInit;
-import peer.communicate.DistributedRecommenderRouterDHM;
+import peer.communicate.DistributedRecommenderRouter;
 import peer.communicate.InboundCommunicator;
 import peer.communicate.OutboundCommInit;
 import peer.communicate.OutboundCommunicator;
 import peer.data.BackedUpPeerLinksRequest;
 import peer.data.BackedUpSimilarContentViewPeersRequest;
 import peer.data.Databaser;
-import peer.graph.distributedmap.PeerWeightedLinkorDHM;
+import peer.graph.distributedmap.PeerWeightedLinkor;
 
 /**
  * Creates the permanent Actors for this Peer
@@ -113,13 +113,13 @@ public class PeerToPeerActorSystem {
     
     protected CamelContext getCamelContext(ActorRef inboundComm) throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
-        DistributedRecommenderRouterDHM router = new DistributedRecommenderRouterDHM(peerId, inboundComm);
+        DistributedRecommenderRouter router = new DistributedRecommenderRouter(peerId, inboundComm);
         camelContext.addRoutes(router);
         return camelContext;
     }
     
     protected void createPeerGraph(final ActorRef databaser) throws Exception {
-        final ActorRef peerWeightedLinkor = actorSystem.actorOf(Props.create(PeerWeightedLinkorDHM.class), ActorNames.PEER_LINKER);
+        final ActorRef peerWeightedLinkor = actorSystem.actorOf(Props.create(PeerWeightedLinkor.class), ActorNames.PEER_LINKER);
         PeerToPeerActorInit peerLinkerInit = new PeerToPeerActorInit(peerId, ActorNames.PEER_LINKER);
         peerWeightedLinkor.tell(peerLinkerInit, ActorRef.noSender());
         

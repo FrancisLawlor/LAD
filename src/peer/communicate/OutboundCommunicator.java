@@ -13,6 +13,7 @@ import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
 import peer.core.xcept.UnknownMessageException;
+import peer.graph.distributedmap.RemotePeerWeightedLinkAddition;
 import peer.graph.weight.PeerWeightUpdateRequest;
 
 /**
@@ -62,6 +63,10 @@ public class OutboundCommunicator extends PeerToPeerActor {
         else if (message instanceof PeerWeightUpdateRequest) {
             PeerWeightUpdateRequest request = (PeerWeightUpdateRequest) message;
             this.processPeerWeightUpdateRequest(request);
+        }
+        else if (message instanceof RemotePeerWeightedLinkAddition) {
+            RemotePeerWeightedLinkAddition addition = (RemotePeerWeightedLinkAddition) message;
+            this.processRemotePeerWeightedLinkAddition(addition);
         }
         else {
             throw new UnknownMessageException();
@@ -131,5 +136,18 @@ public class OutboundCommunicator extends PeerToPeerActor {
         String restletUri = CamelRestletUris.getPeerWeightUpdateRequest(peerId);
         String requestJson = this.gson.toJson(request);
         this.camelTemplate.sendBody(restletUri, requestJson);
+    }
+    
+    /**
+     * Sends an outbound request to add a weighted link to the peer graph of a remote peer
+     * This is required if a weighted link has been added to the local peer's peer graph
+     * Seeks to keep weighted links consistent on both ends
+     * @param addition
+     */
+    protected void processRemotePeerWeightedLinkAddition(RemotePeerWeightedLinkAddition addition) {
+        UniversalId peerId = addition.getOriginalTarget();
+        String restletUri = CamelRestletUris.getRemotePeerWeightedLinkAddition(peerId);
+        String additionJson = this.gson.toJson(addition);
+        this.camelTemplate.sendBody(restletUri, additionJson);
     }
 }

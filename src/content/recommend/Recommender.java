@@ -62,13 +62,10 @@ public class Recommender extends PeerToPeerActor {
      */
     protected void processRecommendationForUserRequest(RecommendationsForUserRequest request) {
         final ActorRef aggregator = getContext().actorOf(Props.create(PeerRecommendationAggregator.class), ActorNames.AGGREGATOR);
-        
         PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(super.peerId, ActorNames.AGGREGATOR);
         aggregator.tell(peerIdInit, getSelf());
-
         PeerRecommendationAggregatorInit init = new PeerRecommendationAggregatorInit(new WeightedProbabilityAggregationHeuristic());
         aggregator.tell(init, getSelf());
-        
         aggregator.tell(request, getSelf());
     }
     

@@ -147,9 +147,8 @@ public class PeerRecommendationAggregator extends PeerToPeerActor {
      */
     protected void sendPeerLinkWeightRequest(UniversalId peerId) {
         WeightRequest request = new WeightRequest(peerId);
-        
-        ActorSelection peerWeighter = getContext().actorSelection(ActorPaths.getPathToWeighter(peerId));
-        peerWeighter.tell(request, getSelf());
+        ActorSelection peerWeightedLinkor = getContext().actorSelection(ActorPaths.getPathToPeerLinker());
+        peerWeightedLinkor.tell(request, getSelf());
     }
     
     /**

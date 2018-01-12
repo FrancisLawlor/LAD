@@ -19,14 +19,10 @@ import peer.communicate.DistributedRecommenderRouter;
 import peer.communicate.InboundCommunicator;
 import peer.communicate.OutboundCommInit;
 import peer.communicate.OutboundCommunicator;
-import peer.communicate.PeerRecommendationProcessor;
-import peer.communicate.PeerRecommendationRequestProcessor;
-import peer.communicate.PeerRetrieveContentRequestProcessor;
-import peer.communicate.PeerWeightUpdateRequestProcessor;
-import peer.communicate.RetrievedContentProcessor;
 import peer.core.ActorNames;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
+import peer.graph.distributedmap.RemotePeerWeightedLinkAddition;
 import peer.graph.weight.PeerWeightUpdateRequest;
 import peer.graph.weight.Weight;
 
@@ -47,49 +43,33 @@ public class TestCommunicatorsSideSend {
         
         // Initialise PeerId and Name
         PeerToPeerActorInit outboundCommInitPeerId = new PeerToPeerActorInit(peerOneId, ActorNames.OUTBOUND_COMM);
-        outboundComm.tell(outboundCommInitPeerId, null);
+        outboundComm.tell(outboundCommInitPeerId, ActorRef.noSender());
         PeerToPeerActorInit inboundCommInitPeerId = new PeerToPeerActorInit(peerOneId, ActorNames.INBOUND_COMM);
-        inboundComm.tell(inboundCommInitPeerId, null);
+        inboundComm.tell(inboundCommInitPeerId, ActorRef.noSender());
         
         //Initialise Apache Camel with Routes
         CamelContext camelContext = getCamelContext(inboundComm);
         
         // Specific OutboundCommunicator Initialisation with camelContext
         OutboundCommInit outboundCommInit = new OutboundCommInit(camelContext);
-        outboundComm.tell(outboundCommInit, null);
+        outboundComm.tell(outboundCommInit, ActorRef.noSender());
         
         // Start Camel Context
         camelContext.start();
         
-        // Begin test with messages
-        outboundComm.tell(getPeerRecommendationRequest(), null);
-        outboundComm.tell(getPeerRecommendation(), null);
-        outboundComm.tell(getPeerRetrieveContentRequest(), null);
-        outboundComm.tell(getRetrievedContent(), null);
-        outboundComm.tell(getPeerWeightUpdateRequest(), null);
+        // Begin test with messages after 5 seconds
+        Thread.sleep(5000);
+        outboundComm.tell(getPeerRecommendationRequest(), ActorRef.noSender());
+        outboundComm.tell(getPeerRecommendation(), ActorRef.noSender());
+        outboundComm.tell(getPeerRetrieveContentRequest(), ActorRef.noSender());
+        outboundComm.tell(getRetrievedContent(), ActorRef.noSender());
+        outboundComm.tell(getRemotePeerWeightedLinkAddition(), ActorRef.noSender());
+        outboundComm.tell(getPeerWeightUpdateRequest(), ActorRef.noSender());
     }
     
     private static CamelContext getCamelContext(ActorRef inboundComm) throws Exception {
         CamelContext camelContext = new DefaultCamelContext();
-        // Router and Processors for Routes initialisation
-        PeerRecommendationRequestProcessor peerRecommendationRequestProcessor = 
-                new PeerRecommendationRequestProcessor(inboundComm);
-        PeerRecommendationProcessor peerRecommendationProcessor = 
-                new PeerRecommendationProcessor(inboundComm);
-        PeerRetrieveContentRequestProcessor peerRetrieveContentRequestProcessor = 
-                new PeerRetrieveContentRequestProcessor(inboundComm);
-        RetrievedContentProcessor retrievedContentProcessor = 
-                new RetrievedContentProcessor(inboundComm);
-        PeerWeightUpdateRequestProcessor peerWeightUpdateRequestProcessor = 
-                new PeerWeightUpdateRequestProcessor(inboundComm);
-        DistributedRecommenderRouter router = 
-                new DistributedRecommenderRouter(
-                        peerOneId,
-                        peerRecommendationRequestProcessor, 
-                        peerRecommendationProcessor, 
-                        peerRetrieveContentRequestProcessor, 
-                        retrievedContentProcessor, 
-                        peerWeightUpdateRequestProcessor);
+        DistributedRecommenderRouter router = new DistributedRecommenderRouter( peerOneId, inboundComm);
         camelContext.addRoutes(router);
         return camelContext;
     }
@@ -115,6 +95,10 @@ public class TestCommunicatorsSideSend {
         return new PeerWeightUpdateRequest(peerOneId, peerTwoId, new Weight(10.0));
     }
     
+    private static RemotePeerWeightedLinkAddition getRemotePeerWeightedLinkAddition() {
+        return new RemotePeerWeightedLinkAddition(peerOneId, peerTwoId, new Weight(10.0));
+    }
+    
     private static List<Content> getContent() {
         List<Content> contentList = new LinkedList<Content>();
         for (int i = 1; i < 11; i++) {
@@ -123,3 +107,4 @@ public class TestCommunicatorsSideSend {
         return contentList;
     }
 }
+

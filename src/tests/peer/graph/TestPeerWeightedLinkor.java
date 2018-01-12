@@ -6,24 +6,24 @@ import akka.actor.Props;
 import peer.core.ActorNames;
 import peer.core.PeerToPeerActorInit;
 import peer.core.UniversalId;
-import peer.graph.distributedmap.PeerWeightedLinkorDHM;
+import peer.graph.distributedmap.PeerWeightedLinkor;
 import tests.core.ActorTestLogger;
 import tests.core.DummyInit;
 import tests.core.StartTest;
 
-public class TestPeerWeightedLinkorDHM {
+public class TestPeerWeightedLinkor {
     public static final String TESTOR_NAME = "PeerWeightedLinkorTestor";
     
     public static void main(String[] args) throws Exception {
-        UniversalId peerOneId = new UniversalId(PeerWeightedLinkorDHMTestor.PEER_ONE);
+        UniversalId peerOneId = new UniversalId(PeerWeightedLinkorTestor.PEER_ONE);
         
         ActorSystem actorSystem = ActorSystem.create("ContentSystem");
         
-        final ActorRef peerWeightedLinkor = actorSystem.actorOf(Props.create(PeerWeightedLinkorDHM.class), ActorNames.PEER_LINKER);
+        final ActorRef peerWeightedLinkor = actorSystem.actorOf(Props.create(PeerWeightedLinkor.class), ActorNames.PEER_LINKER);
         PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(peerOneId, ActorNames.PEER_LINKER);
         peerWeightedLinkor.tell(peerIdInit, ActorRef.noSender());
         
-        final ActorRef peerWeightedLinkorTestor = actorSystem.actorOf(Props.create(PeerWeightedLinkorDHMTestor.class), TESTOR_NAME);
+        final ActorRef peerWeightedLinkorTestor = actorSystem.actorOf(Props.create(PeerWeightedLinkorTestor.class), TESTOR_NAME);
         peerIdInit = new PeerToPeerActorInit(peerOneId, TESTOR_NAME);
         peerWeightedLinkorTestor.tell(peerIdInit, ActorRef.noSender());
         

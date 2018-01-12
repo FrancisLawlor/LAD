@@ -8,10 +8,10 @@ import content.retrieve.RetrievedContent;
 import peer.core.ActorPaths;
 import peer.core.PeerToPeerActor;
 import peer.core.PeerToPeerActorInit;
-import peer.core.UniversalId;
 import peer.core.xcept.PeerToPeerRequestOriginPeerIdMismatchException;
 import peer.core.xcept.PeerToPeerRequestTargetPeerIdMismatchException;
 import peer.core.xcept.UnknownMessageException;
+import peer.graph.distributedmap.RemotePeerWeightedLinkAddition;
 import peer.graph.weight.PeerWeightUpdateRequest;
 
 /**
@@ -51,6 +51,10 @@ public class InboundCommunicator extends PeerToPeerActor {
         else if (message instanceof PeerWeightUpdateRequest) {
             PeerWeightUpdateRequest request = (PeerWeightUpdateRequest) message;
             this.processPeerWeightUpdateRequest(request);
+        }
+        else if (message instanceof RemotePeerWeightedLinkAddition) {
+            RemotePeerWeightedLinkAddition addition = (RemotePeerWeightedLinkAddition) message;
+            this.processRemotePeerWeightedLinkAddition(addition);
         }
         else {
             throw new UnknownMessageException();
@@ -106,15 +110,26 @@ public class InboundCommunicator extends PeerToPeerActor {
     }
     
     /**
-     * Will update weighted linked between this peer and the requesting peer if a link is recorded
+     * Will tell the PeerWeightedLinkor to update weighted linked between this peer and the requesting peer if a link is recorded
      * @param request
      */
     protected void processPeerWeightUpdateRequest(PeerWeightUpdateRequest updateWeightRequest) {
         if (!updateWeightRequest.getOriginalTarget().equals(super.peerId)) 
             throw new PeerToPeerRequestTargetPeerIdMismatchException(updateWeightRequest.getOriginalTarget(), super.peerId);
         
-        UniversalId linkedPeerId = updateWeightRequest.getOriginalRequester();
-        ActorSelection weighter = getContext().actorSelection(ActorPaths.getPathToWeighter(linkedPeerId));
-        weighter.tell(updateWeightRequest, getSelf());
+        ActorSelection peerWeightedLinkor = getContext().actorSelection(ActorPaths.getPathToPeerLinker());
+        peerWeightedLinkor.tell(updateWeightRequest, getSelf());
+    }
+    
+    /**
+     * Will tell the PeerWeightedLinkorDHM to add a weighted link between this peer and the requesting peer
+     * @param addition
+     */
+    protected void processRemotePeerWeightedLinkAddition(RemotePeerWeightedLinkAddition addition) {
+        if (!addition.getOriginalTarget().equals(super.peerId)) 
+            throw new PeerToPeerRequestTargetPeerIdMismatchException(addition.getOriginalTarget(), super.peerId);
+        
+        ActorSelection peerWeightedLinkor = getContext().actorSelection(ActorPaths.getPathToPeerLinker());
+        peerWeightedLinkor.tell(addition, getSelf());
     }
 }
