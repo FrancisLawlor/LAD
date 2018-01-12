@@ -2,14 +2,14 @@ package tests.content.retrieve;
 
 import com.google.gson.Gson;
 
-import content.core.Content;
-import content.view.ContentView;
-import content.view.ContentViews;
-import content.view.Rating;
-import content.view.ViewingTime;
+import content.frame.core.Content;
+import content.view.core.ContentView;
+import content.view.core.ContentViews;
+import content.view.core.Rating;
+import content.view.core.ViewingTime;
 import filemanagement.filewrapper.ArrayToLongConverter;
 import filemanagement.filewrapper.FileUnwrapper;
-import peer.core.UniversalId;
+import peer.frame.core.UniversalId;
 
 public class TestHeaderMediaFile {
     static final String TEST = "A1B2C3D4E5F6G7H8I9J10";

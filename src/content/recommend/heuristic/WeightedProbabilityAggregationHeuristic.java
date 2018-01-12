@@ -5,9 +5,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import content.recommend.Recommendation;
-import content.recommend.RecommendationsForUser;
-import content.recommend.WeightedPeerRecommendation;
+import content.recommend.core.Recommendation;
+import content.recommend.core.WeightedPeerRecommendation;
+import content.recommend.messages.RecommendationsForUser;
 
 /**
  * Weighted Probabilistic Heuristic for Peer Recommendation Content Aggregation

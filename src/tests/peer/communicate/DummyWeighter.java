@@ -1,7 +1,7 @@
 package tests.peer.communicate;
 
-import peer.core.PeerToPeerActorInit;
-import peer.graph.weight.PeerWeightUpdateRequest;
+import peer.frame.messages.PeerToPeerActorInit;
+import peer.graph.messages.PeerWeightUpdateRequest;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

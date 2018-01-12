@@ -1,14 +1,14 @@
 package tests.content.retrieve;
 
 import akka.actor.ActorRef;
-import content.core.ContentFile;
-import content.core.ContentFileExistenceRequest;
-import content.core.ContentFileExistenceResponse;
-import content.core.ContentFileRequest;
-import content.core.ContentFileResponse;
-import content.retrieve.RetrievedContentFile;
+import content.frame.core.ContentFile;
+import content.frame.messages.ContentFileExistenceRequest;
+import content.frame.messages.ContentFileExistenceResponse;
+import content.frame.messages.ContentFileRequest;
+import content.frame.messages.ContentFileResponse;
+import content.retrieve.messages.RetrievedContentFile;
 import filemanagement.filewrapper.FileUnwrapper;
-import peer.core.PeerToPeerActorInit;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

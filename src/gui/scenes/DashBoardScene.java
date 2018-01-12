@@ -1,6 +1,6 @@
 package gui.scenes;
 
-import content.recommend.Recommendation;
+import content.recommend.core.Recommendation;
 import gui.panes.DashBoardPane;
 import gui.utilities.GUIDimensions;
 import javafx.scene.Scene;

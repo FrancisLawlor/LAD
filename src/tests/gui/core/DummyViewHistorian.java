@@ -2,10 +2,10 @@ package tests.gui.core;
 
 import com.google.gson.Gson;
 
-import content.view.ContentView;
-import content.view.RecordContentView;
+import content.view.core.ContentView;
+import content.view.messages.RecordContentView;
 import filemanagement.fileretrieval.MediaFileSaver;
-import peer.core.PeerToPeerActorInit;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

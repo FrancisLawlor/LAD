@@ -1,6 +1,6 @@
 package tests.adt;
 
-import content.core.Content;
+import content.frame.core.Content;
 
 public class TestCasting {
     private static Class<?> contentClass;

@@ -1,11 +1,11 @@
 package tests.gui.core;
 
 import akka.actor.ActorRef;
-import content.core.Content;
-import content.retrieve.LocalRetrieveContentRequest;
-import content.retrieve.RetrievedContent;
+import content.frame.core.Content;
+import content.retrieve.messages.LocalRetrieveContentRequest;
+import content.retrieve.messages.RetrievedContent;
 import filemanagement.fileretrieval.MediaFileSaver;
-import peer.core.PeerToPeerActorInit;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

@@ -2,9 +2,9 @@ package tests.gui.core;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import peer.core.ActorNames;
-import peer.core.PeerToPeerActorInit;
-import peer.core.UniversalId;
+import peer.frame.core.ActorNames;
+import peer.frame.core.UniversalId;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.TestPeerToPeerActorSystem;
 
 public class TestPeerToPeerActorSystem1 extends TestPeerToPeerActorSystem {

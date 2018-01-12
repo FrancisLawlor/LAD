@@ -1,6 +1,6 @@
 package tests.content.recommend;
 
-import peer.core.PeerToPeerActorInit;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

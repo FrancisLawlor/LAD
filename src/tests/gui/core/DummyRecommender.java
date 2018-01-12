@@ -4,12 +4,12 @@ import java.util.LinkedList;
 import java.util.List;
 
 import akka.actor.ActorRef;
-import content.core.Content;
-import content.recommend.Recommendation;
-import content.recommend.RecommendationsForUser;
-import content.recommend.RecommendationsForUserRequest;
-import peer.core.PeerToPeerActorInit;
-import peer.core.UniversalId;
+import content.frame.core.Content;
+import content.recommend.core.Recommendation;
+import content.recommend.messages.RecommendationsForUser;
+import content.recommend.messages.RecommendationsForUserRequest;
+import peer.frame.core.UniversalId;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

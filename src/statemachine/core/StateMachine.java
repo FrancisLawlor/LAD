@@ -5,7 +5,7 @@ import java.util.Map;
 
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
-import peer.core.ViewerToUIChannel;
+import peer.frame.core.ViewerToUIChannel;
 import statemachine.states.AddFileState;
 import statemachine.states.DashboardState;
 import statemachine.states.RatingState;

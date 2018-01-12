@@ -2,9 +2,9 @@ package gui.core;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import peer.core.PeerToPeerActorSystem;
-import peer.core.UniversalId;
-import peer.core.ViewerToUIChannel;
+import peer.frame.core.PeerToPeerActorSystem;
+import peer.frame.core.UniversalId;
+import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 

@@ -5,10 +5,10 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
-import content.core.Content;
-import content.view.ContentView;
-import content.view.ViewHistory;
-import content.view.ViewHistoryResponse;
+import content.frame.core.Content;
+import content.view.core.ContentView;
+import content.view.core.ViewHistory;
+import content.view.messages.ViewHistoryResponse;
 
 /**
  * Weighted Probability Heuristic

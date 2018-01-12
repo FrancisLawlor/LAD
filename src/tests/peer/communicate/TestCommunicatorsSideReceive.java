@@ -6,11 +6,11 @@ import org.apache.camel.impl.DefaultCamelContext;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import peer.communicate.DistributedRecommenderRouter;
-import peer.communicate.InboundCommunicator;
-import peer.core.ActorNames;
-import peer.core.PeerToPeerActorInit;
-import peer.core.UniversalId;
+import peer.communicate.actors.InboundCommunicator;
+import peer.communicate.core.DistributedRecommenderRouter;
+import peer.frame.core.ActorNames;
+import peer.frame.core.UniversalId;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.ActorTestLogger;
 import tests.core.DummyInit;
 

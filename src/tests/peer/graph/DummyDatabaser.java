@@ -1,7 +1,7 @@
 package tests.peer.graph;
 
-import peer.core.PeerToPeerActorInit;
-import peer.data.BackupPeerLinkRequest;
+import peer.data.messages.BackupPeerLinkRequest;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

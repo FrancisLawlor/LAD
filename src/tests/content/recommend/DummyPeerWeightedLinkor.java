@@ -1,13 +1,13 @@
 package tests.content.recommend;
 
 import akka.actor.ActorRef;
-import peer.core.PeerToPeerActorInit;
-import peer.core.UniversalId;
-import peer.graph.link.PeerLinkResponse;
-import peer.graph.link.PeerLinksRequest;
-import peer.graph.weight.Weight;
-import peer.graph.weight.WeightRequest;
-import peer.graph.weight.WeightResponse;
+import peer.frame.core.UniversalId;
+import peer.frame.messages.PeerToPeerActorInit;
+import peer.graph.core.Weight;
+import peer.graph.messages.PeerLinkResponse;
+import peer.graph.messages.PeerLinksRequest;
+import peer.graph.messages.WeightRequest;
+import peer.graph.messages.WeightResponse;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 
