@@ -1,11 +1,11 @@
 package tests.content.retrieve;
 
 import akka.actor.ActorRef;
-import content.similarity.SimilarContentViewPeerAlert;
-import content.similarity.SimilarContentViewPeerRequest;
-import content.similarity.SimilarContentViewPeerResponse;
-import peer.core.PeerToPeerActorInit;
-import peer.core.UniversalId;
+import content.similarity.messages.SimilarContentViewPeerAlert;
+import content.similarity.messages.SimilarContentViewPeerRequest;
+import content.similarity.messages.SimilarContentViewPeerResponse;
+import peer.frame.core.UniversalId;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

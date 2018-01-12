@@ -3,12 +3,11 @@ package tests.content.recommend;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import content.recommend.Recommender;
-import peer.core.ActorNames;
-import peer.core.PeerToPeerActorInit;
-import peer.core.UniversalId;
-import peer.graph.weight.Weight;
-import peer.graph.weight.WeighterInit;
+import content.recommend.actors.Recommender;
+import peer.frame.core.ActorNames;
+import peer.frame.core.UniversalId;
+import peer.frame.messages.PeerToPeerActorInit;
+import peer.graph.core.Weight;
 import tests.core.ActorTestLogger;
 import tests.core.DummyInit;
 import tests.core.StartTest;
@@ -30,7 +29,7 @@ public class TestRecommendSendSide {
         PeerToPeerActorInit init = new PeerToPeerActorInit(peerOneId, ActorNames.RECOMMENDER);
         recommenderToTest.tell(init, null);
         
-        final ActorRef dummyPeerLinker = actSys.actorOf(Props.create(DummyPeerLinker.class), ActorNames.PEER_LINKER);
+        final ActorRef dummyPeerLinker = actSys.actorOf(Props.create(DummyPeerWeightedLinkor.class), ActorNames.PEER_LINKER);
         init = new PeerToPeerActorInit(peerOneId, ActorNames.PEER_LINKER);
         dummyPeerLinker.tell(init, null);
         dummyPeerLinker.tell(dummyInit, null);

@@ -3,10 +3,10 @@ package content.recommend.heuristic;
 import java.util.LinkedList;
 import java.util.List;
 
-import content.recommend.PeerRecommendation;
-import content.recommend.Recommendation;
-import content.recommend.RecommendationsForUser;
-import content.recommend.WeightedPeerRecommendation;
+import content.recommend.core.Recommendation;
+import content.recommend.core.WeightedPeerRecommendation;
+import content.recommend.messages.PeerRecommendation;
+import content.recommend.messages.RecommendationsForUser;
 
 /**
  * Deterministic Heuristic to be used for testing

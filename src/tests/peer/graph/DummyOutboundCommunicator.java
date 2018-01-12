@@ -1,8 +1,8 @@
 package tests.peer.graph;
 
-import peer.core.PeerToPeerActorInit;
-import peer.graph.distributedmap.RemotePeerWeightedLinkAddition;
-import peer.graph.weight.PeerWeightUpdateRequest;
+import peer.frame.messages.PeerToPeerActorInit;
+import peer.graph.messages.PeerWeightUpdateRequest;
+import peer.graph.messages.RemotePeerWeightedLinkAddition;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

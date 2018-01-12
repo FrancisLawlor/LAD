@@ -1,6 +1,6 @@
 package gui.panes;
 
-import content.recommend.Recommendation;
+import content.recommend.core.Recommendation;
 import gui.utilities.GUIText;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;

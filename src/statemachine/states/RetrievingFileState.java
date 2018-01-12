@@ -4,16 +4,16 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
-import content.recommend.Recommendation;
-import content.retrieve.RetrievedContent;
+import content.recommend.core.Recommendation;
+import content.retrieve.messages.RetrievedContent;
 import filemanagement.core.FileConstants;
-import filemanagement.fileretrieval.FileManager;
+import filemanagement.fileretrieval.MediaFileSaver;
 import filemanagement.fileretrieval.RetrievedFile;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
 import javafx.concurrent.Task;
-import peer.core.ViewerToUIChannel;
+import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
@@ -57,7 +57,7 @@ public class RetrievingFileState extends State {
 			    viewer.createNewContentView(retrievedContent.getContent());
 			    String fileName = retrievedContent.getContent().getFileName();
 			    String fileFormat = retrievedContent.getContent().getFileFormat();
-			    File file = FileManager.getFile(fileName, fileFormat);
+			    File file = MediaFileSaver.getFile(fileName, fileFormat);
 			    retrievedFile.setFile(file);
 				return null;
 			}

@@ -1,7 +1,7 @@
 package statemachine.states;
 
-import content.recommend.Recommendation;
-import content.recommend.RecommendationsForUser;
+import content.recommend.core.Recommendation;
+import content.recommend.messages.RecommendationsForUser;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
@@ -9,7 +9,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
-import peer.core.ViewerToUIChannel;
+import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 

@@ -4,9 +4,9 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
-import content.core.Content;
-import content.view.ContentView;
-import content.view.ViewHistoryResponse;
+import content.frame.core.Content;
+import content.view.core.ContentView;
+import content.view.messages.ViewHistoryResponse;
 
 /**
  * Deterministic Heuristic to be used for testing

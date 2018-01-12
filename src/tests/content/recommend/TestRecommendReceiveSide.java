@@ -3,11 +3,11 @@ package tests.content.recommend;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import content.recommend.PeerRecommendationRequest;
-import content.recommend.Recommender;
-import peer.core.ActorNames;
-import peer.core.PeerToPeerActorInit;
-import peer.core.UniversalId;
+import content.recommend.actors.Recommender;
+import content.recommend.messages.PeerRecommendationRequest;
+import peer.frame.core.ActorNames;
+import peer.frame.core.UniversalId;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.ActorTestLogger;
 import tests.core.DummyInit;
 

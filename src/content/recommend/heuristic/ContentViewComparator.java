@@ -2,7 +2,7 @@ package content.recommend.heuristic;
 
 import java.util.Comparator;
 
-import content.view.ContentView;
+import content.view.core.ContentView;
 
 public class ContentViewComparator implements Comparator<ContentView> {
     public int compare(ContentView a, ContentView b) {

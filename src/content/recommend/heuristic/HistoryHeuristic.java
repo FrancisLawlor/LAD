@@ -2,8 +2,8 @@ package content.recommend.heuristic;
 
 import java.util.List;
 
-import content.core.Content;
-import content.view.ViewHistoryResponse;
+import content.frame.core.Content;
+import content.view.messages.ViewHistoryResponse;
 
 /**
  * Handles Heuristic for Recommendations

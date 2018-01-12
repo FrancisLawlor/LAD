@@ -4,14 +4,14 @@ import java.util.LinkedList;
 import java.util.List;
 
 import akka.actor.ActorRef;
-import content.core.Content;
-import content.view.ContentView;
-import content.view.ViewHistory;
-import content.view.ViewHistoryRequest;
-import content.view.ViewHistoryResponse;
-import content.view.ViewingTime;
-import peer.core.PeerToPeerActorInit;
-import peer.core.UniversalId;
+import content.frame.core.Content;
+import content.view.core.ContentView;
+import content.view.core.ViewHistory;
+import content.view.core.ViewingTime;
+import content.view.messages.ViewHistoryRequest;
+import content.view.messages.ViewHistoryResponse;
+import peer.frame.core.UniversalId;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 
@@ -57,15 +57,8 @@ public class DummyViewHistorian extends DummyActor {
         List<ContentView> contentViews = new LinkedList<ContentView>();
         for (int i = 1; i <= contentList.size(); i++) {
             ContentView contentView = new ContentView(contentList.get(i - 1), new UniversalId("Peer" + (i + 10)));
-            if (i % 2 == 0) {
-                super.logger.logMessage("Recording full view for content " + i);
-                contentView.recordView(new ViewingTime(20));
-            }
-            else {
-                super.logger.logMessage("Recording zero view for content " + i);
-                contentView.recordView(new ViewingTime(0));
-                
-            }
+            super.logger.logMessage("Recording view of length " + i + " for content name " + i);
+            contentView.recordView(new ViewingTime(i));
             contentViews.add(contentView);
         }
         return contentViews;

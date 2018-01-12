@@ -10,9 +10,9 @@ import org.junit.Test;
 
 import com.google.gson.Gson;
 
-import content.core.Content;
-import content.recommend.PeerRecommendation;
-import peer.core.UniversalId;
+import content.frame.core.Content;
+import content.recommend.messages.PeerRecommendation;
+import peer.frame.core.UniversalId;
 
 public class TestJson {
     private static Gson gson;

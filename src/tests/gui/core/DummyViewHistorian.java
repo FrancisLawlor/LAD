@@ -2,10 +2,10 @@ package tests.gui.core;
 
 import com.google.gson.Gson;
 
-import content.view.ContentView;
-import content.view.RecordContentView;
-import filemanagement.fileretrieval.FileManager;
-import peer.core.PeerToPeerActorInit;
+import content.view.core.ContentView;
+import content.view.messages.RecordContentView;
+import filemanagement.fileretrieval.MediaFileSaver;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 
@@ -25,7 +25,7 @@ public class DummyViewHistorian extends DummyActor {
             ContentView contentView = recordContentView.getContentView();
             Gson gson = new Gson();
             String json = gson.toJson(contentView);
-            FileManager.writeMediaFile("TestRating", "txt", json.getBytes());
+            MediaFileSaver.writeMediaFile("TestRating", "txt", json.getBytes());
         }
     }
 }

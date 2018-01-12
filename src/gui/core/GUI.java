@@ -1,7 +1,7 @@
 package gui.core;
 
-import content.core.Content;
-import content.recommend.Recommendation;
+import content.frame.core.Content;
+import content.recommend.core.Recommendation;
 import gui.panes.AddFilePane;
 import gui.panes.DashBoardPane;
 import gui.panes.FileRetrievalQueryPane;

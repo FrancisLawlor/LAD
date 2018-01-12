@@ -1,6 +1,6 @@
 package gui.scenes;
 
-import content.core.Content;
+import content.frame.core.Content;
 import gui.panes.MyFilesPane;
 import gui.utilities.GUIDimensions;
 import javafx.scene.Scene;

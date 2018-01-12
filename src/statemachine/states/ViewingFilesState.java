@@ -7,7 +7,7 @@ import java.nio.file.Paths;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import content.core.Content;
+import content.frame.core.Content;
 import filemanagement.core.FileConstants;
 import filemanagement.core.FileHeaderKeys;
 import gui.core.GUI;

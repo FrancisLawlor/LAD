@@ -2,9 +2,9 @@ package tests.peer.communicate;
 
 import akka.actor.ActorRef;
 import akka.actor.Props;
-import content.recommend.PeerRecommendationRequest;
-import peer.core.ActorNames;
-import peer.core.PeerToPeerActorInit;
+import content.recommend.messages.PeerRecommendationRequest;
+import peer.frame.core.ActorNames;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

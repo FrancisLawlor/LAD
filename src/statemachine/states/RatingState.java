@@ -1,11 +1,11 @@
 package statemachine.states;
 
-import content.view.Rating;
-import content.view.ViewingTime;
+import content.view.core.Rating;
+import content.view.core.ViewingTime;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
-import peer.core.ViewerToUIChannel;
+import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 

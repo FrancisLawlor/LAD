@@ -9,17 +9,17 @@ import java.util.List;
 import com.google.gson.Gson;
 
 import akka.actor.ActorRef;
-import content.core.Content;
-import content.recommend.PeerRecommendation;
-import content.recommend.PeerRecommendationRequest;
-import content.retrieve.PeerRetrieveContentRequest;
-import content.retrieve.RetrievedContent;
-import content.retrieve.TransferInfo;
-import content.view.ContentView;
-import content.view.ContentViews;
+import content.frame.core.Content;
+import content.recommend.messages.PeerRecommendation;
+import content.recommend.messages.PeerRecommendationRequest;
+import content.retrieve.core.TransferInfo;
+import content.retrieve.messages.PeerRetrieveContentRequest;
+import content.retrieve.messages.RetrievedContent;
+import content.view.core.ContentView;
+import content.view.core.ContentViews;
 import filemanagement.filewrapper.ArrayToLongConverter;
-import peer.core.PeerToPeerActorInit;
-import peer.core.UniversalId;
+import peer.frame.core.UniversalId;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 
@@ -73,7 +73,7 @@ public class DummyOutboundCommunicator extends DummyActor {
     
     private static byte[] getHeaderMediaFile() {
         Content content = new Content("UniqueId", "Filename", "FileFormat", 10);
-        ContentViews contentViews = new ContentViews();
+        ContentViews contentViews = new ContentViews(content);
         contentViews.addContentView(new ContentView(content, new UniversalId("localhost:10010")));
         contentViews.addContentView(new ContentView(content, new UniversalId("localhost:10011")));
         contentViews.addContentView(new ContentView(content, new UniversalId("localhost:10012")));

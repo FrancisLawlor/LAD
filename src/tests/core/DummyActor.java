@@ -2,7 +2,7 @@ package tests.core;
 
 import java.util.Iterator;
 
-import peer.core.PeerToPeerActor;
+import peer.frame.actors.PeerToPeerActor;
 
 public abstract class DummyActor extends PeerToPeerActor {
     protected ActorTestLogger logger;

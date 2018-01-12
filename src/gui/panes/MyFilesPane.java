@@ -1,6 +1,6 @@
 package gui.panes;
 
-import content.core.Content;
+import content.frame.core.Content;
 import gui.utilities.GUIText;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;

@@ -3,8 +3,8 @@ package content.recommend.heuristic;
 import java.util.Iterator;
 import java.util.List;
 
-import content.recommend.RecommendationsForUser;
-import content.recommend.WeightedPeerRecommendation;
+import content.recommend.core.WeightedPeerRecommendation;
+import content.recommend.messages.RecommendationsForUser;
 
 /**
  * Abstract superclass for Aggregation Heuristics

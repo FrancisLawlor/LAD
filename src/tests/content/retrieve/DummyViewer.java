@@ -1,7 +1,7 @@
 package tests.content.retrieve;
 
-import content.retrieve.RetrievedContent;
-import peer.core.PeerToPeerActorInit;
+import content.retrieve.messages.RetrievedContent;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 

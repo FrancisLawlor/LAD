@@ -1,11 +1,11 @@
 package tests.gui.core;
 
 import akka.actor.ActorRef;
-import content.core.Content;
-import content.retrieve.LocalRetrieveContentRequest;
-import content.retrieve.RetrievedContent;
-import filemanagement.fileretrieval.FileManager;
-import peer.core.PeerToPeerActorInit;
+import content.frame.core.Content;
+import content.retrieve.messages.LocalRetrieveContentRequest;
+import content.retrieve.messages.RetrievedContent;
+import filemanagement.fileretrieval.MediaFileSaver;
+import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 
@@ -25,7 +25,7 @@ public class DummyRetriever extends DummyActor {
             LocalRetrieveContentRequest request = (LocalRetrieveContentRequest) message;
             Content content = request.getContent();
             
-            FileManager.writeMediaFile(content.getFileName(), content.getFileFormat(), TEST.getBytes());
+            MediaFileSaver.writeMediaFile(content.getFileName(), content.getFileFormat(), TEST.getBytes());
             RetrievedContent retrievedContent = new RetrievedContent(request.getOriginalRequester(), request.getOriginalTarget(), content, null);
             
             ActorRef sender = getSender();
