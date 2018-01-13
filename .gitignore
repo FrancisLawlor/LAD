@@ -2,5 +2,5 @@ bin/
 .settings/
 .DS_Store
 *.properties
-files/
-data/
+/files
+/data
