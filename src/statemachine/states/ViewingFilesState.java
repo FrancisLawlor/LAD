@@ -1,17 +1,6 @@
 package statemachine.states;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-
 import content.frame.core.Content;
-import content.recommend.core.Recommendation;
-import content.recommend.messages.RecommendationsForUser;
-import filemanagement.core.FileConstants;
-import filemanagement.core.FileHeaderKeys;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
@@ -92,22 +81,6 @@ public class ViewingFilesState extends State {
             viewList.getItems().add(content);
         }
 	}
-//        String filesJSONString = null;
-//        
-//		try {
-//			filesJSONString = new String(Files.readAllBytes(Paths.get("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME)));
-//		} catch (IOException e1) {
-//			e1.printStackTrace();
-//		}
-//		
-//		JSONArray filesJSONArray = new JSONObject(filesJSONString).getJSONArray(FileConstants.JSON_FILES_KEY);
-//		
-//		for (int i = 0; i < filesJSONArray.length(); i++) {
-//			JSONObject object = filesJSONArray.getJSONObject(i);
-//			Content content = new Content("", object.get(FileHeaderKeys.FILE_NAME).toString(), object.get(FileHeaderKeys.File_FORMAT).toString(), 0);
-//			viewList.getItems().add(content);
-//		}		
-	//}
 
 	private void clicksBack() {
 		stateMachine.setCurrentState(StateName.DASHBOARD.toString());
