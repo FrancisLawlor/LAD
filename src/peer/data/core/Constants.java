@@ -5,5 +5,6 @@ public class Constants {
     public static final String DATA_DIR = "./data/";
     public static final String PEER_LINKS_FILENAME = "PeerLinks" + FILE_EXTENSION;
     public static final String SIMILAR_CONTENT_VIEW_PEERS_FILENAME = "SimilarContentViewPeers" + FILE_EXTENSION;
+    public static final String CONTENT_VIEW_HISTORY_FILENAME = "ContentViewHistory";
     public static final String CONTENT_FILE_EXTENSION = ".lad";
 }

@@ -1,10 +1,10 @@
-package tests.peer.data;
+package tests.content.view;
 
 import peer.frame.messages.PeerToPeerActorInit;
 import tests.core.DummyActor;
 import tests.core.DummyInit;
 
-public class DatabaserTestor extends DummyActor {
+public class ViewHistorianTestor extends DummyActor {
     @Override
     public void onReceive(Object message) {
         if (message instanceof PeerToPeerActorInit) {

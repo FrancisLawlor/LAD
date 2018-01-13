@@ -1,6 +1,6 @@
-package tests.peer.data;
+package tests.system;
 
-public class TestDatabaser {
+public class SystemTest {
     public static void main(String[] args) {
         
     }

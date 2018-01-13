@@ -1,5 +1,6 @@
 package peer.data.messages;
 
+import content.view.core.ContentView;
 import peer.frame.core.ActorMessageType;
 import peer.frame.messages.ActorMessage;
 
@@ -8,7 +9,13 @@ import peer.frame.messages.ActorMessage;
  *
  */
 public class BackedUpContentViewResponse extends ActorMessage {
-    public BackedUpContentViewResponse() {
+    private ContentView contentView;
+    
+    public BackedUpContentViewResponse(ContentView contentView) {
         super(ActorMessageType.BackedUpContentViewResponse);
+    }
+    
+    public ContentView getContentView() {
+        return this.contentView;
     }
 }

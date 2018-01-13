@@ -29,10 +29,18 @@ import content.view.messages.ContentViewAddition;
 import filemanagement.filewrapper.FileUnwrapper;
 import filemanagement.filewrapper.FileWrapper;
 import peer.data.core.Constants;
+import peer.data.messages.BackedUpContentViewHistoryRequest;
+import peer.data.messages.BackedUpContentViewResponse;
+import peer.data.messages.BackedUpPeerLinkResponse;
 import peer.data.messages.BackedUpPeerLinksRequest;
 import peer.data.messages.BackedUpSimilarContentViewPeersRequest;
+import peer.data.messages.BackedUpSimilarContentViewPeersResponse;
+import peer.data.messages.BackupContentViewInHistoryRequest;
 import peer.data.messages.BackupPeerLinkRequest;
 import peer.data.messages.BackupSimilarContentViewPeersRequest;
+import peer.data.messages.LocalSavedContentRequest;
+import peer.data.messages.LocalSavedContentResponse;
+import peer.data.messages.SaveContentFileRequest;
 import peer.frame.actors.PeerToPeerActor;
 import peer.frame.exceptions.ImproperlyStoredContentFileException;
 import peer.frame.exceptions.UnknownMessageException;
@@ -94,6 +102,22 @@ public class Databaser extends PeerToPeerActor {
         else if (message instanceof BackedUpSimilarContentViewPeersRequest) {
             BackedUpSimilarContentViewPeersRequest request = (BackedUpSimilarContentViewPeersRequest) message;
             this.processBackedUpSimilarContentViewPeersRequest(request);
+        }
+        else if (message instanceof BackupContentViewInHistoryRequest) {
+            BackupContentViewInHistoryRequest request = (BackupContentViewInHistoryRequest) message;
+            this.processBackupContentViewInHistoryRequest(request);
+        }
+        else if (message instanceof BackedUpContentViewHistoryRequest) {
+            BackedUpContentViewHistoryRequest request = (BackedUpContentViewHistoryRequest) message;
+            this.processBackedUpContentViewHistoryRequest(request);
+        }
+        else if (message instanceof SaveContentFileRequest) {
+            SaveContentFileRequest request = (SaveContentFileRequest) message;
+            this.processSaveContentFileRequest(request);
+        }
+        else if (message instanceof LocalSavedContentRequest) {
+            LocalSavedContentRequest request = (LocalSavedContentRequest) message;
+            this.processLocalSavedContentRequest(request);
         }
         else {
             throw new UnknownMessageException();
@@ -164,6 +188,7 @@ public class Databaser extends PeerToPeerActor {
      */
     protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) throws IOException {
         ContentFile contentFile = retrievedContentFile.getContentFile();
+        this.saveContentToManifest(contentFile.getContent());
         writeContentFile(contentFile);
     }
     
@@ -294,6 +319,35 @@ public class Databaser extends PeerToPeerActor {
     }
     
     /**
+     * Will back up a content view in the view history backup
+     * @param request
+     */
+    protected void processBackupContentViewInHistoryRequest(BackupContentViewInHistoryRequest request) {
+        ContentView contentView = request.getContentView();
+        Properties prop = new Properties();
+        OutputStream output = null;
+        String filename = Constants.DATA_DIR + Constants.CONTENT_VIEW_HISTORY_FILENAME;
+        Gson gson = new Gson();
+        try {
+            output = new FileOutputStream(filename, true);
+            String key = contentView.getContent().getId();
+            String value = gson.toJson(contentView);
+            prop.setProperty(key, value);
+            prop.store(output, null);
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (output != null) {
+                try {
+                    output.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+    
+    /**
      * Will return all backed up peer links to the requester
      * @param request
      */
@@ -313,7 +367,8 @@ public class Databaser extends PeerToPeerActor {
                     String key = (String) e.nextElement();
                     String value = prop.getProperty(key);
                     PeerWeightedLink peerWeightedLink = gson.fromJson(value, PeerWeightedLink.class);
-                    requester.tell(peerWeightedLink, ActorRef.noSender());
+                    BackedUpPeerLinkResponse response = new BackedUpPeerLinkResponse(peerWeightedLink);
+                    requester.tell(response, getSelf());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -349,7 +404,8 @@ public class Databaser extends PeerToPeerActor {
                     String key = (String) e.nextElement();
                     String value = prop.getProperty(key);
                     SimilarContentViewPeers similarContentViewPeers = gson.fromJson(value, SimilarContentViewPeers.class);
-                    requester.tell(similarContentViewPeers, ActorRef.noSender());
+                    BackedUpSimilarContentViewPeersResponse response = new BackedUpSimilarContentViewPeersResponse(similarContentViewPeers);
+                    requester.tell(response, getSelf());
                 }
             } catch (IOException e) {
                 e.printStackTrace();
@@ -363,5 +419,72 @@ public class Databaser extends PeerToPeerActor {
                 }
             }
         }
+    }
+    
+    /**
+     * Will return to the requester all the backed up content views in the backed up view history
+     * @param request
+     */
+    protected void processBackedUpContentViewHistoryRequest(BackedUpContentViewHistoryRequest request) {
+        String filename = Constants.DATA_DIR + Constants.CONTENT_VIEW_HISTORY_FILENAME;
+        File file = new File(filename);
+        if (file.exists()) {
+            ActorRef requester = getSender();
+            Properties prop = new Properties();
+            InputStream input = null;
+            Gson gson = new Gson();
+            try {
+                input = new FileInputStream(filename);
+                prop.load(input);
+                Enumeration<?> e = prop.propertyNames();
+                while (e.hasMoreElements()) {
+                    String key = (String) e.nextElement();
+                    String value = prop.getProperty(key);
+                    ContentView contentView = gson.fromJson(value, ContentView.class);
+                    BackedUpContentViewResponse response = new BackedUpContentViewResponse(contentView);
+                    requester.tell(response, getSelf());
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                if (input != null) {
+                    try {
+                        input.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+    }
+    
+    /**
+     * Saves Content File to data storage directory
+     * @param request
+     */
+    protected void processSaveContentFileRequest(SaveContentFileRequest request) throws IOException {
+        ContentFile contentFile = request.getContentFile();
+        this.saveContentToManifest(contentFile.getContent());
+        writeContentFile(contentFile);
+    }
+    
+    /**
+     * Iterates through manifest of saved content and sends content objects back in response
+     * @param request
+     */
+    protected void processLocalSavedContentRequest(LocalSavedContentRequest request) {
+        ActorRef requester = getSender();
+        //To Do
+        Content content = null;
+        LocalSavedContentResponse response = new LocalSavedContentResponse(content);
+        requester.tell(response, getSelf());
+    }
+    
+    /**
+     * Saves content to manifest of local saved content
+     * @param content
+     */
+    private void saveContentToManifest(Content content) {
+        
     }
 }
