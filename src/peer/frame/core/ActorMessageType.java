@@ -68,7 +68,9 @@ public enum ActorMessageType {
     BackedUpSimilarContentViewPeersRequest("BackedUpSimilarContentViewPeersRequest"),
     BackedUpSimilarContentViewPeersResponse("BackedUpSimilarContentViewPeersResponse"),
     BackupPeerLinkRequest("BackupPeerLinkRequest"),
-    BackupSimilarContentViewPeersRequest("BackupSimilarContentViewPeersRequest");
+    BackupSimilarContentViewPeersRequest("BackupSimilarContentViewPeersRequest"),
+    BackedUpContentViewHistoryRequest("BackedUpContentViewHistoryRequest"),
+    BackedUpContentViewResponse("BackedUpContentViewResponse");
     
     private String typeName;
     
