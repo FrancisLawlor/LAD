@@ -18,7 +18,6 @@ import content.frame.core.Content;
 import content.frame.core.MediaAttributes;
 import content.view.core.ContentViews;
 import filemanagement.core.FileConstants;
-import filemanagement.core.FileHeaderKeys;
 import filemanagement.filewrapper.FileWrapper;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
@@ -124,7 +123,7 @@ public class AddFileState extends State {
 		JSONObject filesJSONObject = new JSONObject(filesJSONString);
 		Gson gsonUtil = new Gson();
 		
-		((JSONArray) filesJSONObject.get("files"))
+		((JSONArray) filesJSONObject.get(FileConstants.JSON_FILES_KEY))
 			.put(new JSONObject(gsonUtil.toJson(new Content("todo", gui.getAddFileScene().getFileNameTextField().getText(), 
 						gui.getAddFileScene().getFileFormatTextField().getText(), 
 						Integer.parseInt(gui.getAddFileScene().getViewLengthTextField().getText()), 
