@@ -25,4 +25,11 @@ public class TestPeerToPeerActorSystem1 extends TestPeerToPeerActorSystem {
         PeerToPeerActorInit init = new PeerToPeerActorInit(super.peerId, ActorNames.RETRIEVER);
         retriever.tell(init, ActorRef.noSender());
     }
+    
+    @Override
+    protected void initialiseDatabase() {
+        final ActorRef databaser = this.actorSystem.actorOf(Props.create(DummyDatabaser.class), ActorNames.DATABASER);
+        PeerToPeerActorInit init = new PeerToPeerActorInit(peerId, ActorNames.INBOUND_COMM);
+        databaser.tell(init, ActorRef.noSender());
+    }
 }

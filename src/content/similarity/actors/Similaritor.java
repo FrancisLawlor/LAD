@@ -5,6 +5,7 @@ import java.util.Map;
 
 import adt.distributedmap.core.DistributedHashMap;
 import adt.distributedmap.core.DistributedMap;
+import adt.distributedmap.messages.DistributedMapAdditionResponse;
 import adt.distributedmap.messages.DistributedMapContainsResponse;
 import adt.distributedmap.messages.DistributedMapGetResponse;
 import akka.actor.ActorRef;
@@ -29,7 +30,7 @@ import peer.graph.messages.PeerLinkExistenceResponse;
 import peer.graph.messages.PeerWeightedLinkAddition;
 
 /**
- * SimilaritorDHM is the Similaritor implemented with a Distributed Hash Map
+ * Similaritor is implemented with a Distributed Hash Map
  * Explicitly remembers sets of peers who watched the same content as this peer
  * Implicitly remembers the similarity of this peer to these peers by reweighting ...
  * ... the weighted link between them in the Peer Graph based on these similar content views
@@ -78,6 +79,9 @@ public class Similaritor extends PeerToPeerActor {
         else if (message instanceof BackedUpSimilarContentViewPeersResponse) {
             BackedUpSimilarContentViewPeersResponse response = (BackedUpSimilarContentViewPeersResponse) message;
             this.processBackedUpSimilarContentViewPeersResponse(response);
+        }
+        else if (message instanceof DistributedMapAdditionResponse) {
+            
         }
         else {
             throw new UnknownMessageException();
@@ -162,7 +166,7 @@ public class Similaritor extends PeerToPeerActor {
         Content similarViewedContent = this.distributedMap.getGetKey(response);
         SimilarViewPeers similarViewPeers = this.distributedMap.getGetValue(response);
         if (this.similarContentViewPeerAdditionWaitingOnGets.containsKey(requestNum)) {
-            SimilarContentViewPeerAlert alert = this.similarContentViewPeerAdditionWaitingOnContains.remove(requestNum);
+            SimilarContentViewPeerAlert alert = this.similarContentViewPeerAdditionWaitingOnGets.remove(requestNum);
             UniversalId similarViewPeerId = alert.getSimilarViewPeerId();
             similarViewPeers.add(similarViewPeerId);
             this.backupSimilarContentViewPeers(new SimilarContentViewPeers(similarViewedContent, similarViewPeers));
