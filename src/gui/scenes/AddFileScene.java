@@ -25,4 +25,20 @@ public class AddFileScene extends Scene {
 	public Button getSubmitButton() {
 		return this.addFilePane.getSubmitButton();
 	}
+
+	public TextField getFileFormatTextField() {
+		return this.addFilePane.getFileFormatTextField();
+	}
+
+	public TextField getViewLengthTextField() {
+		return this.addFilePane.getViewLengthTextField();
+	}
+
+	public TextField getYearTextField() {
+		return this.addFilePane.getYearTextField();
+	}
+
+	public TextField getCreatorTextField() {
+		return this.addFilePane.getCreatorTextField();
+	}
 }

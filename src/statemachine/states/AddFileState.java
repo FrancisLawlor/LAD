@@ -12,6 +12,11 @@ import java.util.Properties;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.google.gson.Gson;
+
+import content.frame.core.Content;
+import content.frame.core.MediaAttributes;
+import content.view.core.ContentViews;
 import filemanagement.core.FileConstants;
 import filemanagement.core.FileHeaderKeys;
 import filemanagement.filewrapper.FileWrapper;
@@ -100,29 +105,21 @@ public class AddFileState extends State {
 	}
 	
 	private String writeJSONHeader() {
-		JSONObject headerJSON = new JSONObject();
+		ContentViews contentViews = new ContentViews(
+				new Content("todo", gui.getAddFileScene().getFileNameTextField().getText(), 
+						gui.getAddFileScene().getFileFormatTextField().getText(), 
+						Integer.parseInt(gui.getAddFileScene().getViewLengthTextField().getText()), 
+							new MediaAttributes(gui.getAddFileScene().getGenreTextField().getText(), 
+									gui.getAddFileScene().getYearTextField().getText(),
+									gui.getAddFileScene().getCreatorTextField().getText())));
 		
-		JSONArray recentContentViews = new JSONArray();
-		recentContentViews.put(new JSONObject()
-			.put(FileHeaderKeys.NORMALISED_RATING, -1)
-			.put(FileHeaderKeys.NUMBER_OF_VIEWS, 0)
-			.put(FileHeaderKeys.AVERAGE_VIEWING_TIME, 0)
-			.put(FileHeaderKeys.CONTENT, new JSONObject()
-				.put(FileHeaderKeys.UNIQUE_ID, "")
-				.put(FileHeaderKeys.FILE_NAME, gui.getAddFileScene().getFileNameTextField().getText())
-				.put(FileHeaderKeys.File_FORMAT, "")
-				.put(FileHeaderKeys.VIEW_LENGTH, 10))
-			.put(FileHeaderKeys.VIEWING_PEER_ID, new JSONObject()
-					.put(FileHeaderKeys.IP_AND_PORT, ""))
-		);
+		Gson gsonUtil = new Gson();
 		
-		headerJSON.put(FileHeaderKeys.RECENT_CONTENT_VIEWS, recentContentViews);
-		
-		return headerJSON.toString();
+		return gsonUtil.toJson(contentViews);
 	}
 	
 	private void storeFileInformation() throws IOException {
-		String filesJSONString = new String (Files.readAllBytes(Paths.get("./" + FileConstants.JSON_FILE_NAME)));
+		String filesJSONString = new String (Files.readAllBytes(Paths.get("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME)));
 		
 		JSONObject filesJSONObject = new JSONObject(filesJSONString);
 		
@@ -132,7 +129,7 @@ public class AddFileState extends State {
 				.put(FileHeaderKeys.File_FORMAT, "file format")
 			);
 		
-		File jsonFile = new File("./" + FileConstants.JSON_FILE_NAME);
+		File jsonFile = new File("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME);
 		
 		try {
 			FileWriter fileWriter = new FileWriter(jsonFile, false);
