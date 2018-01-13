@@ -9,7 +9,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
-import content.frame.core.Content;
 import content.recommend.actors.Recommender;
 import content.recommend.messages.RecommendationsForUser;
 import content.retrieve.actors.Retriever;
@@ -26,6 +25,8 @@ import peer.data.actors.Databaser;
 import peer.data.messages.BackedUpContentViewHistoryRequest;
 import peer.data.messages.BackedUpPeerLinksRequest;
 import peer.data.messages.BackedUpSimilarContentViewPeersRequest;
+import peer.data.messages.LoadedContent;
+import peer.data.messages.LocalSavedContentResponse;
 import peer.frame.messages.PeerToPeerActorInit;
 import peer.graph.actors.PeerWeightedLinkor;
 
@@ -78,10 +79,11 @@ public class PeerToPeerActorSystem {
         
         BlockingQueue<RecommendationsForUser> recommendationsQueue = new LinkedBlockingQueue<RecommendationsForUser>();
         BlockingQueue<RetrievedContent> retrievedContentQueue = new LinkedBlockingQueue<RetrievedContent>();
-        BlockingQueue<Content> savedContentQueue = new LinkedBlockingQueue<Content>();
-        this.channel = new ViewerToUIChannel(this.peerId, viewer, recommendationsQueue, retrievedContentQueue, savedContentQueue);
+        BlockingQueue<LocalSavedContentResponse> savedContentQueue = new LinkedBlockingQueue<LocalSavedContentResponse>();
+        BlockingQueue<LoadedContent> loadedContentQueue = new LinkedBlockingQueue<LoadedContent>();
+        this.channel = new ViewerToUIChannel(this.peerId, viewer, recommendationsQueue, retrievedContentQueue, savedContentQueue, loadedContentQueue);
         
-        ViewerInit viewerInit = new ViewerInit(recommendationsQueue, retrievedContentQueue);
+        ViewerInit viewerInit = new ViewerInit(recommendationsQueue, retrievedContentQueue, savedContentQueue, loadedContentQueue);
         viewer.tell(viewerInit, ActorRef.noSender());
     }
     
