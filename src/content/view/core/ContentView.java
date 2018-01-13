@@ -121,7 +121,7 @@ public class ContentView {
             compositeScore *= this.normalisedRating;
         }
         else {
-            compositeScore *= (double)RANGE / (double)2;
+            compositeScore *= ((double)RANGE / (double)2) / (double)RANGE;
         }
         return compositeScore;
     }
@@ -150,7 +150,7 @@ public class ContentView {
         int mergedNumberOfViews = this.numberOfViews + other.numberOfViews;
         double totalViewingTimeHere = this.averageViewingTime * this.numberOfViews;
         double totalViewingTimeThere = other.averageViewingTime * other.numberOfViews;
-        double mergedViewingTime = totalViewingTimeHere + totalViewingTimeThere / mergedNumberOfViews;
+        double mergedViewingTime = (totalViewingTimeHere + totalViewingTimeThere) / mergedNumberOfViews;
         this.averageViewingTime = mergedViewingTime;
         this.numberOfViews = mergedNumberOfViews;
     }
