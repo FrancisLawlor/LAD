@@ -1,6 +1,6 @@
-package tests.peer.frame.core;
+package tests.content.view;
 
-public class SystemTest {
+public class TestViewHistorian {
     public static void main(String[] args) {
         
     }

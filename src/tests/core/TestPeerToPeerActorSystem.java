@@ -9,6 +9,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import akka.actor.ActorRef;
 import akka.actor.ActorSystem;
 import akka.actor.Props;
+import content.frame.core.Content;
 import content.recommend.actors.Recommender;
 import content.recommend.messages.RecommendationsForUser;
 import content.retrieve.actors.Retriever;
@@ -76,7 +77,8 @@ public class TestPeerToPeerActorSystem {
         
         BlockingQueue<RecommendationsForUser> recommendationsQueue = new LinkedBlockingQueue<RecommendationsForUser>();
         BlockingQueue<RetrievedContent> retrievedContentQueue = new LinkedBlockingQueue<RetrievedContent>();
-        this.channel = new ViewerToUIChannel(this.peerId, viewer, recommendationsQueue, retrievedContentQueue);
+        BlockingQueue<Content> savedContentQueue = new LinkedBlockingQueue<Content>();
+        this.channel = new ViewerToUIChannel(this.peerId, viewer, recommendationsQueue, retrievedContentQueue, savedContentQueue);
         
         ViewerInit viewerInit = new ViewerInit(recommendationsQueue, retrievedContentQueue);
         viewer.tell(viewerInit, ActorRef.noSender());
