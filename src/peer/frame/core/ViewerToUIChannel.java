@@ -4,6 +4,7 @@ import java.util.concurrent.BlockingQueue;
 
 import akka.actor.ActorRef;
 import content.frame.core.Content;
+import content.frame.core.ContentFile;
 import content.recommend.core.Recommendation;
 import content.recommend.messages.RecommendationsForUser;
 import content.recommend.messages.RecommendationsForUserRequest;
@@ -26,44 +27,79 @@ public class ViewerToUIChannel {
     private ActorRef viewer;
     private BlockingQueue<RecommendationsForUser> recommendationsQueue;
     private BlockingQueue<RetrievedContent> retrievedContentQueue;
+    private BlockingQueue<Content> savedContentQueue;
     private ContentView contentView;
     
-    public ViewerToUIChannel(UniversalId peerId, ActorRef viewer, BlockingQueue<RecommendationsForUser> recommendationsQueue, BlockingQueue<RetrievedContent> retrievedContentQueue) {
+    public ViewerToUIChannel(UniversalId peerId, ActorRef viewer, BlockingQueue<RecommendationsForUser> recommendationsQueue, BlockingQueue<RetrievedContent> retrievedContentQueue, BlockingQueue<Content> savedContentQueue) {
         this.peerId = peerId;
         this.viewer = viewer;
         this.recommendationsQueue = recommendationsQueue;
         this.retrievedContentQueue = retrievedContentQueue;
+        this.savedContentQueue = savedContentQueue;
         this.contentView = null;
     }
     
+    /**
+     * Request Viewer retrieves Recommendations
+     */
     synchronized public void requestRecommendations() {
         RecommendationsForUserRequest request = new RecommendationsForUserRequest(this.peerId);
         this.viewer.tell(request, ActorRef.noSender());
     }
     
+    /**
+     * Request Viewer retrieves content associated with this Recommendation
+     * @param recom
+     */
     synchronized public void requestContent(Recommendation recom) {
         LocalRetrieveContentRequest request = new LocalRetrieveContentRequest(this.peerId, recom.getRecommendingPeerId(), recom.getContent());
         this.viewer.tell(request, ActorRef.noSender());
     }
     
+    /**
+     * Blocks on queue waiting for RecommendationsForUser
+     * @return
+     * @throws InterruptedException
+     */
     synchronized public RecommendationsForUser getRecommendations() throws InterruptedException {
         return this.recommendationsQueue.take();
     }
     
+    /**
+     * Blocks on queue waiting for RetrievedContent
+     * @return
+     * @throws InterruptedException
+     */
     synchronized public RetrievedContent getRetrievedContent() throws InterruptedException {
         return this.retrievedContentQueue.take();
     }
     
+    /**
+     * Create a new ContentView with no ViewingTime or Rating recorded in it yet
+     * @param content
+     */
     synchronized public void createNewContentView(Content content) {
         this.threadSafeMutateContentViewField(ContentViewMutate.Create, content, null, null);
     }
     
+    /**
+     * Record ViewingTime and an optional Rating
+     * @param viewingTime
+     * @param rating
+     */
     synchronized public void recordContentViewInfo(ViewingTime viewingTime, Rating rating) {
         this.threadSafeMutateContentViewField(ContentViewMutate.Record, null, viewingTime, rating);
     }
     
     private enum ContentViewMutate { Create, Record; }
     
+    /**
+     * Private helper method that is synchronized so the Content View field can only be created or modified in a mutually exclusive way
+     * @param mutate
+     * @param content
+     * @param viewingTime
+     * @param rating
+     */
     synchronized private void threadSafeMutateContentViewField(ContentViewMutate mutate, Content content, ViewingTime viewingTime, Rating rating) {
         switch (mutate) {
         case Create:
@@ -87,5 +123,37 @@ public class ViewerToUIChannel {
         default:
             throw new InvalidSwitchCaseException();
         }
+    }
+    
+    /**
+     * Ask Viewer to pass on a user's own uploaded file to the databaser for storage
+     * @param contentFile
+     */
+    synchronized public void storeContentFile(ContentFile contentFile) {
+        
+    }
+    
+    /**
+     * Ask the Viewer to get Content objects describing the ContentFiles stored on this peer
+     */
+    synchronized public void requestSavedContent() {
+        
+    }
+    
+    /**
+     * Blocks on queue until Viewer fills with Content
+     * @return
+     * @throws InterruptedException
+     */
+    synchronized public Content getSavedContent() throws InterruptedException {
+        return this.savedContentQueue.take();
+    }
+    
+    /**
+     * Requests RetrievedContent from saved content stored on this peer
+     * @param content
+     */
+    synchronized public void requestRetrievalOfSavedContent(Content content) {
+        
     }
 }

@@ -38,6 +38,9 @@ import peer.data.messages.BackedUpSimilarContentViewPeersResponse;
 import peer.data.messages.BackupContentViewInHistoryRequest;
 import peer.data.messages.BackupPeerLinkRequest;
 import peer.data.messages.BackupSimilarContentViewPeersRequest;
+import peer.data.messages.LocalSavedContentRequest;
+import peer.data.messages.LocalSavedContentResponse;
+import peer.data.messages.SaveContentFileRequest;
 import peer.frame.actors.PeerToPeerActor;
 import peer.frame.exceptions.ImproperlyStoredContentFileException;
 import peer.frame.exceptions.UnknownMessageException;
@@ -108,6 +111,14 @@ public class Databaser extends PeerToPeerActor {
             BackedUpContentViewHistoryRequest request = (BackedUpContentViewHistoryRequest) message;
             this.processBackedUpContentViewHistoryRequest(request);
         }
+        else if (message instanceof SaveContentFileRequest) {
+            SaveContentFileRequest request = (SaveContentFileRequest) message;
+            this.processSaveContentFileRequest(request);
+        }
+        else if (message instanceof LocalSavedContentRequest) {
+            LocalSavedContentRequest request = (LocalSavedContentRequest) message;
+            this.processLocalSavedContentRequest(request);
+        }
         else {
             throw new UnknownMessageException();
         }
@@ -177,6 +188,7 @@ public class Databaser extends PeerToPeerActor {
      */
     protected void processRetrievedContentFile(RetrievedContentFile retrievedContentFile) throws IOException {
         ContentFile contentFile = retrievedContentFile.getContentFile();
+        this.saveContentToManifest(contentFile.getContent());
         writeContentFile(contentFile);
     }
     
@@ -444,5 +456,35 @@ public class Databaser extends PeerToPeerActor {
                 }
             }
         }
+    }
+    
+    /**
+     * Saves Content File to data storage directory
+     * @param request
+     */
+    protected void processSaveContentFileRequest(SaveContentFileRequest request) throws IOException {
+        ContentFile contentFile = request.getContentFile();
+        this.saveContentToManifest(contentFile.getContent());
+        writeContentFile(contentFile);
+    }
+    
+    /**
+     * Iterates through manifest of saved content and sends content objects back in response
+     * @param request
+     */
+    protected void processLocalSavedContentRequest(LocalSavedContentRequest request) {
+        ActorRef requester = getSender();
+        //To Do
+        Content content = null;
+        LocalSavedContentResponse response = new LocalSavedContentResponse(content);
+        requester.tell(response, getSelf());
+    }
+    
+    /**
+     * Saves content to manifest of local saved content
+     * @param content
+     */
+    private void saveContentToManifest(Content content) {
+        
     }
 }
