@@ -15,6 +15,7 @@ import java.util.Properties;
 import com.google.gson.Gson;
 
 import akka.actor.ActorRef;
+import akka.actor.ActorSelection;
 import content.frame.core.Content;
 import content.frame.core.ContentFile;
 import content.frame.messages.ContentFileExistenceRequest;
@@ -26,6 +27,7 @@ import content.similarity.core.SimilarContentViewPeers;
 import content.view.core.ContentView;
 import content.view.core.ContentViews;
 import content.view.messages.ContentViewAddition;
+import filemanagement.fileretrieval.MediaFileSaver;
 import filemanagement.filewrapper.FileUnwrapper;
 import filemanagement.filewrapper.FileWrapper;
 import peer.data.core.Constants;
@@ -38,10 +40,13 @@ import peer.data.messages.BackedUpSimilarContentViewPeersResponse;
 import peer.data.messages.BackupContentViewInHistoryRequest;
 import peer.data.messages.BackupPeerLinkRequest;
 import peer.data.messages.BackupSimilarContentViewPeersRequest;
+import peer.data.messages.LoadSavedContentFileRequest;
+import peer.data.messages.LoadedContent;
 import peer.data.messages.LocalSavedContentRequest;
 import peer.data.messages.LocalSavedContentResponse;
 import peer.data.messages.SaveContentFileRequest;
 import peer.frame.actors.PeerToPeerActor;
+import peer.frame.core.ActorPaths;
 import peer.frame.exceptions.ImproperlyStoredContentFileException;
 import peer.frame.exceptions.UnknownMessageException;
 import peer.frame.messages.PeerToPeerActorInit;
@@ -118,6 +123,10 @@ public class Databaser extends PeerToPeerActor {
         else if (message instanceof LocalSavedContentRequest) {
             LocalSavedContentRequest request = (LocalSavedContentRequest) message;
             this.processLocalSavedContentRequest(request);
+        }
+        else if (message instanceof LoadSavedContentFileRequest) {
+            LoadSavedContentFileRequest request = (LoadSavedContentFileRequest) message;
+            this.processLoadSavedContentFileRequest(request);
         }
         else {
             throw new UnknownMessageException();
@@ -474,9 +483,8 @@ public class Databaser extends PeerToPeerActor {
      */
     protected void processLocalSavedContentRequest(LocalSavedContentRequest request) {
         ActorRef requester = getSender();
+        LocalSavedContentResponse response = new LocalSavedContentResponse();
         //To Do
-        Content content = null;
-        LocalSavedContentResponse response = new LocalSavedContentResponse(content);
         requester.tell(response, getSelf());
     }
     
@@ -486,5 +494,18 @@ public class Databaser extends PeerToPeerActor {
      */
     private void saveContentToManifest(Content content) {
         
+    }
+    
+    /**
+     * Databaser will send back the ContentFile requested as LoadedContent
+     * @param request
+     */
+    protected void processLoadSavedContentFileRequest(LoadSavedContentFileRequest request) throws IOException {
+        Content content = request.getContent();
+        ContentFile contentFile = getContentFile(content);
+        MediaFileSaver.writeMediaFile(content.getFileName(), content.getFileFormat(), FileUnwrapper.extractFileArray(contentFile.getBytes()));
+        LoadedContent loadedContent = new LoadedContent(content);
+        ActorSelection viewer = getContext().actorSelection(ActorPaths.getPathToViewer());
+        viewer.tell(loadedContent, getSelf());
     }
 }

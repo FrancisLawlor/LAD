@@ -74,7 +74,9 @@ public enum ActorMessageType {
     BackedUpContentViewResponse("BackedUpContentViewResponse"),
     LocalSavedContentRequest("LocalSavedContentRequest"),
     LocalSavedContentResponse("LocalSavedContentResponse"),
-    SaveContentFileRequest("SaveContentFile");
+    SaveContentFileRequest("SaveContentFile"),
+    LocalSavedContentFileRequest("LocalSavedContentFileRequest"),
+    LoadedContent("LoadedContent");
     
     private String typeName;
     
