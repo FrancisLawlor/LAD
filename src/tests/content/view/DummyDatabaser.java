@@ -1,5 +1,5 @@
 package tests.content.view;
 
-public class TestViewer {
+public class DummyDatabaser {
 
 }

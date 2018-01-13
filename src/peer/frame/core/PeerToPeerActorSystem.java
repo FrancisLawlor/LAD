@@ -22,6 +22,7 @@ import peer.communicate.actors.OutboundCommunicator;
 import peer.communicate.core.DistributedRecommenderRouter;
 import peer.communicate.messages.OutboundCommInit;
 import peer.data.actors.Databaser;
+import peer.data.messages.BackedUpContentViewHistoryRequest;
 import peer.data.messages.BackedUpPeerLinksRequest;
 import peer.data.messages.BackedUpSimilarContentViewPeersRequest;
 import peer.frame.messages.PeerToPeerActorInit;
@@ -50,7 +51,7 @@ public class PeerToPeerActorSystem {
     public void createActors() throws Exception {
         final ActorRef databaser = createDatabase();
         createViewingSystem();
-        createHistorySystem();
+        createHistorySystem(databaser);
         createSimilaritySystem(databaser);
         createCommunicationSystem();
         createPeerGraph(databaser);
@@ -82,10 +83,12 @@ public class PeerToPeerActorSystem {
         viewer.tell(viewerInit, ActorRef.noSender());
     }
     
-    protected void createHistorySystem() {
+    protected void createHistorySystem(ActorRef databaser) {
         final ActorRef viewHistorian = this.actorSystem.actorOf(Props.create(ViewHistorian.class), ActorNames.VIEW_HISTORIAN);
         PeerToPeerActorInit viewHistorianInit = new PeerToPeerActorInit(peerId, ActorNames.VIEW_HISTORIAN);
         viewHistorian.tell(viewHistorianInit, ActorRef.noSender());
+        
+        databaser.tell(new BackedUpContentViewHistoryRequest(), viewHistorian);
     }
     
     protected void createSimilaritySystem(final ActorRef databaser) {

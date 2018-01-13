@@ -15,6 +15,7 @@ public class ContentView {
     private UniversalId viewingPeerId;
     private Content content;
     private double normalisedRating;
+    private int ratingCount;
     private int numberOfViews;
     private double averageViewingTime;
     
@@ -22,6 +23,7 @@ public class ContentView {
         this.content = content;
         this.viewingPeerId = viewingPeerId;
         this.normalisedRating = -1;
+        this.ratingCount = 0;
         this.numberOfViews = 0;
         this.averageViewingTime = 0;
     }
@@ -49,6 +51,7 @@ public class ContentView {
     public void setRating(Rating rating) {
         double boundedRating = this.boundedRating(rating);
         this.normalisedRating = this.normaliseRating(boundedRating);
+        this.ratingCount++;
     }
     
     /**
@@ -129,5 +132,26 @@ public class ContentView {
      */
     private double normaliseViewingTime() {
         return this.averageViewingTime / (double) this.content.getViewLength();
+    }
+    
+    /**
+     * Averages the viewing times and ratings of two content views
+     * @param other
+     */
+    public void average(ContentView other) {
+        if (this.normalisedRating > 0 && other.normalisedRating > 0) {
+            int mergedRatingCount = this.ratingCount + other.ratingCount;
+            double ratingTotalHere = this.normalisedRating * this.numberOfViews;
+            double ratingTotalThere = other.normalisedRating * other.numberOfViews;
+            double mergedRating = (ratingTotalHere + ratingTotalThere) / mergedRatingCount;
+            this.normalisedRating = mergedRating;
+            
+        }
+        int mergedNumberOfViews = this.numberOfViews + other.numberOfViews;
+        double totalViewingTimeHere = this.averageViewingTime * this.numberOfViews;
+        double totalViewingTimeThere = other.averageViewingTime * other.numberOfViews;
+        double mergedViewingTime = totalViewingTimeHere + totalViewingTimeThere / mergedNumberOfViews;
+        this.averageViewingTime = mergedViewingTime;
+        this.numberOfViews = mergedNumberOfViews;
     }
 }
