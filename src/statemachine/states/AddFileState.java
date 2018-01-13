@@ -122,11 +122,15 @@ public class AddFileState extends State {
 		String filesJSONString = new String (Files.readAllBytes(Paths.get("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME)));
 		
 		JSONObject filesJSONObject = new JSONObject(filesJSONString);
+		Gson gsonUtil = new Gson();
 		
 		((JSONArray) filesJSONObject.get("files"))
-			.put(new JSONObject()
-				.put(FileHeaderKeys.FILE_NAME, gui.getAddFileScene().getFileNameTextField().getText())
-				.put(FileHeaderKeys.File_FORMAT, "file format")
+			.put(new JSONObject(gsonUtil.toJson(new Content("todo", gui.getAddFileScene().getFileNameTextField().getText(), 
+						gui.getAddFileScene().getFileFormatTextField().getText(), 
+						Integer.parseInt(gui.getAddFileScene().getViewLengthTextField().getText()), 
+							new MediaAttributes(gui.getAddFileScene().getGenreTextField().getText(), 
+									gui.getAddFileScene().getYearTextField().getText(),
+									gui.getAddFileScene().getCreatorTextField().getText()))))
 			);
 		
 		File jsonFile = new File("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME);
