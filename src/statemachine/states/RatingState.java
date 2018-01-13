@@ -42,6 +42,7 @@ public class RatingState extends State {
 	
 	private void init() {
 	    this.viewingTimeStart = System.currentTimeMillis();
+	    this.gui.getRatingScene().getRating().setRating(0);
         sceneContainerStage.changeScene(gui.getRatingScene());
         sceneContainerStage.setTitle(GUIText.RATING);
 	}
