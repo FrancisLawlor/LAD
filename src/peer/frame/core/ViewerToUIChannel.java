@@ -14,6 +14,11 @@ import content.view.core.ContentView;
 import content.view.core.Rating;
 import content.view.core.ViewingTime;
 import content.view.messages.RecordContentView;
+import peer.data.messages.LoadSavedContentFileRequest;
+import peer.data.messages.LoadedContent;
+import peer.data.messages.LocalSavedContentRequest;
+import peer.data.messages.LocalSavedContentResponse;
+import peer.data.messages.SaveContentFileRequest;
 import peer.frame.exceptions.InvalidSwitchCaseException;
 import peer.frame.exceptions.UncreatedContentViewException;
 import peer.frame.exceptions.UnrecordedContentViewException;
@@ -27,15 +32,21 @@ public class ViewerToUIChannel {
     private ActorRef viewer;
     private BlockingQueue<RecommendationsForUser> recommendationsQueue;
     private BlockingQueue<RetrievedContent> retrievedContentQueue;
-    private BlockingQueue<Content> savedContentQueue;
+    private BlockingQueue<LocalSavedContentResponse> savedContentQueue;
+    private BlockingQueue<LoadedContent> loadedContentQueue;
     private ContentView contentView;
     
-    public ViewerToUIChannel(UniversalId peerId, ActorRef viewer, BlockingQueue<RecommendationsForUser> recommendationsQueue, BlockingQueue<RetrievedContent> retrievedContentQueue, BlockingQueue<Content> savedContentQueue) {
+    public ViewerToUIChannel(UniversalId peerId, ActorRef viewer,
+            BlockingQueue<RecommendationsForUser> recommendationsQueue, 
+            BlockingQueue<RetrievedContent> retrievedContentQueue,
+            BlockingQueue<LocalSavedContentResponse> savedContentQueue, 
+            BlockingQueue<LoadedContent> loadedContentQueue) {
         this.peerId = peerId;
         this.viewer = viewer;
         this.recommendationsQueue = recommendationsQueue;
         this.retrievedContentQueue = retrievedContentQueue;
         this.savedContentQueue = savedContentQueue;
+        this.loadedContentQueue = loadedContentQueue;
         this.contentView = null;
     }
     
@@ -129,23 +140,25 @@ public class ViewerToUIChannel {
      * Ask Viewer to pass on a user's own uploaded file to the databaser for storage
      * @param contentFile
      */
-    synchronized public void storeContentFile(ContentFile contentFile) {
-        
+    synchronized public void saveContentFile(ContentFile contentFile) {
+        SaveContentFileRequest request = new SaveContentFileRequest(contentFile);
+        this.viewer.tell(request, ActorRef.noSender());
     }
     
     /**
      * Ask the Viewer to get Content objects describing the ContentFiles stored on this peer
      */
     synchronized public void requestSavedContent() {
-        
+        LocalSavedContentRequest request = new LocalSavedContentRequest();
+        this.viewer.tell(request, ActorRef.noSender());
     }
     
     /**
-     * Blocks on queue until Viewer fills with Content
+     * Blocks on queue until Viewer fills with Saved Content
      * @return
      * @throws InterruptedException
      */
-    synchronized public Content getSavedContent() throws InterruptedException {
+    synchronized public LocalSavedContentResponse getSavedContent() throws InterruptedException {
         return this.savedContentQueue.take();
     }
     
@@ -153,7 +166,17 @@ public class ViewerToUIChannel {
      * Requests RetrievedContent from saved content stored on this peer
      * @param content
      */
-    synchronized public void requestRetrievalOfSavedContent(Content content) {
-        
+    synchronized public void requestRetrievalOfSavedContentFile(Content content) {
+        LoadSavedContentFileRequest request = new LoadSavedContentFileRequest(content);
+        this.viewer.tell(request, ActorRef.noSender());
+    }
+    
+    /**
+     * Blocks on queue until Viewer fills with LoadedContent
+     * @return
+     * @throws InterruptedException
+     */
+    synchronized public LoadedContent getLoadedContent() throws InterruptedException {
+        return this.loadedContentQueue.take();
     }
 }
