@@ -76,7 +76,7 @@ public class ViewingFilesState extends State {
 				rateFile();
 			} catch (IOException e1) {
 				e1.printStackTrace();
-				}
+			}
 		});
 		new Thread(task).start();
 	}

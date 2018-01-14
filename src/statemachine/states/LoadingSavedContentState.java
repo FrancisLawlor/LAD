@@ -38,11 +38,8 @@ public class LoadingSavedContentState extends State {
 	}
 	
 	private void init() {
-		// Listen for recommendations.
-        // Change state when received.
-		
 		sceneContainerStage.changeScene(gui.getLoadingSavedContentScene());
-		sceneContainerStage.setTitle(GUIText.SETUP);	
+		sceneContainerStage.setTitle(GUIText.LOADING_SAVED_FILES);	
 	
 		ListView<Content> viewList = this.gui.getMyFilesScene().getFilesListView();
 		viewList.getItems().clear();
@@ -56,7 +53,9 @@ public class LoadingSavedContentState extends State {
 					contents = viewer.getSavedContent();
 					retrieveContents(contents, viewList);
 					Thread.sleep(300);
-				} catch (InterruptedException e) { }
+				} catch (InterruptedException e) {
+					
+				}
 				
 				return null;
 			}
