@@ -76,7 +76,6 @@ public class StartState extends State {
             Properties props = new Properties();
             props.load(configFile);
             String portNumber = props.getProperty(FileConstants.PORT_NUMBER);
-            System.out.println("PortNumber: " + portNumber);
             UniversalId peerId = new UniversalId("localhost:" + portNumber);
             this.p2pActorSystem.createActors(peerId);
             Thread.sleep(2000);

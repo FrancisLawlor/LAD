@@ -2,8 +2,6 @@ package gui.panes;
 
 import content.frame.core.Content;
 import gui.utilities.GUIText;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
@@ -44,15 +42,6 @@ public class MyFilesPane extends BorderPane {
 
 	private ListView<Content> configureListView(ObservableList<Content> data) {
 		final ListView<Content> listView = new ListView<Content>(data);
-		
-		listView.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Content>() {
-			@Override
-			public void changed(ObservableValue<? extends Content> observable, Content oldValue, Content newValue) {  
-				if (newValue != null) {
-					System.out.println(newValue.getFileName());
-				}
-		    }
-		});
 		
 		listView.setCellFactory(new Callback<ListView<Content>, ListCell<Content>>() {
 			

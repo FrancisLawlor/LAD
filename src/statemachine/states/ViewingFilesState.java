@@ -110,9 +110,9 @@ public class ViewingFilesState extends State {
 		Task<Void> task = new Task<Void>() {
 			@Override
 			public Void call() throws Exception {
-			    LoadedContent loadedContent;
-			    Content content = gui.getMyFilesScene().getFilesListView().getSelectionModel().getSelectedItem();
-			    viewer.requestRetrievalOfSavedContentFile(content);
+                LoadedContent loadedContent;
+                Content content = gui.getMyFilesScene().getFilesListView().getSelectionModel().getSelectedItem();
+                viewer.requestRetrievalOfSavedContentFile(content);
 			    loadedContent = viewer.getLoadedContent();
 			    viewer.createNewContentView(loadedContent.getContent());
 			    String fileName = loadedContent.getContent().getFileName();

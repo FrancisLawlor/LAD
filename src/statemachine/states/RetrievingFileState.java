@@ -38,10 +38,8 @@ public class RetrievingFileState extends State {
 		sceneContainerStage.setTitle(GUIText.FILE_RETRIEVAL);
 		
 		switch (param) {
-		    case INIT:
-		        init();
-		        break;
 			case RETRIEVING_FILE:
+			    init();
 				retrieveFileAndOpen();
 				break;
 			default:
