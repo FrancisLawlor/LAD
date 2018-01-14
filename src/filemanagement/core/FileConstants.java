@@ -14,4 +14,6 @@ public class FileConstants {
 	public static final String JSON_FILE_NAME = "manifest.json";
 	public static final String JSON_INIT = "{\"files\":[]}";
 	public static final String JSON_FILES_KEY = "files";
+	public static final String ADDED_ENCRYPTION_KEY = "Added encryption key.";
+	public static final String ENCRYPTION_KEY = "encryptionKey";
 }
