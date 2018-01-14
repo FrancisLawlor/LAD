@@ -26,4 +26,5 @@ public class GUIText {
 	public static final String VIEW_LENGTH = "View length";
 	public static final String YEAR = "Year";
 	public static final String CREATOR = "Creator";
+	public static final String LOADING_SAVED_FILES = "Loading saved files.";
 }

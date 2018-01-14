@@ -2,10 +2,13 @@ package statemachine.states;
 
 import java.io.File;
 
+import content.frame.core.Content;
 import filemanagement.core.FileConstants;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import statemachine.core.StateMachine;
 import statemachine.eventhandlers.ListViewEventHandler;
 import statemachine.eventhandlers.StateMachineEventHandler;
@@ -25,6 +28,15 @@ public class StartState extends State {
 		
 		sceneContainerStage.setOnHiding(event -> {
 			System.exit(0);
+		});
+		
+		gui.getMyFilesScene().getFilesListView().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Content>() {
+			@Override
+			public void changed(ObservableValue<? extends Content> observable, Content oldValue, Content newValue) {  
+				if (newValue != null) {
+					stateMachine.execute(StateName.CLICK_FILE);
+				}
+		    }
 		});
 	}
 

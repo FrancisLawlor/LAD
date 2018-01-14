@@ -13,6 +13,7 @@ import gui.scenes.AddFileScene;
 import gui.scenes.DashBoardScene;
 import gui.scenes.FileRetrievalQueryScene;
 import gui.scenes.FileRetrievalScene;
+import gui.scenes.LoadingFilesScene;
 import gui.scenes.MyFilesScene;
 import gui.scenes.RatingScene;
 import gui.scenes.RetrieveRecommendationsScene;
@@ -20,6 +21,7 @@ import gui.scenes.SetupScene;
 import gui.utilities.GUIText;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.Scene;
 
 public class GUI {
 	private DashBoardScene dashBoardScene;
@@ -30,6 +32,8 @@ public class GUI {
 	private RetrieveRecommendationsScene retrieveRecommendationsScene;
 	private SetupScene setupScene;
 	private AddFileScene addFileScene;
+	private LoadingFilesScene loadingSavedContentScene;
+
 	private DashBoardPane dashBoardPane;
 	private FileRetrievalQueryPane fileRetrievalQueryPane;
 	private WaitingPane fileRetrievalPane;
@@ -38,6 +42,7 @@ public class GUI {
 	private WaitingPane retrieveRecommendationsPane;
 	private SetupPane setupPane;
 	private AddFilePane addFilePane;
+	private WaitingPane loadingSavedContentPane;
 	
 	public GUI(SceneContainerStage containerStage) {
 	    ObservableList<Recommendation> recommendationsData = FXCollections.observableArrayList();
@@ -51,6 +56,7 @@ public class GUI {
 		this.retrieveRecommendationsPane = new WaitingPane(GUIText.FINDING_RECOMMENDATIONS);
 		this.setupPane = new SetupPane(containerStage);
 		this.addFilePane = new AddFilePane();
+		this.loadingSavedContentPane = new WaitingPane(GUIText.LOADING_SAVED_FILES);
 		
 		this.dashBoardScene = new DashBoardScene(this.dashBoardPane);
 		this.fileRetrievalQueryScene = new FileRetrievalQueryScene(this.fileRetrievalQueryPane);
@@ -60,6 +66,7 @@ public class GUI {
 		this.retrieveRecommendationsScene = new RetrieveRecommendationsScene(this.retrieveRecommendationsPane);
 		this.setupScene = new SetupScene(this.setupPane);
 		this.addFileScene = new AddFileScene(this.addFilePane);
+		this.loadingSavedContentScene = new LoadingFilesScene(this.loadingSavedContentPane);
 	}
 	
 	public DashBoardScene getDashBoardScene() {
@@ -92,5 +99,9 @@ public class GUI {
 
 	public AddFileScene getAddFileScene() {
 		return this.addFileScene;
+	}
+
+	public Scene getLoadingSavedContentScene() {
+		return this.loadingSavedContentScene;
 	}
 }
