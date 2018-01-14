@@ -6,7 +6,13 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.URISyntaxException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Properties;
+
+import javax.crypto.KeyGenerator;
+import javax.crypto.SecretKey;
+
+import org.apache.commons.codec.binary.Base64;
 
 import filemanagement.core.FileConstants;
 import gui.core.GUI;
@@ -58,6 +64,7 @@ public class SetupState extends State {
 				createConfigFile();
 				createFilesDirectory();
 				createActorSystem(portNumber);
+				storeEncryptionKey();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (URISyntaxException e) {
@@ -71,6 +78,18 @@ public class SetupState extends State {
 		} else {
 			gui.getSetupScene().getErrorLabel().setText(GUIText.PORT_UNAVAILABLE);
 		}
+	}
+
+	private void storeEncryptionKey() throws NoSuchAlgorithmException, IOException {
+		SecretKey secretKey = KeyGenerator.getInstance("DES").generateKey();
+		String encodedKey = Base64.encodeBase64String(secretKey.getEncoded());
+		
+		FileWriter configFile = new FileWriter(FileConstants.CONFIG_FILE_NAME, true);
+		
+		Properties props = new Properties();
+		props.setProperty(FileConstants.ENCRYPTION_KEY, encodedKey);
+		props.store(configFile, FileConstants.ADDED_ENCRYPTION_KEY);
+		configFile.close();
 	}
 
 	private void createConfigFile() throws IOException, URISyntaxException {
