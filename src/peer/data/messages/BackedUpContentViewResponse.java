@@ -13,6 +13,7 @@ public class BackedUpContentViewResponse extends ActorMessage {
     
     public BackedUpContentViewResponse(ContentView contentView) {
         super(ActorMessageType.BackedUpContentViewResponse);
+        this.contentView = contentView;
     }
     
     public ContentView getContentView() {

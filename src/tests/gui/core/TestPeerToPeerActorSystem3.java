@@ -13,16 +13,9 @@ import peer.frame.messages.PeerToPeerActorInit;
 import peer.graph.core.Weight;
 import peer.graph.messages.PeerWeightedLinkAddition;
 
-public class TestPeerToPeerActorSystem2 extends PeerToPeerActorSystem {
-    public TestPeerToPeerActorSystem2(UniversalId peerId) {
+public class TestPeerToPeerActorSystem3 extends PeerToPeerActorSystem {
+    public TestPeerToPeerActorSystem3(UniversalId peerId) {
         super(peerId);
-    }
-    
-    @Override
-    protected void createHistorySystem(ActorRef databaser) {
-        final ActorRef viewHistorian = this.actorSystem.actorOf(Props.create(DummyViewHistorian.class), ActorNames.VIEW_HISTORIAN);
-        PeerToPeerActorInit viewHistorianInit = new PeerToPeerActorInit(peerId, ActorNames.VIEW_HISTORIAN);
-        viewHistorian.tell(viewHistorianInit, ActorRef.noSender());
     }
     
     @Override
@@ -40,14 +33,6 @@ public class TestPeerToPeerActorSystem2 extends PeerToPeerActorSystem {
         outboundCommunicator.tell(outboundCommInit, ActorRef.noSender());
         
         this.camelContext.start();
-    }
-    
-    @Override
-    protected ActorRef createDatabase() {
-        final ActorRef databaser = this.actorSystem.actorOf(Props.create(DummyDatabaser.class), ActorNames.DATABASER);
-        PeerToPeerActorInit init = new PeerToPeerActorInit(peerId, ActorNames.INBOUND_COMM);
-        databaser.tell(init, ActorRef.noSender());
-        return databaser;
     }
     
     protected void addAFakePeer() {

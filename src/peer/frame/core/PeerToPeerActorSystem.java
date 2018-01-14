@@ -65,7 +65,7 @@ public class PeerToPeerActorSystem {
         return this.channel;
     }
     
-    protected final ActorRef createDatabase() {
+    protected ActorRef createDatabase() {
         final ActorRef databaser = this.actorSystem.actorOf(Props.create(Databaser.class), ActorNames.DATABASER);
         PeerToPeerActorInit peerIdInit = new PeerToPeerActorInit(peerId, ActorNames.DATABASER);
         databaser.tell(peerIdInit, ActorRef.noSender());
