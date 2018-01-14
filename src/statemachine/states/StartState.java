@@ -24,8 +24,7 @@ public class StartState extends State {
 		configureButtons();
 		
 		sceneContainerStage.setOnHiding(event -> {
-			// TODO
-			// Kill whole program here.
+			System.exit(0);
 		});
 	}
 
