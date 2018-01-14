@@ -3,6 +3,7 @@ package statemachine.states;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import content.frame.core.Content;
 import filemanagement.core.FileConstants;
@@ -28,20 +29,20 @@ public class ViewingFilesState extends State {
 	private GUI gui;
 	private PeerToPeerActorSystem p2pActorSystem;
 	private ViewerToUIChannel viewer;
+	private AtomicBoolean hasPopulatedList;
 	
 	public ViewingFilesState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, PeerToPeerActorSystem p2pActorSystem) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
 		this.p2pActorSystem = p2pActorSystem;
+		this.hasPopulatedList = new AtomicBoolean(false);
 	}
 
 	@Override
 	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getMyFilesScene());
 		sceneContainerStage.setTitle(GUIText.MY_FILES);
-		
-		populateListView();
 		
 		switch (param) {
 		    case INIT:
@@ -51,7 +52,9 @@ public class ViewingFilesState extends State {
 				clicksBack();
 				break;
 			case CLICK_FILE:
-				clicksFile();
+			    if (this.hasPopulatedList.get()) {
+	                clicksFile();
+			    }
 				break;
 			default:
 				break;
@@ -60,21 +63,35 @@ public class ViewingFilesState extends State {
 	
 	private void init() {
 	    this.viewer = this.p2pActorSystem.getViewerChannel();
+        this.hasPopulatedList.set(false);
+        populateListView();
+	}
+	
+	private class ListPopulation {
+	    public LocalSavedContentResponse contents;
+	    
+	    public void setContents(LocalSavedContentResponse contents) {
+	        this.contents = contents;
+	    }
+	    
+	    public LocalSavedContentResponse getContents() {
+	        return this.contents;
+	    }
 	}
 	
 	private void populateListView() {
-		ListView<Content> viewList = this.gui.getMyFilesScene().getFilesListView();
-		viewList.getItems().clear();
-		
+        ListPopulation listPopulation = new ListPopulation();
+        
+        ListView<Content> viewList = gui.getMyFilesScene().getFilesListView();
+        viewList.getItems().clear();
+        
 		Task<Void> sleeper = new Task<Void>() {
 			@Override
 			protected Void call() throws Exception {
-				LocalSavedContentResponse contents;
 				try {
 					viewer.requestSavedContent();
-					contents = viewer.getSavedContent();
-					retrieveContents(contents, viewList);
-					Thread.sleep(300);
+					LocalSavedContentResponse contents = viewer.getSavedContent();
+					listPopulation.setContents(contents);
 				} catch (InterruptedException e) { }
 				
 				return null;
@@ -87,16 +104,17 @@ public class ViewingFilesState extends State {
 			}
 
 			private void contentsRetrieved() {
-				System.out.println("Contents retrieved.");
+			    retrieveContents(listPopulation, viewList);
 			}
 		});
 		new Thread(sleeper).start();
 	}
 	
-	private void retrieveContents(LocalSavedContentResponse contents, ListView<Content> viewList) {
-        for (Content content : contents) {
+	private void retrieveContents(ListPopulation listPopulation, ListView<Content> viewList) {
+        for (Content content : listPopulation.getContents()) {
             viewList.getItems().add(content);
         }
+        hasPopulatedList.set(true);
 	}
 
 	private void clicksBack() {
