@@ -34,6 +34,7 @@ import peer.frame.actors.PeerToPeerActor;
 import peer.frame.core.ActorNames;
 import peer.frame.core.ActorPaths;
 import peer.frame.core.UniversalId;
+import peer.frame.core.UniversalIdResolver;
 import peer.frame.exceptions.UnknownMessageException;
 import peer.frame.messages.PeerToPeerActorInit;
 
@@ -42,7 +43,7 @@ import peer.frame.messages.PeerToPeerActorInit;
  *
  */
 public class Retriever extends PeerToPeerActor {
-    private static final String TRANSFER_PORT = "10002";
+    private static String TRANSFER_PORT = "10003";
     
     private Map<Content, UniversalId> contentRequestedBy;
     
@@ -58,6 +59,7 @@ public class Retriever extends PeerToPeerActor {
         if (message instanceof PeerToPeerActorInit) {
             PeerToPeerActorInit init = (PeerToPeerActorInit) message;
             super.initialisePeerToPeerActor(init);
+            TRANSFER_PORT = "" + (Integer.parseInt(UniversalIdResolver.getIdPort(super.peerId)) + 1);
         }
         else if (message instanceof LocalRetrieveContentRequest) {
             LocalRetrieveContentRequest retrievedContentRequest = (LocalRetrieveContentRequest) message;
