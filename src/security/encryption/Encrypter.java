@@ -19,17 +19,6 @@ public class Encrypter {
 	private final static String MD5 = "MD5";
 	private final static String DES = "DES";
 	private final static String UTF8 = "UTF8";
-	private SecretKey key;
-	
-	public Encrypter() throws NoSuchAlgorithmException, IOException {
-		FileReader configFile = new FileReader(FileConstants.CONFIG_FILE_NAME);
-		
-		Properties props = new Properties();
-		props.load(configFile);
-		
-		byte[] decodedKey = Base64.decodeBase64(props.getProperty(FileConstants.ENCRYPTION_KEY));
-		this.key = new SecretKeySpec(decodedKey, 0, decodedKey.length, DES);
-	}
 	
 	public static String hash(String stringToBeHashed) {
 		try {
@@ -50,7 +39,9 @@ public class Encrypter {
 		return null;
 	}
 	
-	public String encrypt(String str) {
+	public static String encrypt(String str) throws IOException {
+		SecretKey key = loadKey();
+		
 		try {
 			Cipher encryptionCipher = Cipher.getInstance(DES);
 			encryptionCipher.init(Cipher.ENCRYPT_MODE, key);
@@ -68,7 +59,9 @@ public class Encrypter {
 		return null;
 	}
 
-	public String decrypt(String str) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException {
+	public static String decrypt(String str) throws InvalidKeyException, NoSuchAlgorithmException, NoSuchPaddingException, IOException {
+		SecretKey key = loadKey();
+
 		Cipher decryptionCipher = Cipher.getInstance(DES);
 
 		decryptionCipher = Cipher.getInstance(DES);
@@ -84,5 +77,16 @@ public class Encrypter {
 		}
 		
 		return null;
+	}
+	
+	private static SecretKey loadKey() throws IOException {
+		FileReader configFile = new FileReader(FileConstants.CONFIG_FILE_NAME);
+		
+		Properties props = new Properties();
+		props.load(configFile);
+		
+		byte[] decodedKey = Base64.decodeBase64(props.getProperty(FileConstants.ENCRYPTION_KEY));
+		
+		return new SecretKeySpec(decodedKey, 0, decodedKey.length, DES);
 	}
 }
