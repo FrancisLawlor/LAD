@@ -4,10 +4,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.util.Properties;
 
+import content.frame.core.Content;
 import filemanagement.core.FileConstants;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import peer.frame.core.PeerToPeerActorSystem;
 import peer.frame.core.UniversalId;
 import statemachine.core.StateMachine;
@@ -30,8 +33,16 @@ public class StartState extends State {
 		configureButtons();
 		
 		sceneContainerStage.setOnHiding(event -> {
-			// TODO
-			// Kill whole program here.
+			System.exit(0);
+		});
+		
+		gui.getMyFilesScene().getFilesListView().getSelectionModel().selectedItemProperty().addListener(new ChangeListener<Content>() {
+			@Override
+			public void changed(ObservableValue<? extends Content> observable, Content oldValue, Content newValue) {  
+				if (newValue != null) {
+					stateMachine.execute(StateName.CLICK_FILE);
+				}
+		    }
 		});
 	}
 

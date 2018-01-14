@@ -50,7 +50,7 @@ public class DashboardState extends State {
 	}
 	
 	private void viewFiles() {
-		stateMachine.setCurrentState(StateName.VIEWING_FILES.toString());
+		stateMachine.setCurrentState(StateName.LOADING_FILES.toString());
 		stateMachine.execute(StateName.INIT);
 	}
 	

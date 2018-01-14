@@ -8,6 +8,7 @@ import gui.core.SceneContainerStage;
 import peer.frame.core.PeerToPeerActorSystem;
 import statemachine.states.AddFileState;
 import statemachine.states.DashboardState;
+import statemachine.states.LoadingSavedContentState;
 import statemachine.states.RatingState;
 import statemachine.states.RetrieveFileQueryState;
 import statemachine.states.RetrieveRecommendationsState;
@@ -34,6 +35,7 @@ public class StateMachine {
 		stateMap.put(StateName.RETRIEVING_FILE.toString(), new RetrievingFileState(this, containerStage, gui, p2pActorSystem));
 		stateMap.put(StateName.RATING.toString(), new RatingState(this, containerStage, gui, p2pActorSystem));
 		stateMap.put(StateName.VIEWING_FILES.toString(), new ViewingFilesState(this, containerStage, gui, p2pActorSystem));
+		stateMap.put(StateName.LOADING_FILES.toString(), new LoadingSavedContentState(this, containerStage, gui, p2pActorSystem));
 	}
 	
 	public void setCurrentState(String newState) {

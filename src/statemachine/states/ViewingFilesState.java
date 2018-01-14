@@ -40,9 +40,7 @@ public class ViewingFilesState extends State {
 	public void execute(StateName param) {
 		sceneContainerStage.changeScene(gui.getMyFilesScene());
 		sceneContainerStage.setTitle(GUIText.MY_FILES);
-		
-		populateListView();
-		
+				
 		switch (param) {
 		    case INIT:
 		        init();
@@ -60,37 +58,6 @@ public class ViewingFilesState extends State {
 	
 	private void init() {
 	    this.viewer = this.p2pActorSystem.getViewerChannel();
-	}
-	
-	private void populateListView() {
-		ListView<Content> viewList = this.gui.getMyFilesScene().getFilesListView();
-		viewList.getItems().clear();
-		
-		Task<Void> sleeper = new Task<Void>() {
-			@Override
-			protected Void call() throws Exception {
-				LocalSavedContentResponse contents;
-				try {
-					viewer.requestSavedContent();
-					contents = viewer.getSavedContent();
-					retrieveContents(contents, viewList);
-					Thread.sleep(300);
-				} catch (InterruptedException e) { }
-				
-				return null;
-			}
-		};
-		sleeper.setOnSucceeded(new EventHandler<WorkerStateEvent>() {
-			@Override
-			public void handle(WorkerStateEvent event) {
-				contentsRetrieved();
-			}
-
-			private void contentsRetrieved() {
-				System.out.println("Contents retrieved.");
-			}
-		});
-		new Thread(sleeper).start();
 	}
 	
 	private void retrieveContents(LocalSavedContentResponse contents, ListView<Content> viewList) {
@@ -128,7 +95,7 @@ public class ViewingFilesState extends State {
 				rateFile();
 			} catch (IOException e1) {
 				e1.printStackTrace();
-				}
+			}
 		});
 		new Thread(task).start();
 	}
