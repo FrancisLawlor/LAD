@@ -2,6 +2,9 @@ package statemachine.states;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 import com.google.gson.Gson;
 import content.frame.core.Content;
 import content.frame.core.ContentFile;
@@ -14,6 +17,7 @@ import gui.utilities.GUIText;
 import javafx.stage.FileChooser;
 import peer.frame.core.PeerToPeerActorSystem;
 import peer.frame.core.ViewerToUIChannel;
+import security.encryption.Encrypter;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
@@ -48,7 +52,14 @@ public class AddFileState extends State {
 				}
 				break;
 			case CLICK_SUBMIT:
-				Content content = new Content("todo", gui.getAddFileScene().getFileNameTextField().getText(), 
+				byte[] fileBytes = null;
+				try {
+					fileBytes = Files.readAllBytes(Paths.get(file.getAbsolutePath()));
+				} catch (IOException e1) {
+					e1.printStackTrace();
+				}
+				
+				Content content = new Content(Encrypter.hash(new String(fileBytes)), gui.getAddFileScene().getFileNameTextField().getText(), 
 						gui.getAddFileScene().getFileFormatTextField().getText(), 
 						Integer.parseInt(gui.getAddFileScene().getViewLengthTextField().getText()), 
 							new MediaAttributes(gui.getAddFileScene().getGenreTextField().getText(), 
