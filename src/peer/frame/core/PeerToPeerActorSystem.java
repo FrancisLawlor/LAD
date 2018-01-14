@@ -40,25 +40,31 @@ public class PeerToPeerActorSystem {
     protected ActorSystem actorSystem;
     protected CamelContext camelContext;
     protected ViewerToUIChannel channel;
+    protected boolean alreadyCreated;
     
     /**
      * Creates the Actor System and Camel Communication System for this Peer
      * @param peerId
      */
-    public PeerToPeerActorSystem(UniversalId peerId) {
-        this.peerId = peerId;
+    public PeerToPeerActorSystem() {
         this.actorSystem = ActorSystem.create("ContentSystem");
+        this.alreadyCreated = false;
     }
     
-    public void createActors() throws Exception {
-        final ActorRef databaser = createDatabase();
-        createViewingSystem();
-        createHistorySystem(databaser);
-        createSimilaritySystem(databaser);
-        createCommunicationSystem();
-        createPeerGraph(databaser);
-        createRecommendingSystem();
-        createRetrievingSystem();
+    public void createActors(UniversalId peerId) throws Exception {
+        if (!this.alreadyCreated) {
+            this.peerId = peerId;
+            this.alreadyCreated = true;
+            final ActorRef databaser = createDatabase();
+            createViewingSystem();
+            createHistorySystem(databaser);
+            createSimilaritySystem(databaser);
+            createCommunicationSystem();
+            createPeerGraph(databaser);
+            createRecommendingSystem();
+            createRetrievingSystem();
+            createTestingSystem();
+        }
     }
     
     public ViewerToUIChannel getViewerChannel() {
@@ -144,5 +150,9 @@ public class PeerToPeerActorSystem {
         final ActorRef retriever = this.actorSystem.actorOf(Props.create(Retriever.class), ActorNames.RETRIEVER);
         PeerToPeerActorInit retrieverInit = new PeerToPeerActorInit(peerId, ActorNames.RETRIEVER);
         retriever.tell(retrieverInit, ActorRef.noSender());
+    }
+    
+    protected void createTestingSystem() {
+        
     }
 }

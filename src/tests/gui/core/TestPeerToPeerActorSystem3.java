@@ -14,10 +14,6 @@ import peer.graph.core.Weight;
 import peer.graph.messages.PeerWeightedLinkAddition;
 
 public class TestPeerToPeerActorSystem3 extends PeerToPeerActorSystem {
-    public TestPeerToPeerActorSystem3(UniversalId peerId) {
-        super(peerId);
-    }
-    
     @Override
     protected void createCommunicationSystem() throws Exception {
         final ActorRef inboundCommunicator = this.actorSystem.actorOf(Props.create(InboundCommunicator.class), ActorNames.INBOUND_COMM);
@@ -33,6 +29,11 @@ public class TestPeerToPeerActorSystem3 extends PeerToPeerActorSystem {
         outboundCommunicator.tell(outboundCommInit, ActorRef.noSender());
         
         this.camelContext.start();
+    }
+    
+    @Override
+    protected void createTestingSystem() {
+        this.addAFakePeer();
     }
     
     protected void addAFakePeer() {

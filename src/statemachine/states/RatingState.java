@@ -5,6 +5,7 @@ import content.view.core.ViewingTime;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
+import peer.frame.core.PeerToPeerActorSystem;
 import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
@@ -13,14 +14,15 @@ public class RatingState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
+	private PeerToPeerActorSystem p2pActorSystem;
 	private ViewerToUIChannel viewer;
 	private long viewingTimeStart;
 	
-	public RatingState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, ViewerToUIChannel viewer) {
+	public RatingState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, PeerToPeerActorSystem p2pActorSystem) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
-		this.viewer = viewer;
+		this.p2pActorSystem = p2pActorSystem;
 	}
 
 	@Override
@@ -41,6 +43,7 @@ public class RatingState extends State {
 	}
 	
 	private void init() {
+	    this.viewer = this.p2pActorSystem.getViewerChannel();
 	    this.viewingTimeStart = System.currentTimeMillis();
 	    this.gui.getRatingScene().getRating().setRating(0);
         sceneContainerStage.changeScene(gui.getRatingScene());

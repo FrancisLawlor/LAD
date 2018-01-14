@@ -9,6 +9,7 @@ import javafx.concurrent.Task;
 import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
+import peer.frame.core.PeerToPeerActorSystem;
 import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
@@ -17,13 +18,14 @@ public class RetrieveRecommendationsState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
+	private PeerToPeerActorSystem p2pActorSystem;
 	private ViewerToUIChannel viewer;
 
-	public RetrieveRecommendationsState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, ViewerToUIChannel viewer) {
+	public RetrieveRecommendationsState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, PeerToPeerActorSystem p2pActorSystem) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
-		this.viewer = viewer;
+		this.p2pActorSystem = p2pActorSystem;
 	}
 
 	@Override
@@ -43,6 +45,8 @@ public class RetrieveRecommendationsState extends State {
 	}
 	
 	private void init() {
+	    this.viewer = this.p2pActorSystem.getViewerChannel();
+	    
 		// Listen for recommendations.
         // Change state when received.
 		

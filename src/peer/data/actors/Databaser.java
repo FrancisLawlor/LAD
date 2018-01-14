@@ -62,11 +62,16 @@ import peer.graph.core.PeerWeightedLink;
  *
  */
 public class Databaser extends PeerToPeerActor {
-    /**
-     * Create Data directory for Databaser on startup
-     */
     public Databaser() {
-        File directory = new File(Constants.DATA_DIR);
+        this.checkDirExists(Constants.DATA_DIR);
+    }
+    
+    /**
+     * Check Data directory exists
+     * @param dir
+     */
+    private void checkDirExists(String dir) {
+        File directory = new File(dir);
         if (!directory.exists()) {
             directory.mkdir();
         }
@@ -80,6 +85,7 @@ public class Databaser extends PeerToPeerActor {
         if (message instanceof PeerToPeerActorInit) {
             PeerToPeerActorInit init = (PeerToPeerActorInit) message;
             this.initialisePeerToPeerActor(init);
+            this.checkDirExists(Constants.getDataDir(super.peerId));
         }
         else if (message instanceof ContentFileExistenceRequest) {
             ContentFileExistenceRequest request = (ContentFileExistenceRequest) message;
@@ -155,8 +161,8 @@ public class Databaser extends PeerToPeerActor {
      * @param content
      * @return
      */
-    private static boolean checkContentFileExists(Content content) {
-        File file = new File(getFilePath(content));
+    private boolean checkContentFileExists(Content content) {
+        File file = new File(this.getFilePath(content));
         boolean exists = file.exists();
         return exists;
     }
@@ -178,8 +184,8 @@ public class Databaser extends PeerToPeerActor {
      * @param filepath
      * @return
      */
-    private static ContentFile getContentFile(Content content) throws IOException {
-        Path path = Paths.get(getFilePath(content));
+    private ContentFile getContentFile(Content content) throws IOException {
+        Path path = Paths.get(this.getFilePath(content));
         byte[] appendedFilesArray = Files.readAllBytes(path);
         ContentFile contentFile = new ContentFile(content, appendedFilesArray);
         return contentFile;
@@ -192,8 +198,8 @@ public class Databaser extends PeerToPeerActor {
      * @return
      * @throws IOException
      */
-    private static final String getFilePath(Content content) {
-        String filePath = Constants.DATA_DIR + content.getId() + Constants.CONTENT_FILE_EXTENSION;
+    private final String getFilePath(Content content) {
+        String filePath = Constants.getDataDir(super.peerId) + content.getId() + Constants.CONTENT_FILE_EXTENSION;
         return filePath;
     }
     
@@ -212,9 +218,9 @@ public class Databaser extends PeerToPeerActor {
      * @param bytes
      * @throws IOException
      */
-    private static void writeContentFile(ContentFile contentFile) throws IOException {
+    private void writeContentFile(ContentFile contentFile) throws IOException {
         byte[] bytes = contentFile.getBytes();
-        String filepath = getFilePath(contentFile.getContent());
+        String filepath = this.getFilePath(contentFile.getContent());
         writeBytesToFile(filepath, bytes);
     }
     
@@ -247,8 +253,8 @@ public class Databaser extends PeerToPeerActor {
      * Gets the Content Views from the header of the content file stored on disk
      * @return
      */
-    private static ContentViews getContentViews(Content content) throws IOException {
-        Path path = Paths.get(getFilePath(content));
+    private ContentViews getContentViews(Content content) throws IOException {
+        Path path = Paths.get(this.getFilePath(content));
         byte[] appendedFilesArray = Files.readAllBytes(path);
         byte[] headerArray = FileUnwrapper.extractHeaderArray(appendedFilesArray);
         String json = new String(headerArray);
@@ -262,16 +268,16 @@ public class Databaser extends PeerToPeerActor {
      * Rewrites the header with the media segment of the content file back to disk
      * @param contentViews
      */
-    private static void setContentViews(ContentViews contentViews) throws IOException {
+    private void setContentViews(ContentViews contentViews) throws IOException {
         Gson gson = new Gson();
         String json = gson.toJson(contentViews);
         byte[] headerArray = json.getBytes();
         Content content = contentViews.getContent();
-        Path path = Paths.get(getFilePath(content));
+        Path path = Paths.get(this.getFilePath(content));
         byte[] appendedFilesArray = Files.readAllBytes(path);
         byte[] mediaArray = FileUnwrapper.extractFileArray(appendedFilesArray);
         appendedFilesArray = FileWrapper.mergeHeaderDataWithMediaFile(headerArray, mediaArray);
-        writeBytesToFile(getFilePath(content), appendedFilesArray);
+        writeBytesToFile(this.getFilePath(content), appendedFilesArray);
     }
     
     /**
@@ -282,7 +288,7 @@ public class Databaser extends PeerToPeerActor {
         PeerWeightedLink peerWeightedLink = request.getPeerWeightedLink();
         Properties prop = new Properties();
         OutputStream output = null;
-        String filename = Constants.DATA_DIR + Constants.PEER_LINKS_FILENAME;
+        String filename = Constants.getDataDir(super.peerId) + Constants.PEER_LINKS_FILENAME;
         Gson gson = new Gson();
         try {
             output = new FileOutputStream(filename, true);
@@ -311,7 +317,7 @@ public class Databaser extends PeerToPeerActor {
         SimilarContentViewPeers similarContentViewPeers = request.getSimilarContentViewPeers();
         Properties prop = new Properties();
         OutputStream output = null;
-        String filename = Constants.DATA_DIR + Constants.SIMILAR_CONTENT_VIEW_PEERS_FILENAME;
+        String filename = Constants.getDataDir(super.peerId) + Constants.SIMILAR_CONTENT_VIEW_PEERS_FILENAME;
         Gson gson = new Gson();
         try {
             output = new FileOutputStream(filename, true);
@@ -340,7 +346,7 @@ public class Databaser extends PeerToPeerActor {
         ContentView contentView = request.getContentView();
         Properties prop = new Properties();
         OutputStream output = null;
-        String filename = Constants.DATA_DIR + Constants.CONTENT_VIEW_HISTORY_FILENAME;
+        String filename = Constants.getDataDir(super.peerId) + Constants.CONTENT_VIEW_HISTORY_FILENAME;
         Gson gson = new Gson();
         try {
             output = new FileOutputStream(filename, true);
@@ -366,7 +372,7 @@ public class Databaser extends PeerToPeerActor {
      * @param request
      */
     protected void processBackedUpPeerLinksRequest(BackedUpPeerLinksRequest request) {
-        String filename = Constants.DATA_DIR + Constants.PEER_LINKS_FILENAME;
+        String filename = Constants.getDataDir(super.peerId) + Constants.PEER_LINKS_FILENAME;
         File file = new File(filename);
         if (file.exists()) {
             ActorRef requester = getSender();
@@ -403,7 +409,7 @@ public class Databaser extends PeerToPeerActor {
      * @param request
      */
     protected void processBackedUpSimilarContentViewPeersRequest(BackedUpSimilarContentViewPeersRequest request) {
-        String filename = Constants.DATA_DIR + Constants.SIMILAR_CONTENT_VIEW_PEERS_FILENAME;
+        String filename = Constants.getDataDir(super.peerId) + Constants.SIMILAR_CONTENT_VIEW_PEERS_FILENAME;
         File file = new File(filename);
         if (file.exists()) {
             ActorRef requester = getSender();
@@ -440,7 +446,7 @@ public class Databaser extends PeerToPeerActor {
      * @param request
      */
     protected void processBackedUpContentViewHistoryRequest(BackedUpContentViewHistoryRequest request) {
-        String filename = Constants.DATA_DIR + Constants.CONTENT_VIEW_HISTORY_FILENAME;
+        String filename = Constants.getDataDir(super.peerId) + Constants.CONTENT_VIEW_HISTORY_FILENAME;
         File file = new File(filename);
         if (file.exists()) {
             ActorRef requester = getSender();
@@ -491,15 +497,18 @@ public class Databaser extends PeerToPeerActor {
         ActorRef requester = getSender();
         LocalSavedContentResponse response = new LocalSavedContentResponse();
         
-        String filesJSONString = new String (Files.readAllBytes(Paths.get("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME)));
-		JSONObject filesJSONObject = new JSONObject(filesJSONString);		
-        JSONArray jsonArray = (JSONArray) filesJSONObject.get(FileConstants.JSON_FILES_KEY);
-        
-		Gson gsonUtil = new Gson();
-		
-		for (int i = 0; i < jsonArray.length(); i++) {
-			response.add(gsonUtil.fromJson(jsonArray.get(i).toString(), Content.class));
-		}
+        File manifestFile = new File(Constants.getDataDir(super.peerId) + FileConstants.JSON_FILE_NAME);
+        if (manifestFile.exists()) {
+            String filesJSONString = new String (Files.readAllBytes(Paths.get(Constants.getDataDir(super.peerId) + FileConstants.JSON_FILE_NAME)));
+    		JSONObject filesJSONObject = new JSONObject(filesJSONString);		
+            JSONArray jsonArray = (JSONArray) filesJSONObject.get(FileConstants.JSON_FILES_KEY);
+            
+    		Gson gsonUtil = new Gson();
+    		
+    		for (int i = 0; i < jsonArray.length(); i++) {
+    			response.add(gsonUtil.fromJson(jsonArray.get(i).toString(), Content.class));
+    		}
+        }
 		
         requester.tell(response, getSelf());
     }
@@ -510,24 +519,34 @@ public class Databaser extends PeerToPeerActor {
      * @throws IOException 
      */
     private void saveContentToManifest(Content content) throws IOException {
-    		String filesJSONString = new String (Files.readAllBytes(Paths.get("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME)));
+        File manifestFile = new File(Constants.getDataDir(peerId) + FileConstants.JSON_FILE_NAME);
+        if (!manifestFile.exists()) {
+            
+            FileWriter jsonFile = new FileWriter(manifestFile, true);
+            
+            jsonFile.write(FileConstants.JSON_INIT);
+            
+            jsonFile.close();
+        }
+        
+        String filesJSONString = new String (Files.readAllBytes(Paths.get(Constants.getDataDir(super.peerId) + FileConstants.JSON_FILE_NAME)));
 
-		JSONObject filesJSONObject = new JSONObject(filesJSONString);
-		Gson gsonUtil = new Gson();
-		
-		((JSONArray) filesJSONObject.get(FileConstants.JSON_FILES_KEY))
-			.put(new JSONObject(gsonUtil.toJson(content))
-			);
-		
-		File jsonFile = new File("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME);
-		
-		try {
-			FileWriter fileWriter = new FileWriter(jsonFile, false);
-			fileWriter.write(filesJSONObject.toString());
-			fileWriter.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        JSONObject filesJSONObject = new JSONObject(filesJSONString);
+        Gson gsonUtil = new Gson();
+        
+        ((JSONArray) filesJSONObject.get(FileConstants.JSON_FILES_KEY))
+            .put(new JSONObject(gsonUtil.toJson(content))
+            );
+        
+        File jsonFile = new File(Constants.getDataDir(super.peerId) + FileConstants.JSON_FILE_NAME);
+        
+        try {
+            FileWriter fileWriter = new FileWriter(jsonFile, false);
+            fileWriter.write(filesJSONObject.toString());
+            fileWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     /**
