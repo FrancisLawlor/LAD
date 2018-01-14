@@ -494,7 +494,6 @@ public class Databaser extends PeerToPeerActor {
      * @throws IOException 
      */
     protected void processLocalSavedContentRequest(LocalSavedContentRequest request) throws IOException {
-		System.exit(0);
         ActorRef requester = getSender();
         LocalSavedContentResponse response = new LocalSavedContentResponse();
         
