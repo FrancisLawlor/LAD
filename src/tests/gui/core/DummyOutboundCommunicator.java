@@ -58,21 +58,20 @@ public class DummyOutboundCommunicator extends DummyActor {
             RetrievedContent retrievedContent = new RetrievedContent(request.getOriginalRequester(), request.getOriginalTarget(), content, transferInfo);
             ActorRef sender = getSender();
             sender.tell(retrievedContent, getSelf());
-            transfer();
+            transfer(content);
         }
     }
     
-    private void transfer() throws Exception {
+    private void transfer(Content content) throws Exception {
         ServerSocket serverSocket = new ServerSocket(10003);
         Socket sendSocket = serverSocket.accept();
         DataOutputStream stream = new DataOutputStream(sendSocket.getOutputStream());
-        stream.write(getHeaderMediaFile());
+        stream.write(getHeaderMediaFile(content));
         sendSocket.close();
         serverSocket.close(); 
     }
     
-    private static byte[] getHeaderMediaFile() {
-        Content content = new Content("UniqueId", "Filename", "FileFormat", 10);
+    private static byte[] getHeaderMediaFile(Content content) {
         ContentViews contentViews = new ContentViews(content);
         contentViews.addContentView(new ContentView(content, new UniversalId("localhost:10010")));
         contentViews.addContentView(new ContentView(content, new UniversalId("localhost:10011")));
