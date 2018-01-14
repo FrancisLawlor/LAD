@@ -13,21 +13,23 @@ import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
 import javafx.concurrent.Task;
+import peer.frame.core.PeerToPeerActorSystem;
 import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
 public class RetrievingFileState extends State {
-	StateMachine stateMachine;
-	SceneContainerStage sceneContainerStage;
-	GUI gui;
+	private StateMachine stateMachine;
+	private SceneContainerStage sceneContainerStage;
+	private GUI gui;
+	private PeerToPeerActorSystem p2pActorSystem;
 	private ViewerToUIChannel viewer;
 	
-	public RetrievingFileState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, ViewerToUIChannel viewer) {
+	public RetrievingFileState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, PeerToPeerActorSystem p2pActorSystem) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
-		this.viewer = viewer;
+		this.p2pActorSystem = p2pActorSystem;
 	}
 
 	@Override
@@ -36,12 +38,19 @@ public class RetrievingFileState extends State {
 		sceneContainerStage.setTitle(GUIText.FILE_RETRIEVAL);
 		
 		switch (param) {
+		    case INIT:
+		        init();
+		        break;
 			case RETRIEVING_FILE:
 				retrieveFileAndOpen();
 				break;
 			default:
 				break;
 		}
+	}
+	
+	private void init() {
+	    this.viewer = this.p2pActorSystem.getViewerChannel();
 	}
 	
 	private void retrieveFileAndOpen() {

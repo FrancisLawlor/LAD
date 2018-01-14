@@ -11,6 +11,7 @@ import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
 import javafx.stage.FileChooser;
+import peer.frame.core.PeerToPeerActorSystem;
 import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
@@ -20,19 +21,21 @@ public class AddFileState extends State {
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
 	private File file;
+	private PeerToPeerActorSystem p2pActorSystem;
 	private ViewerToUIChannel viewer;
 	
-	public AddFileState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, ViewerToUIChannel viewer) {
+	public AddFileState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, PeerToPeerActorSystem p2pActorSystem) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
-		this.viewer = viewer;
+		this.p2pActorSystem = p2pActorSystem;
 	}
 
 	@Override
 	public void execute(StateName param) {
 		switch (param) {
 			case INIT:
+                this.init();
 				sceneContainerStage.changeScene(gui.getAddFileScene());
 				sceneContainerStage.setTitle(GUIText.ADD_FILE);
 				
@@ -69,6 +72,10 @@ public class AddFileState extends State {
 			default:
 				break;
 		}
+	}
+	
+	private void init() {
+        this.viewer = this.p2pActorSystem.getViewerChannel(); 
 	}
 	
 	private File chooseFile() {		

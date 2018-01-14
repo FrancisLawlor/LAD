@@ -2,18 +2,14 @@ package tests.gui.core;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
-import peer.frame.core.UniversalId;
-import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
 public class TestApplicationWindow1 extends Application {
-    private static UniversalId id;
-    private static TestPeerToPeerActorSystem1 actorSystem;
-    private static ViewerToUIChannel viewerChannel;
+    private static TestPeerToPeerActorSystem1 p2pActorSystem;
     
     public void start(Stage stage) {
-            StateMachine stateMachine = new StateMachine(viewerChannel);
+            StateMachine stateMachine = new StateMachine(p2pActorSystem);
             
             stateMachine.setCurrentState(StateName.START.toString());
             
@@ -21,11 +17,7 @@ public class TestApplicationWindow1 extends Application {
     }
     
     public static void main(String[] args) throws Exception {
-        id = new UniversalId("localhost:10001");
-        actorSystem = new TestPeerToPeerActorSystem1(id);
-        actorSystem.createActors();
-        viewerChannel = actorSystem.getViewerChannel();
-        
+        p2pActorSystem = new TestPeerToPeerActorSystem1();
         launch(args);
     }
 }
