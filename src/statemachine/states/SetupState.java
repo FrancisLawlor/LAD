@@ -68,7 +68,7 @@ public class SetupState extends State {
 	}
 	
 	private void createFilesJson() throws IOException {
-		FileWriter jsonFile = new FileWriter(FileConstants.JSON_FILE_NAME, true);
+		FileWriter jsonFile = new FileWriter(FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME, true);
 		
 		jsonFile.write(FileConstants.JSON_INIT);
 		
