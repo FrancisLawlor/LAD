@@ -3,18 +3,14 @@ package gui.core;
 import javafx.application.Application;
 import javafx.stage.Stage;
 import peer.frame.core.PeerToPeerActorSystem;
-import peer.frame.core.UniversalId;
-import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
 public class ApplicationWindow extends Application {
-    private static final String ADDRESS = "localhost:10001";
-    private static PeerToPeerActorSystem actorSystem;
-    private static ViewerToUIChannel viewerChannel;
+    private static PeerToPeerActorSystem p2pActorSystem;
     
     public void start(Stage stage) {
-    		StateMachine stateMachine = new StateMachine(viewerChannel);
+    		StateMachine stateMachine = new StateMachine(p2pActorSystem);
     		
     		stateMachine.setCurrentState(StateName.START.toString());
     		
@@ -22,10 +18,7 @@ public class ApplicationWindow extends Application {
 	}
     
     public static void main(String[] args) throws Exception {
-        UniversalId id = new UniversalId(ADDRESS);
-        actorSystem = new PeerToPeerActorSystem(id);
-        actorSystem.createActors();
-        viewerChannel = actorSystem.getViewerChannel();
+        p2pActorSystem = new PeerToPeerActorSystem();
         
         launch(args);
     }

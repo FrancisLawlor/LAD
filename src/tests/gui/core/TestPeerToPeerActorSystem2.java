@@ -14,10 +14,6 @@ import peer.graph.core.Weight;
 import peer.graph.messages.PeerWeightedLinkAddition;
 
 public class TestPeerToPeerActorSystem2 extends PeerToPeerActorSystem {
-    public TestPeerToPeerActorSystem2(UniversalId peerId) {
-        super(peerId);
-    }
-    
     @Override
     protected void createHistorySystem(ActorRef databaser) {
         final ActorRef viewHistorian = this.actorSystem.actorOf(Props.create(DummyViewHistorian.class), ActorNames.VIEW_HISTORIAN);
@@ -48,6 +44,11 @@ public class TestPeerToPeerActorSystem2 extends PeerToPeerActorSystem {
         PeerToPeerActorInit init = new PeerToPeerActorInit(peerId, ActorNames.INBOUND_COMM);
         databaser.tell(init, ActorRef.noSender());
         return databaser;
+    }
+    
+    @Override
+    protected void createTestingSystem() {
+        this.addAFakePeer();
     }
     
     protected void addAFakePeer() {

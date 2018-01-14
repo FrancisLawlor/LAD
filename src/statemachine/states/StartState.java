@@ -1,6 +1,8 @@
 package statemachine.states;
 
 import java.io.File;
+import java.io.FileReader;
+import java.util.Properties;
 
 import content.frame.core.Content;
 import filemanagement.core.FileConstants;
@@ -9,6 +11,8 @@ import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import peer.frame.core.PeerToPeerActorSystem;
+import peer.frame.core.UniversalId;
 import statemachine.core.StateMachine;
 import statemachine.eventhandlers.ListViewEventHandler;
 import statemachine.eventhandlers.StateMachineEventHandler;
@@ -18,11 +22,13 @@ public class StartState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
+	private PeerToPeerActorSystem p2pActorSystem;
 	
-	public StartState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui) {
+	public StartState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, PeerToPeerActorSystem p2pActorSystem) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
+		this.p2pActorSystem = p2pActorSystem;
 		
 		configureButtons();
 		
@@ -63,6 +69,7 @@ public class StartState extends State {
 			stateMachine.execute(StateName.INIT);
 			sceneContainerStage.show();
 		} else {
+		    this.createActorSystem();
 			stateMachine.setCurrentState(StateName.RETRIEVE_RECOMMENDATIONS.toString());
 			sceneContainerStage.setTitle(GUIText.SETUP);
 			stateMachine.execute(StateName.INIT);
@@ -73,5 +80,19 @@ public class StartState extends State {
 	private boolean configFileExists() {
 		return new File(FileConstants.CONFIG_FILE_NAME).exists();
 	}
-
+    
+    private void createActorSystem() {
+        try {
+            FileReader configFile = new FileReader(FileConstants.CONFIG_FILE_NAME);
+            Properties props = new Properties();
+            props.load(configFile);
+            String portNumber = props.getProperty(FileConstants.PORT_NUMBER);
+            System.out.println("PortNumber: " + portNumber);
+            UniversalId peerId = new UniversalId("localhost:" + portNumber);
+            this.p2pActorSystem.createActors(peerId);
+            Thread.sleep(2000);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

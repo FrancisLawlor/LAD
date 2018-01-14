@@ -12,6 +12,8 @@ import filemanagement.core.FileConstants;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
+import peer.frame.core.PeerToPeerActorSystem;
+import peer.frame.core.UniversalId;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
 
@@ -19,11 +21,13 @@ public class SetupState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
+	private PeerToPeerActorSystem p2pActorSystem;
 	
-	public SetupState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui) {
+	public SetupState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, PeerToPeerActorSystem p2pActorSystem) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
+		this.p2pActorSystem = p2pActorSystem;
 	}
 
 	@Override
@@ -37,6 +41,8 @@ public class SetupState extends State {
 					clicksSubmit();
 				} catch (IOException e) {
 					e.printStackTrace();
+				} catch (Exception ex) {
+				    ex.printStackTrace();
 				}
 				break;
 			default:
@@ -44,14 +50,14 @@ public class SetupState extends State {
 		}
 	}
 	
-	private void clicksSubmit() throws IOException {
+	private void clicksSubmit() throws Exception {
 		String portNumber = gui.getSetupScene().getPortNumberTextField().getText();
 		
 		if (portIsAvailable(portNumber)) {
 			try {
 				createConfigFile();
 				createFilesDirectory();
-				createFilesJson();
+				createActorSystem(portNumber);
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (URISyntaxException e) {
@@ -65,14 +71,6 @@ public class SetupState extends State {
 		} else {
 			gui.getSetupScene().getErrorLabel().setText(GUIText.PORT_UNAVAILABLE);
 		}
-	}
-	
-	private void createFilesJson() throws IOException {
-		FileWriter jsonFile = new FileWriter(FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME, true);
-		
-		jsonFile.write(FileConstants.JSON_INIT);
-		
-		jsonFile.close();
 	}
 
 	private void createConfigFile() throws IOException, URISyntaxException {
@@ -98,6 +96,12 @@ public class SetupState extends State {
 		} else {
 			System.out.println(FileConstants.FAILED_TO_CREATE_FILES_DIRECTORY);
 		}
+	}
+	
+	private void createActorSystem(String portNumber) throws Exception {
+	    UniversalId peerId = new UniversalId("localhost:" + portNumber);
+	    this.p2pActorSystem.createActors(peerId);
+	    Thread.sleep(2000);
 	}
 	
 	private void writePortNumberToConfigFile(String portNumber) throws IOException {

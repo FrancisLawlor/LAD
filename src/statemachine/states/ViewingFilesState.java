@@ -12,7 +12,12 @@ import gui.core.GUI;
 import gui.core.SceneContainerStage;
 import gui.utilities.GUIText;
 import javafx.concurrent.Task;
+import javafx.concurrent.WorkerStateEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.ListView;
 import peer.data.messages.LoadedContent;
+import peer.data.messages.LocalSavedContentResponse;
+import peer.frame.core.PeerToPeerActorSystem;
 import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
@@ -21,13 +26,14 @@ public class ViewingFilesState extends State {
 	private StateMachine stateMachine;
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
+	private PeerToPeerActorSystem p2pActorSystem;
 	private ViewerToUIChannel viewer;
 	
-	public ViewingFilesState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, ViewerToUIChannel viewer) {
+	public ViewingFilesState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, PeerToPeerActorSystem p2pActorSystem) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
-		this.viewer = viewer;
+		this.p2pActorSystem = p2pActorSystem;
 	}
 
 	@Override
@@ -36,6 +42,9 @@ public class ViewingFilesState extends State {
 		sceneContainerStage.setTitle(GUIText.MY_FILES);
 				
 		switch (param) {
+		    case INIT:
+		        init();
+		        break;
 			case CLICK_BACK:
 				clicksBack();
 				break;
@@ -45,6 +54,16 @@ public class ViewingFilesState extends State {
 			default:
 				break;
 			}
+	}
+	
+	private void init() {
+	    this.viewer = this.p2pActorSystem.getViewerChannel();
+	}
+	
+	private void retrieveContents(LocalSavedContentResponse contents, ListView<Content> viewList) {
+        for (Content content : contents) {
+            viewList.getItems().add(content);
+        }
 	}
 
 	private void clicksBack() {

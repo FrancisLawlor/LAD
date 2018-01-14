@@ -4,14 +4,9 @@ import akka.actor.ActorRef;
 import akka.actor.Props;
 import peer.frame.core.ActorNames;
 import peer.frame.core.PeerToPeerActorSystem;
-import peer.frame.core.UniversalId;
 import peer.frame.messages.PeerToPeerActorInit;
 
 public class TestPeerToPeerActorSystem1 extends PeerToPeerActorSystem {
-    public TestPeerToPeerActorSystem1(UniversalId peerId) {
-        super(peerId);
-    }
-    
     @Override
     protected void createRecommendingSystem() throws Exception {
         final ActorRef recommender = this.actorSystem.actorOf(Props.create(DummyRecommender.class), ActorNames.RECOMMENDER);

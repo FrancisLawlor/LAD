@@ -9,6 +9,7 @@ import javafx.concurrent.WorkerStateEvent;
 import javafx.event.EventHandler;
 import javafx.scene.control.ListView;
 import peer.data.messages.LocalSavedContentResponse;
+import peer.frame.core.PeerToPeerActorSystem;
 import peer.frame.core.ViewerToUIChannel;
 import statemachine.core.StateMachine;
 import statemachine.utils.StateName;
@@ -18,12 +19,13 @@ public class LoadingSavedContentState extends State {
 	private SceneContainerStage sceneContainerStage;
 	private GUI gui;
 	private ViewerToUIChannel viewer;
+	private PeerToPeerActorSystem p2pActorSystem;
 
-	public LoadingSavedContentState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, ViewerToUIChannel viewer) {
+	public LoadingSavedContentState(StateMachine stateMachine, SceneContainerStage sceneContainerStage, GUI gui, PeerToPeerActorSystem p2pActorSystem) {
 		this.stateMachine = stateMachine;
 		this.sceneContainerStage = sceneContainerStage;
 		this.gui = gui;
-		this.viewer = viewer;
+		this.p2pActorSystem = p2pActorSystem;
 	}
 
 	@Override
@@ -38,6 +40,7 @@ public class LoadingSavedContentState extends State {
 	}
 	
 	private void init() {
+		this.viewer = this.p2pActorSystem.getViewerChannel();
 		sceneContainerStage.changeScene(gui.getLoadingSavedContentScene());
 		sceneContainerStage.setTitle(GUIText.LOADING_SAVED_FILES);	
 	
