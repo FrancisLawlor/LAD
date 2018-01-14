@@ -3,6 +3,7 @@ package peer.data.actors;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -11,6 +12,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Enumeration;
 import java.util.Properties;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import com.google.gson.Gson;
 
@@ -27,6 +31,7 @@ import content.similarity.core.SimilarContentViewPeers;
 import content.view.core.ContentView;
 import content.view.core.ContentViews;
 import content.view.messages.ContentViewAddition;
+import filemanagement.core.FileConstants;
 import filemanagement.fileretrieval.MediaFileSaver;
 import filemanagement.filewrapper.FileUnwrapper;
 import filemanagement.filewrapper.FileWrapper;
@@ -480,20 +485,49 @@ public class Databaser extends PeerToPeerActor {
     /**
      * Iterates through manifest of saved content and sends content objects back in response
      * @param request
+     * @throws IOException 
      */
-    protected void processLocalSavedContentRequest(LocalSavedContentRequest request) {
+    protected void processLocalSavedContentRequest(LocalSavedContentRequest request) throws IOException {
         ActorRef requester = getSender();
         LocalSavedContentResponse response = new LocalSavedContentResponse();
-        //To Do
+        
+        String filesJSONString = new String (Files.readAllBytes(Paths.get("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME)));
+		JSONObject filesJSONObject = new JSONObject(filesJSONString);		
+        JSONArray jsonArray = (JSONArray) filesJSONObject.get(FileConstants.JSON_FILES_KEY);
+        
+		Gson gsonUtil = new Gson();
+		
+		for (int i = 0; i < jsonArray.length(); i++) {
+			response.add(gsonUtil.fromJson(jsonArray.get(i).toString(), Content.class));
+		}
+		
         requester.tell(response, getSelf());
     }
     
     /**
      * Saves content to manifest of local saved content
      * @param content
+     * @throws IOException 
      */
-    private void saveContentToManifest(Content content) {
-        
+    private void saveContentToManifest(Content content) throws IOException {
+    		String filesJSONString = new String (Files.readAllBytes(Paths.get("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME)));
+
+		JSONObject filesJSONObject = new JSONObject(filesJSONString);
+		Gson gsonUtil = new Gson();
+		
+		((JSONArray) filesJSONObject.get(FileConstants.JSON_FILES_KEY))
+			.put(new JSONObject(gsonUtil.toJson(content))
+			);
+		
+		File jsonFile = new File("./" + FileConstants.FILES_DIRECTORY_NAME + "/" + FileConstants.JSON_FILE_NAME);
+		
+		try {
+			FileWriter fileWriter = new FileWriter(jsonFile, false);
+			fileWriter.write(filesJSONObject.toString());
+			fileWriter.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
     
     /**

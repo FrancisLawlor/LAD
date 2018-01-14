@@ -10,12 +10,21 @@ public class Content {
     private String fileName;
     private String fileFormat;
     private int viewLength;
+    private MediaAttributes mediaAttributes;
     
     public Content(String uniqueId, String fileName, String fileFormat, int viewLength) {
 	    this.uniqueId = uniqueId;
 	    this.fileName = fileName;
 	    this.fileFormat = fileFormat;
 	    this.viewLength = viewLength;
+    }
+    
+    public Content(String uniqueId, String fileName, String fileFormat, int viewLength, MediaAttributes mediaAttributes) {
+	    this.uniqueId = uniqueId;
+	    this.fileName = fileName;
+	    this.fileFormat = fileFormat;
+	    this.viewLength = viewLength;
+	    this.mediaAttributes = mediaAttributes;
     }
     
     public String getId() {
@@ -32,6 +41,10 @@ public class Content {
     
     public int getViewLength() {
         return this.viewLength;
+    }
+    
+    public MediaAttributes getMediaAttributes() {
+		return this.mediaAttributes;
     }
     
     @Override

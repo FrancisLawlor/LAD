@@ -22,4 +22,8 @@ public class GUIText {
 	public static final String FILE_NAME = "File name";
 	public static final String GENRE = "Genre";
 	public static final String SETUP_INFO = "Enter the port number you would like to deploy to when running the application.";
+	public static final String FILE_FORMAT = "File format";
+	public static final String VIEW_LENGTH = "View length";
+	public static final String YEAR = "Year";
+	public static final String CREATOR = "Creator";
 }

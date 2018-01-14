@@ -22,6 +22,11 @@ public class StartState extends State {
 		this.gui = gui;
 		
 		configureButtons();
+		
+		sceneContainerStage.setOnHiding(event -> {
+			// TODO
+			// Kill whole program here.
+		});
 	}
 
 	private void configureButtons() {
