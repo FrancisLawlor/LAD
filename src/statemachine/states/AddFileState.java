@@ -6,6 +6,7 @@ import com.google.gson.Gson;
 import content.frame.core.Content;
 import content.frame.core.ContentFile;
 import content.frame.core.MediaAttributes;
+import content.view.core.ContentViews;
 import filemanagement.filewrapper.FileWrapper;
 import gui.core.GUI;
 import gui.core.SceneContainerStage;
@@ -54,12 +55,14 @@ public class AddFileState extends State {
 									gui.getAddFileScene().getYearTextField().getText(),
 									gui.getAddFileScene().getCreatorTextField().getText()));
 				
+				ContentViews contentViewsHeader = new ContentViews(content);
+				
 				Gson gsonUtil = new Gson();
 				
 				byte[] wrappedFile = null;
 				
 				try {
-					wrappedFile = FileWrapper.mergeHeaderDataWithMediaFile(gsonUtil.toJson(content).getBytes(), file.getAbsolutePath());
+					wrappedFile = FileWrapper.mergeHeaderDataWithMediaFile(gsonUtil.toJson(contentViewsHeader).getBytes(), file.getAbsolutePath());
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
