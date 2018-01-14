@@ -6,10 +6,13 @@ import gui.utilities.GUIText;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
-
+import javafx.scene.layout.Background;
+import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.CornerRadii;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 
 public class RatingPane extends BorderPane {
 	private Button submitButton;
@@ -17,6 +20,8 @@ public class RatingPane extends BorderPane {
 	private Rating rating;
 	
 	public RatingPane() {
+		this.setBackground(new Background(new BackgroundFill(Color.web("#e0f6f9"), CornerRadii.EMPTY, Insets.EMPTY)));
+
 		VBox leftBar = configureLeftBar();
 		this.setLeft(leftBar);
 		
