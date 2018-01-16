@@ -73,6 +73,7 @@ public class PeerWeightedLinkor extends PeerToPeerActor {
      */
     @Override
     public void onReceive(Object message) {
+        try {
         if (message instanceof PeerToPeerActorInit) {
             PeerToPeerActorInit init = (PeerToPeerActorInit) message;
             super.initialisePeerToPeerActor(init);
@@ -129,6 +130,7 @@ public class PeerWeightedLinkor extends PeerToPeerActor {
         else {
             throw new UnknownMessageException();
         }
+        } catch (Exception e) { }
     }
     
     /**
